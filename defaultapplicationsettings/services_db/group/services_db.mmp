@@ -1,0 +1,52 @@
+/*
+* Copyright (c) 2005-2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0""
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  Project definition file for Services DB
+*
+*/
+
+
+
+#include <data_caging_paths.hrh>
+#include <platform_paths.hrh>  
+
+TARGET                  servicesdb.dll
+TARGETTYPE              DLL
+UID                     0x1000008d 0x10281B9F
+
+CAPABILITY              CAP_GENERAL_DLL DRM
+VENDORID                VID_DEFAULT
+
+// Define directories for the .def-files of WINSCW build.
+// IMPORTANT NOTICE:  The lines in the example that end with a backslash 
+// must have one space after the backslash.
+#if defined(ARMCC)
+deffile ../Eabi/ 
+#elif defined( WINSCW )
+deffile ../BWINS/ 
+#endif
+
+
+SOURCEPATH              ../src
+SOURCE                  services_db.cpp
+
+USERINCLUDE             ../inc
+
+// Default system include paths for middleware layer modules.
+APP_LAYER_SYSTEMINCLUDE
+
+LIBRARY                 euser.lib
+LIBRARY                 commonengine.lib
+LIBRARY                 bafl.lib  //TResourceReader
+
+//EXPORTUNFROZEN

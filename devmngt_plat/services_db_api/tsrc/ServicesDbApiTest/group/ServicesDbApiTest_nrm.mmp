@@ -1,0 +1,84 @@
+/*
+* Copyright (c) 2002 - 2007 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0""
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  Project specification file of  ServicesDbApiTest
+*
+*/
+
+
+#include <platform_paths.hrh>
+#include <data_caging_paths.hrh>
+
+TARGET          ServicesDbApiTest.dll
+TARGETTYPE      dll
+UID             0x1000008D 0x101FB3E3
+
+CAPABILITY      ALL -TCB
+
+VENDORID VID_DEFAULT
+
+
+//TARGETPATH      ?target_path
+DEFFILE         ServicesDbApiTest.def
+
+
+APP_LAYER_SYSTEMINCLUDE
+USERINCLUDE     ../inc 
+
+SOURCEPATH      ../src
+
+SOURCE          ServicesDbApiTest.cpp
+SOURCE          ServicesDbApiTestBlocks.cpp
+
+START RESOURCE          ServicesDbApiTest.rss
+HEADER
+TARGETPATH              RESOURCE_FILES_DIR
+END // RESOURCE
+
+
+LIBRARY         euser.lib
+LIBRARY         stiftestinterface.lib
+LIBRARY         stiftestengine.lib 
+LIBRARY         eikcore.lib 
+LIBRARY         efsrv.lib 
+LIBRARY         bafl.lib 
+LIBRARY         cone.lib 
+LIBRARY         servicesdb.lib 
+LIBRARY         commonengine.lib
+
+LANG            SC
+
+epocallowdlldata
+/*
+START WINS      
+?wins_specific_information
+END
+
+START MARM
+?marm_specific_information
+END
+*/
+// Other possible keywords:
+ 
+// DOCUMENT     ?file, that is not compiled, but added to MSVC project workspace (i.e. release notes)
+/*
+START BITMAP ?target
+TARGETPATH   ?emulated_path_on_target_machine
+HEADER
+SOURCE       ?color_depth ?source_bitmap
+END
+*/
+// DEFFILE ?filename
+// AIF ?filename
+
+// End of File

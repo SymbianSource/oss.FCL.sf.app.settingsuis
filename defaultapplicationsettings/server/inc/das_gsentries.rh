@@ -1,0 +1,63 @@
+/*
+* Copyright (c) 2005-2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0""
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  Resource headers for project das_server
+*
+*/
+
+
+#ifndef DAS_GSENTRIES_RH
+#define DAS_GSENTRIES_RH
+
+// ---------------------------------------------------------------------------
+// New structure to describe a Service & MIME pair
+// ---------------------------------------------------------------------------
+//
+STRUCT DAS_SERVICE_MIME
+    {
+    LONG service_uid;
+    LTEXT8 mime;
+    }
+
+// ---------------------------------------------------------------------------
+// New structure to describe a Task.
+// A Task has a name, a MIME label and a list of associated Service & MIMEs pairs.
+// ---------------------------------------------------------------------------
+//
+STRUCT DAS_GS_TASK_ENTRY
+    {
+    LTEXT task_name;
+    
+    //task title
+    LTEXT task_title;         
+
+    // The main service and MIME give the default application for the task. 
+    // The default application for the task is registered as default for the main MIME and Service
+    // The default application for the task does not necessarily have to support the main MIME and Service
+    // ()
+    LTEXT8 mime_label;
+    
+    //other pairs that 
+    STRUCT service_mimes[]; //Type is DAS_SERVICE_MIME
+    }
+
+// ---------------------------------------------------------------------------
+// New structure to describe a list of Tasks
+// ---------------------------------------------------------------------------
+//
+STRUCT DAS_GS_TASKS
+    {
+    STRUCT tasks[]; //Type is DAS_GS_TASK_ENTRY
+    }
+
+#endif // DAS_GSENTRIES_RH

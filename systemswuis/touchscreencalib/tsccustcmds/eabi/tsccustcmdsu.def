@@ -1,0 +1,7 @@
+EXPORTS
+	_ZN17TSCCustCmdFactory26CmdTSCStartupExtensionNewLEv @ 1 NONAME
+	_ZTI14CTSCSubscriber @ 2 NONAME ; #<TI>#
+	_ZTI18CTSCPubSubObserver @ 3 NONAME ; #<TI>#
+	_ZTV14CTSCSubscriber @ 4 NONAME ; #<VT>#
+	_ZTV18CTSCPubSubObserver @ 5 NONAME ; #<VT>#
+

@@ -1,0 +1,8 @@
+EXPORTS
+	??1CDefaultAppClient@@UAE@XZ @ 1 NONAME ; CDefaultAppClient::~CDefaultAppClient(void)
+	?ChangeDefaultsL@CDefaultAppClient@@QAEXH@Z @ 2 NONAME ; void CDefaultAppClient::ChangeDefaultsL(int)
+	?NewL@CDefaultAppClient@@SAPAV1@PAVMAknServerAppExitObserver@@@Z @ 3 NONAME ; class CDefaultAppClient * CDefaultAppClient::NewL(class MAknServerAppExitObserver *)
+	?NewLC@CDefaultAppClient@@SAPAV1@PAVMAknServerAppExitObserver@@@Z @ 4 NONAME ; class CDefaultAppClient * CDefaultAppClient::NewLC(class MAknServerAppExitObserver *)
+	?PairsToDisplayL@CDefaultAppClient@@QAEHXZ @ 5 NONAME ; int CDefaultAppClient::PairsToDisplayL(void)
+	?ServiceAvailable@CDefaultAppClient@@SAHAAH@Z @ 6 NONAME ; int CDefaultAppClient::ServiceAvailable(int &)
+

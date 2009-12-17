@@ -1,0 +1,55 @@
+/*
+* Copyright (c) 2006 - 2008 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0""
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*           This file contains all the resources for the module.
+*
+*/
+
+
+//  RESOURCE IDENTIFIER
+NAME    TSCA // 4 letter ID
+
+//  INCLUDES
+#include <eikon.rh>
+#include <avkon.rsg>
+#include <avkon.rh>
+#include "touchscreencalib.loc"
+
+//  CONSTANTS  
+//  -none
+
+//  MACROS 
+//  -none
+
+//  RESOURCE DEFINITIONS 
+
+RESOURCE RSS_SIGNATURE { }
+
+RESOURCE TBUF { buf="touch_screen_calib"; }
+
+RESOURCE EIK_APP_INFO
+    {
+        status_pane = r_status_pane;
+    }
+
+RESOURCE STATUS_PANE_APP_MODEL r_status_pane
+    {
+        layout= R_AVKON_STATUS_PANE_LAYOUT_EMPTY;
+    }
+
+RESOURCE TBUF       r_qtn_touch_screen_cali_instr_can { buf = qtn_touch_screen_cali_instr_can; }
+RESOURCE TBUF       r_qtn_touch_screen_cali_instr_res { buf = qtn_touch_screen_cali_instr_res; }
+RESOURCE TBUF       r_qtn_touch_screen_cali_instr_gen { buf = qtn_touch_screen_cali_instr_gen; }
+RESOURCE TBUF       r_qtn_touch_screen_cali_cancel { buf = qtn_touch_screen_cali_cancel; }
+RESOURCE TBUF       r_qtn_touch_screen_cali_done { buf = qtn_touch_screen_cali_done; }

@@ -1,0 +1,101 @@
+/*
+* Copyright (c) 2005-2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0""
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  Resource file for project General Settings Plugin
+*
+*/
+
+
+//  INCLUDES
+#include    <bldvariant.hrh>
+#include    <avkon.rh>
+#include    <avkon.rsg>
+#include    <avkon.mbg>
+#include    <eikcore.rsg>
+#include    <eikon.rh>
+#include    <eikon.rsg>
+#include    <avkon.loc>
+#include    <data_caging_paths_strings.hrh>
+
+#include    <gs_das.loc>
+
+//  RESOURCE IDENTIFIER
+NAME    DAGS
+RESOURCE RSS_SIGNATURE { }
+RESOURCE TBUF { buf=""; }
+
+//  RESOURCE DEFINITIONS 
+
+//----------------------------------------------------
+//   
+//    r_gs_menubar_change_exit
+//    Options menu with 'Exit' item.
+//
+//----------------------------------------------------
+//
+RESOURCE MENU_BAR r_gs_menubar_change_exit
+    {
+    titles =
+        {
+        MENU_TITLE 
+            { 
+            menu_pane = r_gs_menu_item_exit;
+            }
+        };
+    }
+
+//----------------------------------------------------
+//   
+//    r_gs_menu_item_exit
+//    Options menu item 'Exit'.
+//
+//----------------------------------------------------
+//
+RESOURCE MENU_PANE r_gs_menu_item_exit
+    {
+    items =
+        {
+        MENU_ITEM 
+            {
+            command = EAknCmdExit;
+            txt = qtn_options_exit;
+            }
+        };
+    }
+    
+//----------------------------------------------------
+//   
+//    r_gs_example_view_title
+//    Packet data view's title.
+//
+//----------------------------------------------------
+//
+RESOURCE TBUF r_gs_defaultapp_caption
+    {
+    buf = qtn_da_gsp_caption;
+    }
+
+//----------------------------------------------------
+//   
+//    r_gs_defaultapp_view
+//    Default App plugin view.
+//
+//----------------------------------------------------
+//
+RESOURCE AVKON_VIEW r_gs_defaultapp_view
+    {
+    menubar = r_gs_menubar_change_exit;
+    cba = R_AVKON_SOFTKEYS_OPTIONS_BACK__SELECT;    
+    }
+
+//End of File
