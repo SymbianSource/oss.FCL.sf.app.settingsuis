@@ -28,7 +28,7 @@
 // l:list_single_popup_submenu_pane_t1
 // r:5.0
 //
-#define qtn_da_options_reset_selected "For selected item"
+#define qtn_da_options_reset_selected "Restore default application"
 
 // d:Sub-menu string, resets all defaults to original/factory values
 // l:list_single_popup_submenu_pane_t1
