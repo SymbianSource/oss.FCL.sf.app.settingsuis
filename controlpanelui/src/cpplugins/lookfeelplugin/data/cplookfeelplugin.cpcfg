@@ -1,0 +1,15 @@
+
+<childplugins>
+  <plugin displayname = "Theme" id = "0X2002C2F3"  dll = "cpthemeplugin.dll">
+    <desc></desc>
+  </plugin>
+  <plugin displayname = "WallPaper" id = "0X20025FE8"  dll = "cpplaceholderplugin.dll">
+    <desc>Name of the WallPaper</desc>
+  </plugin>
+  <plugin displayname = "Display" id = "0X20028735"  dll = "cpdisplayplugin.dll">
+    <desc></desc>
+  </plugin> 
+  <plugin displayname = "Key &amp; touch screen feedback" id = "0X20025FDE"  dll = "cpkeytouchfdbkplugin.dll">
+    <desc></desc>
+  </plugin> 
+</childplugins>

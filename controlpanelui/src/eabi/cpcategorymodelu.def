@@ -1,0 +1,36 @@
+EXPORTS
+	_ZN26CpCategorySettingFormModel10initializeER16CpItemDataHelper @ 1 NONAME
+	_ZN26CpCategorySettingFormModel11qt_metacallEN11QMetaObject4CallEiPPv @ 2 NONAME
+	_ZN26CpCategorySettingFormModel11qt_metacastEPKc @ 3 NONAME
+	_ZN26CpCategorySettingFormModel16staticMetaObjectE @ 4 NONAME DATA 16
+	_ZN26CpCategorySettingFormModel19getStaticMetaObjectEv @ 5 NONAME
+	_ZN26CpCategorySettingFormModel25afterLoadingConfigPluginsER16CpItemDataHelper @ 6 NONAME
+	_ZN26CpCategorySettingFormModel26beforeLoadingConfigPluginsER16CpItemDataHelper @ 7 NONAME
+	_ZN26CpCategorySettingFormModelC1ERK7QString @ 8 NONAME
+	_ZN26CpCategorySettingFormModelC2ERK7QString @ 9 NONAME
+	_ZN26CpCategorySettingFormModelD0Ev @ 10 NONAME
+	_ZN26CpCategorySettingFormModelD1Ev @ 11 NONAME
+	_ZN26CpCategorySettingFormModelD2Ev @ 12 NONAME
+	_ZN29CpCategorySettingFormItemData10initializeER16CpItemDataHelper @ 13 NONAME
+	_ZN29CpCategorySettingFormItemData11qt_metacallEN11QMetaObject4CallEiPPv @ 14 NONAME
+	_ZN29CpCategorySettingFormItemData11qt_metacastEPKc @ 15 NONAME
+	_ZN29CpCategorySettingFormItemData16staticMetaObjectE @ 16 NONAME DATA 16
+	_ZN29CpCategorySettingFormItemData19getStaticMetaObjectEv @ 17 NONAME
+	_ZN29CpCategorySettingFormItemData25afterLoadingConfigPluginsER16CpItemDataHelper @ 18 NONAME
+	_ZN29CpCategorySettingFormItemData26beforeLoadingConfigPluginsER16CpItemDataHelper @ 19 NONAME
+	_ZN29CpCategorySettingFormItemDataC1EN19HbDataFormModelItem12DataItemTypeERK7QStringS4_PKS0_ @ 20 NONAME
+	_ZN29CpCategorySettingFormItemDataC1ERK7QStringPK19HbDataFormModelItem @ 21 NONAME
+	_ZN29CpCategorySettingFormItemDataC2EN19HbDataFormModelItem12DataItemTypeERK7QStringS4_PKS0_ @ 22 NONAME
+	_ZN29CpCategorySettingFormItemDataC2ERK7QStringPK19HbDataFormModelItem @ 23 NONAME
+	_ZN29CpCategorySettingFormItemDataD0Ev @ 24 NONAME
+	_ZN29CpCategorySettingFormItemDataD1Ev @ 25 NONAME
+	_ZN29CpCategorySettingFormItemDataD2Ev @ 26 NONAME
+	_ZNK26CpCategorySettingFormModel10metaObjectEv @ 27 NONAME
+	_ZNK29CpCategorySettingFormItemData10metaObjectEv @ 28 NONAME
+	_ZTI26CpCategorySettingFormModel @ 29 NONAME
+	_ZTI29CpCategorySettingFormItemData @ 30 NONAME
+	_ZTV26CpCategorySettingFormModel @ 31 NONAME
+	_ZTV29CpCategorySettingFormItemData @ 32 NONAME
+	_ZThn8_N29CpCategorySettingFormItemDataD0Ev @ 33 NONAME
+	_ZThn8_N29CpCategorySettingFormItemDataD1Ev @ 34 NONAME
+
