@@ -15,12 +15,14 @@
  *   
  */
 
-#include <qglobal.h>
+
 #include "cpdisplaymodel.h"
 
 #ifdef Q_OS_SYMBIAN
 #include "cpdisplaymodel_p.h"
 #endif
+
+#include <qglobal.h>
 
 CpDisplayModel::CpDisplayModel()
 {

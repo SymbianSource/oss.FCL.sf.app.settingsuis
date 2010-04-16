@@ -48,6 +48,7 @@ private:
 	CpSettingFormEntryItemData *mEmailTone;
 	CpSettingFormEntryItemData *mReminderTone;
 	CpSettingFormEntryItemData *mClockTone;
+	HbDataFormModelItem *mSayCallerName;
 	CpProfileModel *mProfileModel;
 	CpMasterVolumeValueController *mMasterVolumeValueController;
 };

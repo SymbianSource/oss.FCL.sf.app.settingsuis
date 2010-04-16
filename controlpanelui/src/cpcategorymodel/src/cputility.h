@@ -44,10 +44,6 @@ public:
 	*/
 	static QStringList pluginDirectories();
 
-	/*
-		get all application plugin directories of the device
-	*/
-	static QStringList applicationPluginDirectories();
 
 	/*
 		get all config directories of the device

@@ -21,7 +21,8 @@ HEADERS += src/cppersonalizationplugin.h  \
 			     src/cppersonalizationcustomviewitem.h \
 			     src/cpmastervolumevaluecontroller.h \
 			     src/cpprofilesgroupitemdata.h \
-			     src/cpprofilesettingform.h
+                             src/cpprofilesettingform.h \
+                             src/cppersonalizationentryitemdata.h
 			     
 SOURCES += src/cppersonalizationplugin.cpp \
 		       src/cppersonalizationgroupitemdata.cpp \
@@ -29,4 +30,5 @@ SOURCES += src/cppersonalizationplugin.cpp \
 		       src/cppersonalizationcustomviewitem.cpp \
 		       src/cpmastervolumevaluecontroller.cpp \
 		       src/cpprofilesgroupitemdata.cpp \
-		       src/cpprofilesettingform.cpp
+                       src/cpprofilesettingform.cpp \
+                       src/cppersonalizationentryitemdata.cpp

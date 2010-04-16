@@ -19,17 +19,26 @@
 #define CPPROFILESGROUPITEMDATA_H
 
 #include <cpsettingformitemdata.h>
+#include <cpprofilemodel.h>
 
+class CpProfileModel;
 class CpItemDataHelper;
+class CpMasterVolumeValueController;
 class CpProfilesGroupItemData : public CpSettingFormItemData
 {
     Q_OBJECT
 public:
     explicit CpProfilesGroupItemData(CpItemDataHelper &itemDataHelper);
     virtual ~CpProfilesGroupItemData();
+private slots:
+    void activateProfile(int profileIndex);
 private:
     Q_DISABLE_COPY(CpProfilesGroupItemData)
     void initItems(CpItemDataHelper &itemDataHelper);
+    CpProfileModel *mProfileModel;
+    ProfileWrapperProfileId mCurrentProfileId;
+    HbDataFormModelItem *mMasterVolume;
+    CpMasterVolumeValueController *mMasterVolumeValueController;
 };
 
 #endif

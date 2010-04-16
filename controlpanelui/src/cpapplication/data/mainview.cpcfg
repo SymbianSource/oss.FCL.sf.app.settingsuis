@@ -13,14 +13,7 @@
         <desc></desc>
     </plugin>
     
-    <plugin displayname = "Accounts" id = "0x2feed8de" dll = "cpaccountsplugin.dll">
-        <desc></desc>
-    </plugin>
-    
-    <plugin displayname = "Application settings" id = "0x20025FDC" dll = "cpapplicationsettingsplugin.dll">
-        <desc></desc>
-    </plugin>
-    
+
     <plugin displayname = "Privacy" id = "0x20025FE1" dll = "cpprivacyplugin.dll">
         <desc></desc>
     </plugin>

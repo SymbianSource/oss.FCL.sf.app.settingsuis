@@ -43,14 +43,18 @@ void CpProfileSettingForm::initModel()
     mModel = new HbDataFormModel();
 
     QStringList profileList;
-    profileList << "Normal" << "Meeting" << "Silent"; //should be got from engine.
+    profileList << "General" << "Meeting" << "Silent"; //should be got from engine.
     foreach (const QString &profile,profileList) {
         HbDataFormModelItem *profilePage = mModel->appendDataFormPage(profile);
+        //hard code: profile name should be got from profile engine
+        if (profile != "Silent") {
         initVolumeGroup(profilePage);
-        initRingToneGroup(profilePage);
-        initMessageToneGroup(profilePage);
-        initAlertToneGroup(profilePage);
-        initKeyAndScreenToneGroup(profilePage);
+        }
+        initVibraGroup(profilePage);
+        //initRingToneGroup(profilePage);
+        //initMessageToneGroup(profilePage);
+        //initAlertToneGroup(profilePage);
+        //initKeyAndScreenToneGroup(profilePage);
     }
     setModel(mModel);
 }
@@ -59,15 +63,36 @@ void CpProfileSettingForm::initVolumeGroup(HbDataFormModelItem *parent)
 {
     HbDataFormModelItem *volumeGroup = mModel->appendDataFormGroup(
         tr("Volume"),parent);
-    mModel->appendDataFormItem(static_cast<HbDataFormModelItem::DataItemType>(MasterVolumeSliderItem),QString(),volumeGroup);
-    mModel->appendDataFormItem(HbDataFormModelItem::CheckBoxItem,tr("Ring alert vibra"),volumeGroup);    
-    mModel->appendDataFormItem(HbDataFormModelItem::CheckBoxItem,tr("New message alert vibra"),volumeGroup);  
-    mModel->appendDataFormItem(HbDataFormModelItem::CheckBoxItem,tr("New e-mail alert vibra"),volumeGroup);
-    mModel->appendDataFormItem(HbDataFormModelItem::CheckBoxItem,tr("Reminder alarm vibra"),volumeGroup);
-    mModel->appendDataFormItem(HbDataFormModelItem::CheckBoxItem,tr("Clock alarm vibra"),volumeGroup);
+   // mModel->appendDataFormItem(static_cast<HbDataFormModelItem::DataItemType>(MasterVolumeSliderItem),QString("Master volume"),volumeGroup);
+    HbDataFormModelItem *informationTone = mModel->appendDataFormItem(HbDataFormModelItem::CheckBoxItem,QString(),volumeGroup);
+    informationTone->setContentWidgetData("text", tr("information tones"));
+    mModel->appendDataFormItem(static_cast<HbDataFormModelItem::DataItemType>(MasterVolumeSliderItem),QString("Key and touch screen tones"),volumeGroup);
+}
+void CpProfileSettingForm::initVibraGroup(HbDataFormModelItem *parent)
+{
+    HbDataFormModelItem *vibraGroup = mModel->appendDataFormGroup(
+        tr("Vibra"),parent);
+    HbDataFormModelItem *ringVibar = mModel->appendDataFormItem(HbDataFormModelItem::CheckBoxItem,QString(),vibraGroup);
+    ringVibar->setContentWidgetData("text", tr("Ring alert vibra"));
+
+    HbDataFormModelItem *messageVibra = mModel->appendDataFormItem(HbDataFormModelItem::CheckBoxItem,QString(),vibraGroup);
+    messageVibra->setContentWidgetData("text", tr("New message alert vibra"));
+
+    HbDataFormModelItem *emailVibra = mModel->appendDataFormItem(HbDataFormModelItem::CheckBoxItem,QString(),vibraGroup);
+    emailVibra->setContentWidgetData("text", tr("New e-mail alert vibra"));
+
+    HbDataFormModelItem *reminderVibra = mModel->appendDataFormItem(HbDataFormModelItem::CheckBoxItem,QString(),vibraGroup);
+    reminderVibra->setContentWidgetData("text", tr("Reminder alarm vibra"));
+
+    HbDataFormModelItem *clockVibra = mModel->appendDataFormItem(HbDataFormModelItem::CheckBoxItem,QString(),vibraGroup);
+    clockVibra->setContentWidgetData("text", tr("Clock alarm vibra"));
+
+    HbDataFormModelItem *informationVibra = mModel->appendDataFormItem(HbDataFormModelItem::CheckBoxItem,QString(),vibraGroup);
+    informationVibra->setContentWidgetData("text", tr("Information vibra"));
+
 }
 
-void CpProfileSettingForm::initRingToneGroup(HbDataFormModelItem *parent)
+/*void CpProfileSettingForm::initRingToneGroup(HbDataFormModelItem *parent)
 {
     HbDataFormModelItem *ringToneGroup = mModel->appendDataFormGroup(
         tr("Ring tone"),parent);
@@ -146,3 +171,4 @@ void CpProfileSettingForm::initKeyAndScreenToneGroup(HbDataFormModelItem *parent
     mModel->appendDataFormItem(HbDataFormModelItem::SliderItem,
         tr("Touch screen vibra"),keyAndScreenToneGroup);
 }
+*/

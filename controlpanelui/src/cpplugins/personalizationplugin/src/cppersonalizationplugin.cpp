@@ -31,18 +31,16 @@ CpPersonalizationPlugin::~CpPersonalizationPlugin()
 
 QList<CpSettingFormItemData*> CpPersonalizationPlugin::createSettingFormItemData(CpItemDataHelper &itemDataHelper) const
 {
-    Q_UNUSED(itemDataHelper);
-    /*
     CpProfilesGroupItemData *profileItemData = 
         new CpProfilesGroupItemData(itemDataHelper);
-    */
+
     CpPersonalizationGroupItemData *personalItemData = 
             new CpPersonalizationGroupItemData(
             HbDataFormModelItem::GroupItem,
-            tr("Default tones"),
+            tr("Tones"),
             QString("cppersonalizationplugin.cpcfg") );
 
-    return QList<CpSettingFormItemData*>() /*<< profileItemData*/ << personalItemData;
+    return QList<CpSettingFormItemData*>() << profileItemData << personalItemData;
 }
 
 Q_EXPORT_PLUGIN2(cppersonalizationplugin, CpPersonalizationPlugin);

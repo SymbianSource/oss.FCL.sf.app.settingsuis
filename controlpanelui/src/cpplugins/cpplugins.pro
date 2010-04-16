@@ -16,17 +16,17 @@
 
 TEMPLATE = subdirs
 SUBDIRS = communicationplugin \
-  			  placeholderplugin \
   			  deviceplugin \
   			  privacyplugin \
   			  personalizationplugin \
-			  applicationsettingsplugin \
-			  lookfeelplugin \
-			  placeholdernoiconplugin \
-			  displayplugin \
-					keytouchfdbkplugin \
+			  	lookfeelplugin \
+			  	keytouchfdbkplugin \
 					pincodeplugin \
-					devicelockplugin \
-					accountsplugin
+					devicelockplugin 
+					#displayplugin \
+					#applicationsettingsplugin \
+					#accountsplugin
+					#placeholdernoiconplugin \
+					#placeholderplugin \
  
 CONFIG += ordered

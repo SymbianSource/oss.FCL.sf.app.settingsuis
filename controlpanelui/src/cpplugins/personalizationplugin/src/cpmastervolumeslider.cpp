@@ -29,7 +29,7 @@ CpMasterVolumeSlider::CpMasterVolumeSlider(QGraphicsItem *parent /* =0 */)
 
     setElements( elements );
 	setOrientation(Qt::Horizontal);
-	setMaximum(11);
+	setMaximum(10);
 	setMinimum(0);
 	
 	setIcon(HbSlider::DecreaseElement, HbIcon(":/icon/hb_vol_slider_decrement.svg"));
@@ -41,8 +41,8 @@ CpMasterVolumeSlider::CpMasterVolumeSlider(QGraphicsItem *parent /* =0 */)
 	// set tick and beep label
 	
 #if 1
-	setMajorTickInterval(1);
-	setTickPosition(Hb::SliderTicksBothSides);
+//	setMajorTickInterval(1);
+//	setTickPosition(Hb::SliderTicksBothSides);
 //	QStringList labelList;
 //	labelList<< tr("")
 //			 << tr("Beep");
@@ -61,7 +61,7 @@ CpMasterVolumeSlider::~CpMasterVolumeSlider()
 {
 }
 
-bool CpMasterVolumeSlider::isBeepMode()
+/*bool CpMasterVolumeSlider::isBeepMode()
 {
 	if (value() == minimum()+1) {
 		return true;
@@ -79,9 +79,9 @@ void CpMasterVolumeSlider::setBeepMode(bool isBeepMode)
 	else {
 		setValue(mPreviousValue);
 	}
-}
+}*/
 
-bool CpMasterVolumeSlider::isSilentMode()
+/*bool CpMasterVolumeSlider::isSilentMode()
 {
 	if (value() == minimum()) {
 		return true;
@@ -110,7 +110,7 @@ void CpMasterVolumeSlider::setNormalValue(int normalValue)
 {
 	setValue(normalValue+1);
 }
-	
+*/	
 void CpMasterVolumeSlider::onValueChanged(int value)
 {
 	if (this->minimum( ) == value) { 
@@ -127,23 +127,23 @@ void CpMasterVolumeSlider::onValueChanged(int value)
 		this->setIconCheckable(true);
 		
 		
-		if (value == 1) {
+		/*if (value == 1) {
 			emit beepActivated(); 
-		}
-		else {
-			int valueMap = value - 1;
-			emit normalValueChanged(valueMap);
-		}
+		}*/
+		//else {
+		int valueMap = value;
+		emit normalValueChanged(valueMap);
+		//}
     }
 }
 
-void CpMasterVolumeSlider::onIncreaseIconClicked()
+/*void CpMasterVolumeSlider::onIncreaseIconClicked()
 {
 }
 
 void CpMasterVolumeSlider::onDecreaseIconClicked()
 {
-}
+}*/
 
 void CpMasterVolumeSlider::onMuteIconToggled(bool isToggled)
 {

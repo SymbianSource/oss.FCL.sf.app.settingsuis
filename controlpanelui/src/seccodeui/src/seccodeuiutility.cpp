@@ -35,7 +35,7 @@ QString SecCodeUiUtility::getPassword(const QString &label,bool *ok /*= 0*/,QGra
         if(ok) {
 			*ok = true;
         }
-        result = dlg->textValue().toString();
+        result = dlg->value().toString();
     }
     delete dlg;
     return result;
@@ -43,17 +43,17 @@ QString SecCodeUiUtility::getPassword(const QString &label,bool *ok /*= 0*/,QGra
 
 void SecCodeUiUtility::showInformationMessage(const QString &message,QGraphicsItem *parent /*= 0*/ )
 {
-	HbMessageBox::launchInformationMessageBox(message,0,0,parent);
+	HbMessageBox::information(message,0,0,parent);
 }
 
 void SecCodeUiUtility::showWarningMessage(const QString &message,QGraphicsItem *parent /*= 0*/)
 {
-	HbMessageBox::launchWarningMessageBox(message,0,0,parent);
+	HbMessageBox::warning(message,0,0,parent);
 }
 
 void SecCodeUiUtility::showErrorMessage(const QString &message,QGraphicsItem *parent /*= 0*/)
 {
-	HbMessageBox::launchInformationMessageBox(message,0,0,parent);
+	HbMessageBox::information(message,0,0,parent);
 }
 
 QString SecCodeUiUtility::getPinRemainingAttemptsMessage(int remainingAttempts)

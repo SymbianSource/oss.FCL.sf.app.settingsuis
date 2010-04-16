@@ -32,11 +32,14 @@ int main(int argc, char **argv)
 
     Logger::instance(CPFW_LOGGER_NAME)->configure(
         CP_LOGGER_CONFIG_PATH,QSettings::IniFormat);
+    Logger::instance(CPPERF_LOGGER_NAME)->configure(
+        CP_LOGGER_CONFIG_PATH,QSettings::IniFormat);
 
     CPFW_LOG("Entering ControlPanel.exe...");
+    CPPERF_LOG("Entering ControlPanel.exe...");
     
     QTranslator translator;
-    if (translator.load("controlpanel_" + QLocale::system().name()))
+    if (translator.load("control_panel_" + QLocale::system().name(),"Z:/resource/qt/translations"))
     {
         qApp->installTranslator(&translator);
     }

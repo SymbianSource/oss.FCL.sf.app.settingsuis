@@ -61,6 +61,7 @@ win32 {
 
 symbian {
     INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE \
+    							 $$APP_LAYER_SYSTEMINCLUDE \
 	                 $$MOC_DIR
 
     SOURCES += src/cpprofilemodel_p.cpp

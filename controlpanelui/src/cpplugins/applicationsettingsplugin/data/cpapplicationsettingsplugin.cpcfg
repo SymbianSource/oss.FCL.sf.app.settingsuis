@@ -6,7 +6,7 @@
   <plugin displayname = "Calendar" id = "0x2002B338"  dll = "calensettingsplugin.dll">
     <desc></desc>
   </plugin>
-  <plugin displayname = Mail" id = "0x2002BCF6"  dll = "nmsettingsplugin.dll">
+  <plugin displayname = Mail" id = "0x2002BCF6"  dll = "nmailcpplugin.dll">
     <desc></desc>
   </plugin>
   

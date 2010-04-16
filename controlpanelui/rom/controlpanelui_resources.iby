@@ -22,5 +22,7 @@
 #include <data_caging_paths_for_iby.hrh>
 
 data=DATAZ_\QT_TRANSLATIONS_DIR\control_panel.qm QT_TRANSLATIONS_DIR\control_panel.qm
+data=DATAZ_\APP_RESOURCE_DIR\ControlPanel.RSC APP_RESOURCE_DIR\ControlPanel.rsc
+
 
 #endif // CONTROLPANELUI_RESOURCES

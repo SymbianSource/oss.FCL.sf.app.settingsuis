@@ -6,6 +6,9 @@
 <SystemDefinition name="settingsuis" schema="1.5.1">
   <systemModel>
     <layer name="app_layer">
+    	<module name="themeplugin">
+        <unit unitID="themeplugin" mrp="" bldFile="&layer_real_source_path;/controlpanelplugins/themeplugin" name="themeplugin" proFile="themeplugin.pro" qmakeArgs="-r -config rom"/>
+      </module>
       <module name="controlpanelui">
         <unit unitID="controlpanelui" mrp="" bldFile="&layer_real_source_path;/controlpanelui" name="controlpanelui" proFile="controlpanelui.pro" qmakeArgs="-r -config rom"/>
       </module>

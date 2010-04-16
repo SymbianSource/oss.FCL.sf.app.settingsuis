@@ -47,7 +47,7 @@ void CpPlaceHolderItemData::onLaunchView()
            << "3. if the plugin stub file is in place.\n"
            << "4. if the dll is valid Qt plugin.";
 
-    HbMessageBox::launchWarningMessageBox(message);
+    HbMessageBox::warning(message);
 }
 
 CpBaseSettingView *CpPlaceHolderItemData::createSettingView() const

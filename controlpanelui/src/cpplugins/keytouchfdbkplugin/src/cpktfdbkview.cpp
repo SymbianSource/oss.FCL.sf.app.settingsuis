@@ -16,7 +16,7 @@
  */
 #include "cpktfdbkview.h"
 #include <hbdataform.h>
-#include <qstringlist>
+#include <QStringList>
 #include <QDebug>
 #include <hbdataformmodel.h>
 #include <cpsettingformitemdata.h>

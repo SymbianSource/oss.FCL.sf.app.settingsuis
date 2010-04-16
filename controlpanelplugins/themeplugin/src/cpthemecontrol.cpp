@@ -1,0 +1,241 @@
+/*
+ * Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+ * All rights reserved.
+ * This component and the accompanying materials are made available
+ * under the terms of "Eclipse Public License v1.0"
+ * which accompanies this distribution, and is available
+ * at the URL "http://www.eclipse.org/legal/epl-v10.html".
+ *
+ * Initial Contributors:
+ * Nokia Corporation - initial contribution.
+ *
+ * Contributors:
+ *
+ * Description:  
+ *   
+ */
+
+/*!
+    \class CpThemeControl
+    \brief CpThemeControl creates and controls two views for Theme Changer plugin and handles
+	user interaction to preview and change the themes.
+
+	It creates a list view of the themes.  When a list item is selected, it creates a preview
+	of the theme icon using a CpThemePreview class.  
+
+	This class also connects to the theme server using the HbThemeChanger and sets the theme
+	based on user interaction with the views.  
+
+ */
+
+#include <QString>
+#include <QModelIndex>
+#include <QStandardItemModel>
+#include <QStandardItem>
+#include <QTranslator>
+
+#include <hbmainwindow.h>
+#include <hbinstance.h>
+#include "cpthemechanger.h"
+
+#include "cpthemecontrol.h"
+#include "cpthemelistview.h"
+#include "cpthemepreview.h"
+
+static const QString KPlaceholderPreview = ":/image/themePreview.svg";
+
+/*!
+	Helper function to fetch the main window.
+*/
+
+static HbMainWindow *mainWindow() 
+{
+    QList< HbMainWindow* > mainWindows = hbInstance->allMainWindows();
+    if (!mainWindows.isEmpty()) {
+        return mainWindows.front();
+    }
+    return 0;
+}
+
+/*!
+	constructor.
+*/
+CpThemeControl::CpThemeControl(): mThemeListView(0), 
+    mThemePreview(0), 
+    mThemeChanger(0),
+    mListModel(0)
+{
+    mThemeChanger = new CpThemeChanger();
+   
+       
+    QTranslator *translator = new QTranslator(this);
+    QString lang = QLocale::system().name();
+    QString path = "Z:/resource/qt/translations/";
+    translator->load("control_panel_" + lang, path);
+    qApp->installTranslator(translator);
+
+}
+
+
+
+/*!
+	destorys the list view, preview and theme changer objects.
+*/
+CpThemeControl::~CpThemeControl()
+{
+    delete mThemeListView;
+    mThemeListView = 0;
+
+    delete mThemeChanger;
+    mThemeChanger = 0;
+
+    delete mThemePreview;
+    mThemePreview = 0;
+}
+
+/*!
+	Creates the theme list view.  Gets the themes, creates a model based on
+	theme names, icons, and icon paths and sets the list model.
+*/
+void CpThemeControl::createThemeList()
+{
+   
+    mThemeListView = new CpThemeListView();
+    
+    mListModel = &mThemeChanger->model();
+
+    // Set the model for theme list.
+    mThemeListView->setModel(mListModel);
+    
+    //connect to signal for selecting a list item.
+    connect(mThemeListView,SIGNAL(newThemeSelected(const QModelIndex&)),
+            this,SLOT(newThemeSelected(const QModelIndex&)));
+
+	//handle signal for list view closing. (e.g Back softkey pressed)
+    connect(mThemeListView,SIGNAL(aboutToClose()),
+            this,SLOT(themeListClosed()));
+}
+
+/*!
+	returns the instance of themelist view.  Used by control panel to set
+	the view.  
+*/
+CpBaseSettingView* CpThemeControl::themeListView()
+{
+    //If the view was removed before by control panel app, create it again.
+    if(!mThemeListView)
+        createThemeList();
+
+    return mThemeListView;
+}
+
+/*!
+        returns the name of the current theme.
+*/
+QString CpThemeControl::currentThemeName() const
+{
+    return mThemeChanger->currentTheme().name;
+}
+
+/*!
+        returns the repersenatative icon of the current theme.
+*/
+HbIcon CpThemeControl::currentThemeIcon() const
+{
+    return mThemeChanger->currentTheme().icon;
+}
+
+/*!
+	Slot called when a list item of the theme list is selected.
+*/
+void CpThemeControl::newThemeSelected(const QModelIndex& index)
+{
+    if(!index.isValid()) {
+        return;
+    }
+
+    CpThemeChanger::ThemeInfo themeInfo = mThemeChanger->themes().at(index.row());
+	
+    //Set up the theme preview and set it to
+    //the current view of main window.
+    HbMainWindow*  mWindow = ::mainWindow();
+   
+    if(!mThemePreview){
+        mThemePreview = new CpThemePreview(themeInfo);
+        mWindow->addView(mThemePreview);
+        
+        connect(mThemePreview,SIGNAL(aboutToClose()),
+            this, SLOT(previewClosed()));
+
+        connect(mThemePreview, SIGNAL(applyTheme(const QString&)),
+                this, SLOT(themeApplied(const QString&)));
+    } else {
+        mThemePreview->setThemeInfo(themeInfo);
+    }
+    //TODO: use qtTrId(text_id).
+    mThemePreview->setTitle(tr("Control Panel"));
+	  	
+    mWindow->setCurrentView(mThemePreview);
+	
+}
+
+/*!
+	Slot called when a Select key is pressed in theme preview view.
+*/
+void CpThemeControl::themeApplied(const QString& theme)
+{
+    bool success = false;
+
+    success = mThemeChanger->connectToServer();
+    
+    if (success) {
+        mThemeChanger->changeTheme(theme);
+        emit themeUpdated(mThemeChanger->currentTheme().name, mThemeChanger->currentTheme().icon);
+    }
+
+    //Go back to control panel view. Close theme preview.
+    previewClosed();
+    //ask the themelistview to close.  Control Panel will
+    //take care of removing it from window.
+    triggerThemeListClose();
+
+}
+/*!
+	Slot called when the theme preview view is closed.
+*/
+void CpThemeControl::previewClosed()
+{
+    //The theme preview closed, go back
+    //to theme list view.
+    HbMainWindow*  mainWindow = ::mainWindow();
+	mainWindow->removeView(mThemePreview);
+    mThemePreview->deleteLater();
+    mThemePreview = 0;
+    
+	mainWindow->setCurrentView(mThemeListView);   
+}
+
+/*!
+    Slot for when the theme list view is closed. Ownership of the theme list was given to
+    control panel, so the class won't delete it.
+    
+*/
+void CpThemeControl::themeListClosed()
+{
+    mThemeListView = 0;
+
+    delete mThemePreview;
+    mThemePreview = 0;
+}
+
+/*!
+    asks the theme list view to close.  
+*/
+void CpThemeControl::triggerThemeListClose()
+{
+    mThemeListView->closeView();
+}
+
+
+
+

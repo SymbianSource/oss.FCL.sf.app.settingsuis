@@ -32,10 +32,11 @@ public:
 private:
     void initModel();
     void initVolumeGroup(HbDataFormModelItem *parent);
-    void initRingToneGroup(HbDataFormModelItem *parent);
-    void initMessageToneGroup(HbDataFormModelItem *parent);
-    void initAlertToneGroup(HbDataFormModelItem *parent);
-    void initKeyAndScreenToneGroup(HbDataFormModelItem *parent);
+    void initVibraGroup(HbDataFormModelItem *parent);
+ //   void initRingToneGroup(HbDataFormModelItem *parent);
+ //   void initMessageToneGroup(HbDataFormModelItem *parent);
+ //   void initAlertToneGroup(HbDataFormModelItem *parent);
+ //   void initKeyAndScreenToneGroup(HbDataFormModelItem *parent);
 private:
     HbDataFormModel *mModel;
 };

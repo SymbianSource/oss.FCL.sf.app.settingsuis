@@ -37,6 +37,7 @@ CpPersonalizationGroupItemData::CpPersonalizationGroupItemData(HbDataFormModelIt
 															   mEmailTone(0),
 															   mReminderTone(0),
 															   mClockTone(0),
+															   mSayCallerName(0),
                                                                mProfileModel(0),
 															   mMasterVolumeValueController(0)
 {
@@ -51,7 +52,7 @@ CpPersonalizationGroupItemData::~CpPersonalizationGroupItemData()
 
 void CpPersonalizationGroupItemData::beforeLoadingConfigPlugins(CpItemDataHelper &itemDataHelper)
 {
-    
+    /*
 	itemDataHelper.addItemPrototype(new CpPersonalizationCustomViewItem);
 
 	mMasterVolume = new HbDataFormModelItem(static_cast<HbDataFormModelItem::DataItemType>(MasterVolumeSliderItem));
@@ -76,12 +77,19 @@ void CpPersonalizationGroupItemData::beforeLoadingConfigPlugins(CpItemDataHelper
 
     this->appendChild(mMasterVibra);
 	   
+    */
 
 
 	mRingTone = new CpSettingFormEntryItemDataImpl<CpBaseSettingView>(itemDataHelper,
 																		tr("Ring tone"),
 																		tr("Nokia tone"));
 	this->appendChild(mRingTone);
+	
+	/*mSayCallerName = new HbDataFormModelItem(HbDataFormModelItem::CheckBoxItem, QString());
+	mSayCallerName->setContentWidgetData("text", tr("Say caller's name"));
+	this->appendChild(mSayCallerName);*/
+	
+	
 	mMessageTone = new CpSettingFormEntryItemDataImpl<CpBaseSettingView>(itemDataHelper,
 																		tr("Message tone"),
 																		tr("Nokia message tone"));
@@ -105,7 +113,7 @@ void CpPersonalizationGroupItemData::beforeLoadingConfigPlugins(CpItemDataHelper
 void CpPersonalizationGroupItemData::masterVolumeValueChanged(int value)
 {
 	Q_UNUSED(value);
-    HbMessageBox::launchInformationMessageBox(QString("volume changed to:%1").arg(value));
+    HbMessageBox::information(QString("volume changed to:%1").arg(value));
 }
 void CpPersonalizationGroupItemData::onVibraValueChange(int isVibra)
 {

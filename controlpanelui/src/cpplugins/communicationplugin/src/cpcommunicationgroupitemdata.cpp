@@ -39,7 +39,7 @@ CpCommunicationGroupItemData::~CpCommunicationGroupItemData()
 void CpCommunicationGroupItemData::beforeLoadingConfigPlugins(CpItemDataHelper &/*itemDataHelper*/)
 {
     HbDataFormModelItem *airPlaneMode = new HbDataFormModelItem(HbDataFormModelItem::ToggleValueItem,
-                                                                QString("Airplane Mode"));
+                                                                tr("Offline mode"));
     QStringList airModeList;
     airModeList << QObject::tr("On") << QObject::tr("Off");
     

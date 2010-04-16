@@ -16,6 +16,7 @@
 */
 
 #include "cpprofilemodel_p.h"
+#include <cpprofilemodel.h>
 #include <e32base.h>
 #include <QString>
 #include <MProfileEngineExtended.h>
@@ -78,7 +79,7 @@ void CpProfileModelPrivate::UpdateProfileL()
 CpProfileModelPrivate::~CpProfileModelPrivate()
 {
     delete mVibraCenRep;
-    mVibraCenRep = NULL;
+    mVibraCenRep = 0;
 }
 
 /*
@@ -238,10 +239,29 @@ void CpProfileModelPrivate::setRingVolume(int volume)
         {
         return;
         }
+    mProfileExt = mEngine->ProfileL( EProfileWrapperGeneralId );
 
+    // General tones volume
+    TProfileToneSettings& toneSettingsGeneral = mProfileExt->ProfileSetTones().SetToneSettings();
+    mToneSettings = &toneSettingsGeneral;
+    
     mToneSettings->iRingingType = EProfileRingingTypeRinging;
     mToneSettings->iRingingVolume = volume;
     commitChange();
+
+    mProfileExt = mEngine->ProfileL( EProfileWrapperMeetingId );
+
+    // meeting tones volume
+    TProfileToneSettings& toneSettingsMeeting = mProfileExt->ProfileSetTones().SetToneSettings();
+    mToneSettings = &toneSettingsMeeting;
+    
+    mToneSettings->iRingingType = EProfileRingingTypeRinging;
+    mToneSettings->iRingingVolume = volume;
+
+    commitChange();
+    
+    mProfileExt = mEngine->ProfileL(mEngine->ActiveProfileId());
+    // currently implementation: keep the two profiles same volume
 }
 
 /*

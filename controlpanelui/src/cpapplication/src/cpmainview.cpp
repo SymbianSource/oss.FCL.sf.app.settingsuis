@@ -20,6 +20,7 @@
 #include <QList>
 #include <hbdataform.h>
 #include <cpitemdatahelper.h>
+#include <cplogger.h>
 
 CpMainView::CpMainView(QGraphicsItem *parent /*= 0*/)
 : CpBaseSettingView(0,parent), mMainModel(0), mItemDataHelper(0)
@@ -37,6 +38,14 @@ CpMainView::~CpMainView()
 {
     delete mMainModel;
     delete mItemDataHelper;
+}
+
+bool CpMainView::event(QEvent *e)
+{
+    if (e->type() == QEvent::Show || e->type() == QEvent::ShowToParent) {
+        CPPERF_LOG("CpMainView shown.");
+    }
+    return CpBaseSettingView::event(e);
 }
 
 // End of File

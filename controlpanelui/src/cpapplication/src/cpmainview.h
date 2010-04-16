@@ -30,6 +30,7 @@ class CpMainView : public CpBaseSettingView
 public:
     explicit CpMainView(QGraphicsItem *parent = 0);
     virtual ~CpMainView();
+    bool event(QEvent *e);
 private:
     Q_DISABLE_COPY(CpMainView)
 private:

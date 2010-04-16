@@ -29,17 +29,19 @@ class CpMasterVolumeValueController : public QObject
 public:
 	CpMasterVolumeValueController(CpProfileModel *profileModel,
 		HbDataFormModelItem *masterVolumeItem,
-		CpItemDataHelper &itemDataHelper);
+		CpItemDataHelper &itemDataHelper,
+		HbDataFormModelItem *profileItem);
 	virtual ~CpMasterVolumeValueController();
 private slots:
-	void onBeepActivated();
+	//void onBeepActivated();
 	void onSilentActivated();
 	void onNormalValueChanged(int value);
 private:
 	void updateMasterVolumeValue();
 private:
-	CpProfileModel *mProfileModle;
+	CpProfileModel *mProfileModel;
 	HbDataFormModelItem *mMasterVolumeItem;
+	HbDataFormModelItem *mProfileItem;
 };
 
 #endif
