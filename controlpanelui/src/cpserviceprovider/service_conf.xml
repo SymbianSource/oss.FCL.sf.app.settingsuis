@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<service>
+  <name>com.nokia.services.cpserviceprovider</name>
+  <filepath>="must-not-be-empty"</filepath>
+  <description>ControlPanel service</description>
+  <interface>
+     <name>Launcher</name>
+     <version>1.0</version>
+     <description>Launch a setting view which comes from a specific plugin</description>
+  </interface>
+</service>

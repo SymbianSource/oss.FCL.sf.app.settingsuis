@@ -41,15 +41,26 @@ public:
     {
         QString name;
         HbIcon  icon;
+        HbIcon portraitPreviewIcon;
+        HbIcon landscapePreviewIcon;
         bool operator < (const struct ThemeInfo &other) const   {			
             return name.localeAwareCompare(other.name) < 0;
-        }		
+        }	
+        bool operator == (const struct ThemeInfo &other) const {
+            return name.localeAwareCompare(other.name) == 0;
+        }
     };
-
+    
+    enum ThemeListUserRole {
+        PortraitPreviewRole = Qt::UserRole,
+        LandscapePreviewRole
+    };
+    
     const QList<ThemeInfo> themes() const;
     QAbstractItemModel& model();
 
     const ThemeInfo& currentTheme() const;
+    int indexOf(const ThemeInfo& theme) const;
 
     bool changeTheme(const QString& newtheme);
 	

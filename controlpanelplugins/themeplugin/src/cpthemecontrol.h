@@ -27,7 +27,7 @@
 QT_BEGIN_NAMESPACE
 class QModelIndex;
 class QString;
-class QStandardItemModel;
+class QSortFilterProxyModel;
 QT_END_NAMESPACE
 
 class CpThemeListView;
@@ -59,12 +59,14 @@ public slots:
 private:
     void createThemeList();
     void triggerThemeListClose();
+    void setActiveThemeIndex();
 
 private:
     CpThemeListView* mThemeListView;
     CpThemePreview* mThemePreview;
     CpThemeChanger* mThemeChanger;
     QAbstractItemModel* mListModel;
+    QSortFilterProxyModel* mSortModel;
 };
 
 #endif //CPTHEMECONTROL_H

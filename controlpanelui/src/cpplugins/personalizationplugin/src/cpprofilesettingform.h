@@ -22,6 +22,9 @@
 
 class HbDataFormModel;
 class HbDataFormModelItem;
+class CpItemDataHelper;
+class CpProfileModel;
+class QFileIconProvider;
 
 class CpProfileSettingForm : public HbDataForm
 {
@@ -29,16 +32,58 @@ class CpProfileSettingForm : public HbDataForm
 public:
     CpProfileSettingForm();
     virtual ~CpProfileSettingForm();
+    
+private slots:
+    
+    //general tones
+    void on_general_notificationTones_stateChanged(int state);
+    void on_general_keysAndScreenToneSlider_ValueChanged( int value );
+    
+    //general vibra
+    void on_general_ringVibar_stateChanged( int state );
+    void on_general_messageVibra_stateChanged( int state );
+    void on_general_emailVibra_stateChanged( int state );
+    void on_general_reminderVibra_stateChanged( int state );
+    void on_general_notificationVibra_stateChanged( int state );
+    void on_general_screenVibra_ValueChanged( int value );
+
+    //meeting tones
+    void on_meeting_notificationTones_stateChanged(int state);
+    void on_meeting_keysAndScreenSlider_ValueChanged( int value );
+    
+    //meeting vibar
+    void on_meeting_ringVibar_stateChanged( int state );
+    void on_meeting_messageVibra_stateChanged( int state );
+    void on_meeting_emailVibra_stateChanged( int state );
+    void on_meeting_reminderVibra_stateChanged( int state );
+    void on_meeting_notificationVibra_stateChanged( int state );
+    void on_meeting_screenVibra_ValueChanged( int value );
 private:
     void initModel();
-    void initVolumeGroup(HbDataFormModelItem *parent);
-    void initVibraGroup(HbDataFormModelItem *parent);
+    void initGeneralTonesGroup();
+    //void initGeneralVibraGroup();
+    void initMeetingTonesGroup();
+    //void initMeetingVibraGroup();
+    bool checkBoxStateToBool( int state );
  //   void initRingToneGroup(HbDataFormModelItem *parent);
  //   void initMessageToneGroup(HbDataFormModelItem *parent);
  //   void initAlertToneGroup(HbDataFormModelItem *parent);
  //   void initKeyAndScreenToneGroup(HbDataFormModelItem *parent);
 private:
     HbDataFormModel *mModel;
+    CpItemDataHelper *mItemDataHelper;
+    CpProfileModel  *mProfileModel;
+    QFileIconProvider *mFileIconProvider;
+    
+    HbDataFormModelItem *mGeneralPage;
+    HbDataFormModelItem *mMeetingPage;
+    
+    HbDataFormModelItem *mCurrentPage;
+    
+    HbDataFormModelItem *mGeneralKeysAndScreenToneSlider;
+    HbDataFormModelItem *mGeneralSreenVibra;
+    HbDataFormModelItem *mMeetingKeysAndScreenToneSlider;
+    HbDataFormModelItem *mMeetingSreenVibra;
 };
 
 

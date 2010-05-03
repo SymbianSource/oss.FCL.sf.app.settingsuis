@@ -52,7 +52,7 @@ HEADERS += ../inc/cpprofilemodel.h \
            ../inc/cpprofilewrappermacro.h \
            src/cpprofilemodel_p.h
 SOURCES += src/cpprofilemodel.cpp
-
+CONFIG += hb
 win32 {
     INCLUDEPATH += $$PWD/src
     INCLUDEPATH += ../inc
@@ -61,14 +61,16 @@ win32 {
 
 symbian {
     INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE \
-    							 $$APP_LAYER_SYSTEMINCLUDE \
-	                 $$MOC_DIR
+    		   $$APP_LAYER_SYSTEMINCLUDE \
+	           $$MOC_DIR
+    INCLUDEPATH += $$MW_LAYER_PLATFORM_EXPORT_PATH(cplogger)
 
     SOURCES += src/cpprofilemodel_p.cpp
 
     LIBS += -lprofileeng  \
             -lcentralrepository \
-            -lcharconv
+            -lcharconv \
+            -lcpframework  # For cplogger
     TARGET.CAPABILITY = All -TCB 
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.UID3 = 0x20025FE6

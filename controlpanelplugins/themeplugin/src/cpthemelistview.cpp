@@ -20,7 +20,7 @@
 #include <QGraphicsLinearLayout>
 #include <QModelIndex>
 
-#include <hbview>
+#include <hbview.h>
 #include <hblabel.h>
 #include <hblistview.h>
 

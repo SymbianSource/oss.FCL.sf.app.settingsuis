@@ -18,7 +18,7 @@
 #include <QString>
 #include <QDir>
 #include <QFileInfo>
-#include "cpbasepath.h"
+#include <cpbasepath.h>
 #include <cppluginloader.h>
 #include <cpplugininterface.h>
 #include <cppluginplatinterface.h>
@@ -27,6 +27,34 @@
 #include "cpcategorysettingformitemdata.h"
 #include "cppluginconfigreader.h"
 #include "cpplaceholderitemdata.h"
+
+
+static bool setEntryItemContentIfEmpty(CpSettingFormItemData *itemData, 
+        const CpPluginConfig &pluginConfig)
+{
+    CpSettingFormEntryItemData *entryItemData = qobject_cast< CpSettingFormEntryItemData* > (itemData);
+    if (!entryItemData) {
+        return false;
+    }
+    
+    if (entryItemData->text().isEmpty()) {
+        entryItemData->setText(pluginConfig.mDisplayName);
+    }
+    if (entryItemData->description().isEmpty()) {
+        entryItemData->setDescription(pluginConfig.mDescription);
+    }
+    if (entryItemData->iconName().isEmpty()) {
+        entryItemData->setIconName(
+                  CP_RESOURCE_PATH
+                  + QDir::separator() 
+                  + ICON_SUB_PATH 
+                  + QDir::separator() 
+                  + QLatin1String("qgn_prop_set_default_sub.svg") );
+    }
+    
+    return true;
+}
+
 
 void CpUtility::buildConfigPluginItems(HbDataFormModelItem *parent,
 									   const QString &configFile,
@@ -58,7 +86,7 @@ void CpUtility::buildConfigPluginItems(HbDataFormModelItem *parent,
 		QList<CpSettingFormItemData*> itemDataList;
 		
         //firstly, handle CpPluginInterface
-		if (CpPluginInterface *plugin = CpPluginLoader().loadCpPlugin(pluginConfig.mPluginFile)) {
+		if (CpPluginInterface *plugin = CpPluginLoader().loadCpPluginInterface(pluginConfig.mPluginFile)) {
             CPFW_LOG("Load  root component CpPluginInterface succeed.");
 			itemDataList = plugin->createSettingFormItemData(itemDataHelper);
 		}
@@ -76,7 +104,7 @@ void CpUtility::buildConfigPluginItems(HbDataFormModelItem *parent,
             CPFW_LOG(QLatin1String("Load plugin:") + pluginConfig.mPluginFile + QLatin1String(" failed."));
             #ifdef _DEBUG
               CPFW_LOG(QLatin1String("***Add a placeholder."));
-              parent->appendChild(new CpPlaceHolderItemData(itemDataHelper,pluginConfig));
+              itemDataList.append(new CpPlaceHolderItemData(itemDataHelper,pluginConfig));
             #endif
 		}
 
@@ -91,17 +119,8 @@ void CpUtility::buildConfigPluginItems(HbDataFormModelItem *parent,
 						categoryItemData->initialize(itemDataHelper);
 					}
 
-					//set the description from config if it is empty.
-					if (CpSettingFormEntryItemData *cpEntryItemData
-						= qobject_cast<CpSettingFormEntryItemData*>(itemData)) {
-						if (cpEntryItemData->text().isEmpty()) {
-							cpEntryItemData->setText(pluginConfig.mDisplayName);
-						}
-						if (cpEntryItemData->description().isEmpty()) {
-							cpEntryItemData->setDescription(pluginConfig.mDescription);
-						}
-					}
-
+					//set the text and description from config if it is empty.
+					setEntryItemContentIfEmpty(itemData,pluginConfig);
 				}
 			} //end foreach
 		}

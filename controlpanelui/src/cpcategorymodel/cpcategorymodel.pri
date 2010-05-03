@@ -14,8 +14,7 @@
 # Description: cpframework source files
 #
 
-HEADERS += $$PWD/src/cpbasepath.h \
-		   $$PWD/src/cpplaceholderitemdata.h \
+HEADERS += $$PWD/src/cpplaceholderitemdata.h \
 		   $$PWD/src/cppluginconfigreader.h \		 
 		   $$PWD/src/cputility.h 
 

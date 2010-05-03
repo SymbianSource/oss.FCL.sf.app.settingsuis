@@ -17,8 +17,12 @@
 
 #include <hbapplication.h>
 #include <hbmainwindow.h>
+#include <hbstyleloader.h>
 #include <QTranslator>
+#include <QLatin1String>
+#include <QDir>
 #include <cplogger.h>
+#include <cpbasepath.h>
 #include "cpmainview.h"
 
 int main(int argc, char **argv)
@@ -43,18 +47,18 @@ int main(int argc, char **argv)
     {
         qApp->installTranslator(&translator);
     }
+    
+    HbStyleLoader::registerFilePath(CP_RESOURCE_PATH + QDir::separator() + WIDGETML_SUB_PATH);
 
     HbMainWindow mainWindow;
     CpMainView *mainView = new CpMainView();
-#ifdef WIN32
-	mainWindow.setOrientation(Qt::Vertical);
-#endif
+  
     QObject::connect(mainView,SIGNAL(aboutToClose()),&app, SLOT(quit()));  
     mainWindow.addView(mainView);
     mainWindow.show();
     
     int ret = app.exec();
-
+    
     CPFW_LOG("Exiting ControlPanel.exe.");
 
     Logger::closeAll();
@@ -62,4 +66,4 @@ int main(int argc, char **argv)
     return ret;
 }
 
-//
+// End of File

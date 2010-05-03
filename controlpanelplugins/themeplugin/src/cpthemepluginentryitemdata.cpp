@@ -15,8 +15,8 @@
  *   
  */
 
-#include <hbdataform>
-#include <hbiconitem>
+#include <hbdataform.h>
+#include <hbiconitem.h>
 
 #include <cpbasesettingview.h>
 #include "cpthemecontrol.h"

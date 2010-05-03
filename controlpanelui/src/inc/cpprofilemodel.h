@@ -21,57 +21,118 @@
 #include "cpprofilewrappermacro.h"
 #include <QtCore/qglobal.h>
 #include <QString>
-
+#include <QtCore/QObject>
 class CpProfileModelPrivate;
 
+/*!
+     Profile id is defined in profile engine
+ */
 enum ProfileWrapperProfileId
-    {
-    EProfileWrapperGeneralId = 0,
-    EProfileWrapperSilentId  = 1,
-    EProfileWrapperMeetingId = 2
-    };
-
-class PROFILE_WRAPPER_EXPORT CpProfileModel
-    {
+{
+    EProfileWapperStart = -1,
+    EProfileWrapperGeneralId = 0, 
+    EProfileWrapperMeetingId = 2,
+    EPRofileWrapperEnd    
+};
+class CpProfileSettings
+{
 public:
-    CpProfileModel();
+    QString mRingTone;
+    QString mMessageTone;
+    QString mEmailTone;
+    QString mReminderTone;
+    bool mNotificationTone;
+    int mKeyTouchScreenTone; // 0-5
+    
+    bool mRingAlertVibra;
+    bool mMessageVibra;
+    bool mEmailVibra;
+    bool mReminderAlertVibra;
+    bool mNotificationVibra;
+    int mKeyTouchScreenVibra; //0-5    
+};
+class PROFILE_WRAPPER_EXPORT CpProfileModel : QObject
+{
+    Q_OBJECT
+public:
+    CpProfileModel(QObject *parent = 0);
     ~CpProfileModel();
 
 public:
     int initiationFlag();
-    QString profileName(int profileId);
+    QString profileName(int profileId)const;
+    QStringList profileNames()const;
     int activateProfile(int profileId);
     int activeProfileId();
-    QString ringTone();
-    int setRingTone(const QString& filePath);
-    QString messageTone();
-    int setMessageTone(const QString& filePath);
-    QString emailTone();
-    int setEmailTone(const QString& filePath);
-    QString calendarTone();
-    void setCalendarTone(const QString& filePath);
-    QString alarmTone();
-    void setAlarmTone(const QString& filePath);
-    int ringVolume();
-    void setRingVolume(int volume);
-    void activateBeep();
-    bool isBeep();
-    void activateSilent();
-    bool isSilent();
-    bool vibraStatus();
-    void setVibraStatus(bool status);
-    int keyVolume();
-    void setKeyVolume(int volume);
-    int screenVolume();
-    void setScreenVolume(int volume);
-    int screenVibra();
-    void setScreenVibra(int volume);
+    int setEditingProfile(int profileId); 
+    int profileSettings(int profileId, CpProfileSettings& profileSettings);
+    int setProfileSettings(int profileId, CpProfileSettings& profileSettings );
+    
+    /*!
+     * set ring tone in personalization group in control panel's homeview
+     */
+    QString ringTone() const;
+    void setRingTone(const QString& filePath);
+    
+   /* QString alarmTone();
+    void setAlarmTone(const QString& filePath);*/
+    
+    int masterVolume() const;
+    void setMasterVolume(int volume);
+    
+    
+    bool masterVibra() const;
+    void setMasterVibra(bool isVibra);
+        
+    bool isSilenceMode() const;
+    void setSilenceMode(bool isSlience);
+    
+    bool isOffLineMode() const;    
+    void setOffLineMode(bool isOffLine);
+    
+    /*!
+     *  For profile settings 
+     */
+    
+    QString ringTone(int profileId)const;
+    void setRingTone(int profileId, const QString& filePath);
+    QString messageTone(int profileId) const;
+    void setMessageTone(int profileId, const QString& filePath);
+    QString emailTone(int profileId) const;
+    void setEmailTone(int profileId, const QString& filePath);
+    QString reminderTone(int profileId) const;
+    void setReminderTone(int profileId, const QString& filePath);
+    
+    bool notificationTone(int profileId) const;
+    void setNotificationTone(int profileId, bool isActive);
+    
+    int keyTouchScreenTone(int profileId) const;
+    void setKeyTouchScreenTone(int profileId, int level);
+    
+    bool ringAlertVibra(int profileId) const;
+    void setRingAlertVibra(int profileId, bool isActive);
+    
+    bool messageVibra(int profileId) const;
+    void setMessageVibra(int profileId, bool isActive);
+    
+    bool emailVibra(int profileId) const;
+    void setEmailVibra(int profileId, bool isActive);
+    
+    bool reminderVibra(int profileId) const;
+    void setReminderVibra(int profileId, bool isActive);
+    
+    bool notificationVibra(int profileId) const;
+    void setNotificationVibra(int profileId, bool isActive);
+    
+    int keyTouchScreenVibra(int profileId)const;
+    void setKeyTouchScreenVibra(int profileId, int level);
 
 private:
+    CpProfileModelPrivate *const d_ptr;
+
+private:    
     Q_DISABLE_COPY(CpProfileModel)
-    
-private:
-    CpProfileModelPrivate* dptr;
-    };
+    Q_DECLARE_PRIVATE_D(d_ptr,CpProfileModel)
+};
 
 #endif

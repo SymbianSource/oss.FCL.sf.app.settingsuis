@@ -1,32 +1,57 @@
 EXPORTS
-	?ringVolume@CpProfileModel@@QAEHXZ @ 1 NONAME ; int CpProfileModel::ringVolume(void)
-	??1CpProfileModel@@QAE@XZ @ 2 NONAME ; CpProfileModel::~CpProfileModel(void)
-	?profileName@CpProfileModel@@QAE?AVQString@@H@Z @ 3 NONAME ; class QString CpProfileModel::profileName(int)
-	?setScreenVibra@CpProfileModel@@QAEXH@Z @ 4 NONAME ; void CpProfileModel::setScreenVibra(int)
-	?setScreenVolume@CpProfileModel@@QAEXH@Z @ 5 NONAME ; void CpProfileModel::setScreenVolume(int)
-	?screenVolume@CpProfileModel@@QAEHXZ @ 6 NONAME ; int CpProfileModel::screenVolume(void)
-	?setRingTone@CpProfileModel@@QAEHABVQString@@@Z @ 7 NONAME ; int CpProfileModel::setRingTone(class QString const &)
-	?keyVolume@CpProfileModel@@QAEHXZ @ 8 NONAME ; int CpProfileModel::keyVolume(void)
-	?setVibraStatus@CpProfileModel@@QAEX_N@Z @ 9 NONAME ; void CpProfileModel::setVibraStatus(bool)
-	?calendarTone@CpProfileModel@@QAE?AVQString@@XZ @ 10 NONAME ; class QString CpProfileModel::calendarTone(void)
-	?vibraStatus@CpProfileModel@@QAE_NXZ @ 11 NONAME ; bool CpProfileModel::vibraStatus(void)
-	?setKeyVolume@CpProfileModel@@QAEXH@Z @ 12 NONAME ; void CpProfileModel::setKeyVolume(int)
-	?activateSilent@CpProfileModel@@QAEXXZ @ 13 NONAME ; void CpProfileModel::activateSilent(void)
-	?ringTone@CpProfileModel@@QAE?AVQString@@XZ @ 14 NONAME ; class QString CpProfileModel::ringTone(void)
-	?activeProfileId@CpProfileModel@@QAEHXZ @ 15 NONAME ; int CpProfileModel::activeProfileId(void)
-	?emailTone@CpProfileModel@@QAE?AVQString@@XZ @ 16 NONAME ; class QString CpProfileModel::emailTone(void)
-	?activateBeep@CpProfileModel@@QAEXXZ @ 17 NONAME ; void CpProfileModel::activateBeep(void)
-	?setEmailTone@CpProfileModel@@QAEHABVQString@@@Z @ 18 NONAME ; int CpProfileModel::setEmailTone(class QString const &)
-	?setRingVolume@CpProfileModel@@QAEXH@Z @ 19 NONAME ; void CpProfileModel::setRingVolume(int)
-	?messageTone@CpProfileModel@@QAE?AVQString@@XZ @ 20 NONAME ; class QString CpProfileModel::messageTone(void)
-	?initiationFlag@CpProfileModel@@QAEHXZ @ 21 NONAME ; int CpProfileModel::initiationFlag(void)
-	?isBeep@CpProfileModel@@QAE_NXZ @ 22 NONAME ; bool CpProfileModel::isBeep(void)
-	?activateProfile@CpProfileModel@@QAEHH@Z @ 23 NONAME ; int CpProfileModel::activateProfile(int)
-	?setAlarmTone@CpProfileModel@@QAEXABVQString@@@Z @ 24 NONAME ; void CpProfileModel::setAlarmTone(class QString const &)
-	??0CpProfileModel@@QAE@XZ @ 25 NONAME ; CpProfileModel::CpProfileModel(void)
-	?screenVibra@CpProfileModel@@QAEHXZ @ 26 NONAME ; int CpProfileModel::screenVibra(void)
-	?alarmTone@CpProfileModel@@QAE?AVQString@@XZ @ 27 NONAME ; class QString CpProfileModel::alarmTone(void)
-	?setMessageTone@CpProfileModel@@QAEHABVQString@@@Z @ 28 NONAME ; int CpProfileModel::setMessageTone(class QString const &)
-	?isSilent@CpProfileModel@@QAE_NXZ @ 29 NONAME ; bool CpProfileModel::isSilent(void)
-	?setCalendarTone@CpProfileModel@@QAEXABVQString@@@Z @ 30 NONAME ; void CpProfileModel::setCalendarTone(class QString const &)
+	?setKeyTouchScreenVibra@CpProfileModel@@QAEXHH@Z @ 1 NONAME ; void CpProfileModel::setKeyTouchScreenVibra(int, int)
+	?tr@CpProfileModel@@SA?AVQString@@PBD0H@Z @ 2 NONAME ; class QString CpProfileModel::tr(char const *, char const *, int)
+	?setReminderVibra@CpProfileModel@@QAEXH_N@Z @ 3 NONAME ; void CpProfileModel::setReminderVibra(int, bool)
+	?masterVibra@CpProfileModel@@QBE_NXZ @ 4 NONAME ; bool CpProfileModel::masterVibra(void) const
+	?ringTone@CpProfileModel@@QBE?AVQString@@XZ @ 5 NONAME ; class QString CpProfileModel::ringTone(void) const
+	?qt_metacast@CpProfileModel@@UAEPAXPBD@Z @ 6 NONAME ; void * CpProfileModel::qt_metacast(char const *)
+	?setRingTone@CpProfileModel@@QAEXABVQString@@@Z @ 7 NONAME ; void CpProfileModel::setRingTone(class QString const &)
+	?setReminderTone@CpProfileModel@@QAEXHABVQString@@@Z @ 8 NONAME ; void CpProfileModel::setReminderTone(int, class QString const &)
+	?activeProfileId@CpProfileModel@@QAEHXZ @ 9 NONAME ; int CpProfileModel::activeProfileId(void)
+	?trUtf8@CpProfileModel@@SA?AVQString@@PBD0@Z @ 10 NONAME ; class QString CpProfileModel::trUtf8(char const *, char const *)
+	?profileSettings@CpProfileModel@@QAEHHAAVCpProfileSettings@@@Z @ 11 NONAME ; int CpProfileModel::profileSettings(int, class CpProfileSettings &)
+	?reminderVibra@CpProfileModel@@QBE_NH@Z @ 12 NONAME ; bool CpProfileModel::reminderVibra(int) const
+	?setEmailTone@CpProfileModel@@QAEXHABVQString@@@Z @ 13 NONAME ; void CpProfileModel::setEmailTone(int, class QString const &)
+	?ringAlertVibra@CpProfileModel@@QBE_NH@Z @ 14 NONAME ; bool CpProfileModel::ringAlertVibra(int) const
+	?emailTone@CpProfileModel@@QBE?AVQString@@H@Z @ 15 NONAME ; class QString CpProfileModel::emailTone(int) const
+	?masterVolume@CpProfileModel@@QBEHXZ @ 16 NONAME ; int CpProfileModel::masterVolume(void) const
+	?notificationTone@CpProfileModel@@QBE_NH@Z @ 17 NONAME ; bool CpProfileModel::notificationTone(int) const
+	?tr@CpProfileModel@@SA?AVQString@@PBD0@Z @ 18 NONAME ; class QString CpProfileModel::tr(char const *, char const *)
+	?getStaticMetaObject@CpProfileModel@@SAABUQMetaObject@@XZ @ 19 NONAME ; struct QMetaObject const & CpProfileModel::getStaticMetaObject(void)
+	?keyTouchScreenTone@CpProfileModel@@QBEHH@Z @ 20 NONAME ; int CpProfileModel::keyTouchScreenTone(int) const
+	?setRingTone@CpProfileModel@@QAEXHABVQString@@@Z @ 21 NONAME ; void CpProfileModel::setRingTone(int, class QString const &)
+	?reminderTone@CpProfileModel@@QBE?AVQString@@H@Z @ 22 NONAME ; class QString CpProfileModel::reminderTone(int) const
+	?profileName@CpProfileModel@@QBE?AVQString@@H@Z @ 23 NONAME ; class QString CpProfileModel::profileName(int) const
+	?setKeyTouchScreenTone@CpProfileModel@@QAEXHH@Z @ 24 NONAME ; void CpProfileModel::setKeyTouchScreenTone(int, int)
+	?setMasterVolume@CpProfileModel@@QAEXH@Z @ 25 NONAME ; void CpProfileModel::setMasterVolume(int)
+	?staticMetaObject@CpProfileModel@@2UQMetaObject@@B @ 26 NONAME ; struct QMetaObject const CpProfileModel::staticMetaObject
+	?profileNames@CpProfileModel@@QBE?AVQStringList@@XZ @ 27 NONAME ; class QStringList CpProfileModel::profileNames(void) const
+	?activateProfile@CpProfileModel@@QAEHH@Z @ 28 NONAME ; int CpProfileModel::activateProfile(int)
+	?setNotificationVibra@CpProfileModel@@QAEXH_N@Z @ 29 NONAME ; void CpProfileModel::setNotificationVibra(int, bool)
+	?setNotificationTone@CpProfileModel@@QAEXH_N@Z @ 30 NONAME ; void CpProfileModel::setNotificationTone(int, bool)
+	?isOffLineMode@CpProfileModel@@QBE_NXZ @ 31 NONAME ; bool CpProfileModel::isOffLineMode(void) const
+	?metaObject@CpProfileModel@@UBEPBUQMetaObject@@XZ @ 32 NONAME ; struct QMetaObject const * CpProfileModel::metaObject(void) const
+	?setRingAlertVibra@CpProfileModel@@QAEXH_N@Z @ 33 NONAME ; void CpProfileModel::setRingAlertVibra(int, bool)
+	??0CpProfileModel@@QAE@PAVQObject@@@Z @ 34 NONAME ; CpProfileModel::CpProfileModel(class QObject *)
+	?emailVibra@CpProfileModel@@QBE_NH@Z @ 35 NONAME ; bool CpProfileModel::emailVibra(int) const
+	?setProfileSettings@CpProfileModel@@QAEHHAAVCpProfileSettings@@@Z @ 36 NONAME ; int CpProfileModel::setProfileSettings(int, class CpProfileSettings &)
+	?setEmailVibra@CpProfileModel@@QAEXH_N@Z @ 37 NONAME ; void CpProfileModel::setEmailVibra(int, bool)
+	?setOffLineMode@CpProfileModel@@QAEX_N@Z @ 38 NONAME ; void CpProfileModel::setOffLineMode(bool)
+	??1CpProfileModel@@UAE@XZ @ 39 NONAME ; CpProfileModel::~CpProfileModel(void)
+	?isSilenceMode@CpProfileModel@@QBE_NXZ @ 40 NONAME ; bool CpProfileModel::isSilenceMode(void) const
+	?notificationVibra@CpProfileModel@@QBE_NH@Z @ 41 NONAME ; bool CpProfileModel::notificationVibra(int) const
+	?qt_metacall@CpProfileModel@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 42 NONAME ; int CpProfileModel::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?messageTone@CpProfileModel@@QBE?AVQString@@H@Z @ 43 NONAME ; class QString CpProfileModel::messageTone(int) const
+	?d_func@CpProfileModel@@ABEPBVCpProfileModelPrivate@@XZ @ 44 NONAME ; class CpProfileModelPrivate const * CpProfileModel::d_func(void) const
+	?setSilenceMode@CpProfileModel@@QAEX_N@Z @ 45 NONAME ; void CpProfileModel::setSilenceMode(bool)
+	?setMessageVibra@CpProfileModel@@QAEXH_N@Z @ 46 NONAME ; void CpProfileModel::setMessageVibra(int, bool)
+	?keyTouchScreenVibra@CpProfileModel@@QBEHH@Z @ 47 NONAME ; int CpProfileModel::keyTouchScreenVibra(int) const
+	?d_func@CpProfileModel@@AAEPAVCpProfileModelPrivate@@XZ @ 48 NONAME ; class CpProfileModelPrivate * CpProfileModel::d_func(void)
+	?messageVibra@CpProfileModel@@QBE_NH@Z @ 49 NONAME ; bool CpProfileModel::messageVibra(int) const
+	?initiationFlag@CpProfileModel@@QAEHXZ @ 50 NONAME ; int CpProfileModel::initiationFlag(void)
+	??_ECpProfileModel@@UAE@I@Z @ 51 NONAME ; CpProfileModel::~CpProfileModel(unsigned int)
+	?ringTone@CpProfileModel@@QBE?AVQString@@H@Z @ 52 NONAME ; class QString CpProfileModel::ringTone(int) const
+	?trUtf8@CpProfileModel@@SA?AVQString@@PBD0H@Z @ 53 NONAME ; class QString CpProfileModel::trUtf8(char const *, char const *, int)
+	?setMessageTone@CpProfileModel@@QAEXHABVQString@@@Z @ 54 NONAME ; void CpProfileModel::setMessageTone(int, class QString const &)
+	?setMasterVibra@CpProfileModel@@QAEX_N@Z @ 55 NONAME ; void CpProfileModel::setMasterVibra(bool)
 

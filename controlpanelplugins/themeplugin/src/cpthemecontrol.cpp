@@ -33,6 +33,7 @@
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <QTranslator>
+#include <QSortFilterProxyModel>
 
 #include <hbmainwindow.h>
 #include <hbinstance.h>
@@ -63,7 +64,8 @@ static HbMainWindow *mainWindow()
 CpThemeControl::CpThemeControl(): mThemeListView(0), 
     mThemePreview(0), 
     mThemeChanger(0),
-    mListModel(0)
+    mListModel(0),
+    mSortModel(0)
 {
     mThemeChanger = new CpThemeChanger();
    
@@ -103,9 +105,19 @@ void CpThemeControl::createThemeList()
     mThemeListView = new CpThemeListView();
     
     mListModel = &mThemeChanger->model();
+    
+    mSortModel = new QSortFilterProxyModel(this);
+    mSortModel->setDynamicSortFilter(true);
+    mSortModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+    mSortModel->sort(0);
+    mSortModel->setSourceModel(mListModel);
 
     // Set the model for theme list.
-    mThemeListView->setModel(mListModel);
+    mThemeListView->setModel(mSortModel);
+    mThemeListView->themeList()->setSelectionMode(HbAbstractItemView::SingleSelection);
+    
+    setActiveThemeIndex();
+    
     
     //connect to signal for selecting a list item.
     connect(mThemeListView,SIGNAL(newThemeSelected(const QModelIndex&)),
@@ -154,8 +166,36 @@ void CpThemeControl::newThemeSelected(const QModelIndex& index)
         return;
     }
 
-    CpThemeChanger::ThemeInfo themeInfo = mThemeChanger->themes().at(index.row());
-	
+    
+    CpThemeChanger::ThemeInfo themeInfo;
+    QVariant data;
+
+    //reset the current index to active theme, so that the selection remains on current
+    //theme even though another list item is selected.
+    setActiveThemeIndex();
+    
+    //get the theme name.
+    data = index.data(Qt::DisplayRole);
+    if(data.isValid()) {
+        themeInfo.name = data.toString();
+    }
+    //get theme icon.
+    data = index.data(Qt::DecorationRole);
+    if(data.isValid()) {
+        themeInfo.icon = data.value<HbIcon>();
+    }
+    
+    data = index.data(CpThemeChanger::PortraitPreviewRole);
+    if(data.isValid()) {
+        themeInfo.portraitPreviewIcon = data.value<HbIcon>();
+    }
+    
+    data = index.data(CpThemeChanger::LandscapePreviewRole);
+    if(data.isValid()) {
+        themeInfo.landscapePreviewIcon = data.value<HbIcon>();
+    }
+        
+        
     //Set up the theme preview and set it to
     //the current view of main window.
     HbMainWindow*  mWindow = ::mainWindow();
@@ -211,7 +251,10 @@ void CpThemeControl::previewClosed()
 	mainWindow->removeView(mThemePreview);
     mThemePreview->deleteLater();
     mThemePreview = 0;
-    
+  
+    //reset the current index to active theme, so that the selection remains on current
+    //theme even though another list item is selected.
+    setActiveThemeIndex();
 	mainWindow->setCurrentView(mThemeListView);   
 }
 
@@ -235,6 +278,22 @@ void CpThemeControl::triggerThemeListClose()
 {
     mThemeListView->closeView();
 }
+
+/*!
+ * Private function that sets the current index of theme list view to indicate
+ * the active theme.
+ */
+void CpThemeControl::setActiveThemeIndex()
+{
+    //Get the index of current theme.
+    QModelIndex sourceIndex = mListModel->index(mThemeChanger->indexOf(mThemeChanger->currentTheme()),0);
+    //Map it to the sort model index.
+    QModelIndex sortedIndex = mSortModel->mapFromSource(sourceIndex);
+    //set current index.
+    mThemeListView->themeList()->setCurrentIndex(sortedIndex, QItemSelectionModel::SelectCurrent);
+}
+    
+
 
 
 

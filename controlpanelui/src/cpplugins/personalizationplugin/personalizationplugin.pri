@@ -18,17 +18,15 @@
 HEADERS += src/cppersonalizationplugin.h  \
 			     src/cppersonalizationgroupitemdata.h \
 			     src/cpmastervolumeslider.h \
-			     src/cppersonalizationcustomviewitem.h \
-			     src/cpmastervolumevaluecontroller.h \
-			     src/cpprofilesgroupitemdata.h \
-                             src/cpprofilesettingform.h \
-                             src/cppersonalizationentryitemdata.h
+           src/cpprofilesettingform.h \
+           src/cppersonalizationentryitemdata.h \
+           src/cppersonalizationadvanceview.h \
+           src/cpprofilenameeditdialog.h \
 			     
 SOURCES += src/cppersonalizationplugin.cpp \
 		       src/cppersonalizationgroupitemdata.cpp \
 		       src/cpmastervolumeslider.cpp \
-		       src/cppersonalizationcustomviewitem.cpp \
-		       src/cpmastervolumevaluecontroller.cpp \
-		       src/cpprofilesgroupitemdata.cpp \
-                       src/cpprofilesettingform.cpp \
-                       src/cppersonalizationentryitemdata.cpp
+		       src/cpprofilesettingform.cpp \
+           src/cppersonalizationentryitemdata.cpp \
+           src/cppersonalizationadvanceview.cpp \
+           src/cpprofilenameeditdialog.cpp \

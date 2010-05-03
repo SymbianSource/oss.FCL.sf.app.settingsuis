@@ -40,7 +40,6 @@ void CpPlaceHolderItemData::onLaunchView()
     stream << "Load plugin:"
            << description() 
            << " faild."
-           << "this is only a placeholder."
            << "Please check:\n"
            << "1. if the dll name is correct in configuration file.\n" 
            << "2  if the dll has been generated.\n"

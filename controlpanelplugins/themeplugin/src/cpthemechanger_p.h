@@ -42,6 +42,7 @@ class HbThemeListModel : public QAbstractListModel
     Q_OBJECT
 
 public:
+   
     HbThemeListModel(CpThemeChangerPrivate* dd, QObject *parent = 0);
     virtual ~HbThemeListModel();
 
@@ -73,6 +74,7 @@ public:
     const QStringList directories() const;
 
     const CpThemeChanger::ThemeInfo& currentTheme() const;
+    int indexOf(const CpThemeChanger::ThemeInfo& theme) const;
 
     const QString& currentThemeName() const;
     bool changeTheme(const QString& newtheme);

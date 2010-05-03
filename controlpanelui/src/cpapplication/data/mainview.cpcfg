@@ -1,6 +1,8 @@
 
 <childplugins> 
-
+		<plugin displayname = "Volume " id = "0X20028737"  dll = "cpvolumeplugin.dll">
+    		<desc></desc>
+  	</plugin>
   	<plugin displayname = "Personalization" id = "0X20025FE5" dll = "cppersonalizationplugin.dll">
 	 			<desc></desc>
   	</plugin>   

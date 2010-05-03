@@ -7,7 +7,7 @@
   <plugin displayname = "WLAN" id = "0x2002BCE0"  dll = "cpwlanentryplugin.dll">
     <desc>WLAN status</desc>
   </plugin>
-  <plugin displayname = "Bluetooth" id = "0X20025FE8"  dll = "cpplaceholderplugin.dll">
+  <plugin displayname = "Bluetooth" id = "0x2002434E"  dll = "btcpplugin.dll">
     <desc>Status text</desc>
   </plugin>
   <plugin displayname = "Telephony" id = "0X20029F23"  dll = "cptelephonyplugin.dll">

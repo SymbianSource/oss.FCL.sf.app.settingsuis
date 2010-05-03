@@ -17,7 +17,6 @@
 
 #include "cppersonalizationplugin.h"
 #include "cppersonalizationgroupitemdata.h"
-#include "cpprofilesgroupitemdata.h"
 #include <cpcategorysettingformitemdata.h>
 #include <cpitemdatahelper.h>
 
@@ -31,16 +30,14 @@ CpPersonalizationPlugin::~CpPersonalizationPlugin()
 
 QList<CpSettingFormItemData*> CpPersonalizationPlugin::createSettingFormItemData(CpItemDataHelper &itemDataHelper) const
 {
-    CpProfilesGroupItemData *profileItemData = 
-        new CpProfilesGroupItemData(itemDataHelper);
-
+  
     CpPersonalizationGroupItemData *personalItemData = 
             new CpPersonalizationGroupItemData(
             HbDataFormModelItem::GroupItem,
-            tr("Tones"),
+            tr("Personalization"),
             QString("cppersonalizationplugin.cpcfg") );
 
-    return QList<CpSettingFormItemData*>() << profileItemData << personalItemData;
+    return QList<CpSettingFormItemData*>() << personalItemData;
 }
 
 Q_EXPORT_PLUGIN2(cppersonalizationplugin, CpPersonalizationPlugin);

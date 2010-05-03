@@ -19,12 +19,13 @@
 #include <QGraphicsPixmapItem>
 #include <QGraphicsLinearLayout>
 
-#include <hbaction>
-#include <hbtoolbar>
+#include <hbaction.h>
+#include <hbtoolbar.h>
 #include <hbicon.h>
 #include <hbaction.h>
 #include <hblabel.h>
 #include <hbiconitem.h>
+#include <hbmainwindow.h>
 
 #include "cpthemepreview.h"
 
@@ -54,8 +55,11 @@ CpThemePreview::CpThemePreview(const CpThemeChanger::ThemeInfo& theme, QGraphics
     QString themeHeading = tr("Preview: ") + mTheme.name;
     HbLabel* label = new HbLabel(themeHeading, this);
     label->setFontSpec(HbFontSpec(HbFontSpec::Primary));
-
+   
+    label->setPreferredHeight(5.0);
     layout->addItem(label);
+    
+    layout->setAlignment(layout->itemAt(0), Qt::AlignTop);
     
     //Create the toolbar and "Select" and "Cancel" actions.
     HbToolBar* mToolBar = new HbToolBar(this);
@@ -74,9 +78,17 @@ CpThemePreview::CpThemePreview(const CpThemeChanger::ThemeInfo& theme, QGraphics
     QObject::connect( cancelAction, SIGNAL(triggered()), 
                       this, SIGNAL(aboutToClose()));
 
+    HbIconItem* layoutItem;
     //layout->addItem(&HbIconItem(mTheme.icon, this ));
-    HbIconItem* layoutItem = new HbIconItem(mTheme.icon, this);
+    if(mainWindow()->orientation() == Qt::Horizontal) {
+        layoutItem = new HbIconItem(mTheme.landscapePreviewIcon, this);
+    }
+    else {
+        layoutItem = new HbIconItem(mTheme.portraitPreviewIcon, this);
+    }
     layout->addItem(layoutItem);
+    layout->setAlignment(layout->itemAt(0), Qt::AlignTop);
+    
     setToolBar(mToolBar);
     setLayout(layout);
 

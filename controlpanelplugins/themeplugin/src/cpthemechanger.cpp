@@ -97,6 +97,12 @@ const CpThemeChanger::ThemeInfo& CpThemeChanger::currentTheme() const
     return d->currentTheme();
 }
 
+int CpThemeChanger::indexOf(const ThemeInfo& theme) const
+{
+    Q_D(const CpThemeChanger);
+    return d->indexOf(theme);
+}
+
 /*!
  Change a theme. Returns true on success, false otherwise.
  */

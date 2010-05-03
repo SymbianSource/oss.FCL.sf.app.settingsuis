@@ -35,22 +35,12 @@ public:
         const HbDataFormModelItem *parent = 0);
 
     ~CpPersonalizationGroupItemData();
-private slots:
-    void masterVolumeValueChanged(int value);
-	void onVibraValueChange(int isVibra);
+//private slots:
+    //void masterVolumeValueChanged(int value);
+//	void onVibraValueChange(int isVibra);
 private:
     virtual void beforeLoadingConfigPlugins(CpItemDataHelper &itemDataHelper);
-private:
-	HbDataFormModelItem *mMasterVolume;
-	HbDataFormModelItem *mMasterVibra;
-	CpSettingFormEntryItemData *mRingTone;
-	CpSettingFormEntryItemData *mMessageTone;
-	CpSettingFormEntryItemData *mEmailTone;
-	CpSettingFormEntryItemData *mReminderTone;
-	CpSettingFormEntryItemData *mClockTone;
-	HbDataFormModelItem *mSayCallerName;
-	CpProfileModel *mProfileModel;
-	CpMasterVolumeValueController *mMasterVolumeValueController;
+    virtual void afterLoadingConfigPlugins(CpItemDataHelper &itemDataHelper);
 };
 
 #endif /* CPPERSONALIZATIONGROUPITEMDATA_H */

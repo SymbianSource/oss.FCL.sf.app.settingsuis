@@ -11,10 +11,7 @@
 #
 # Contributors:
 #
-# Description: 
-#
-
-# description: copy all cpcfg files to destination directory when building control panel in window envionment
+# Description: Copy all cpcfg files to destination directory when building control panel in window envionment
 # usage: go to control panel source directory, 
 # run cpcfg_win.pl if you want to build control panel in debug mode or cpcfg_win -R in release mode.
 
