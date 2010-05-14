@@ -63,9 +63,8 @@ public:
     QString profileName(int profileId)const;
     QStringList profileNames()const;
     int activateProfile(int profileId);
-    int activeProfileId();
-    int setEditingProfile(int profileId); 
-    int profileSettings(int profileId, CpProfileSettings& profileSettings);
+    int activeProfileId() const;
+    void profileSettings(int profileId, CpProfileSettings& profileSettings);
     int setProfileSettings(int profileId, CpProfileSettings& profileSettings );
     
     /*!
@@ -84,10 +83,10 @@ public:
     bool masterVibra() const;
     void setMasterVibra(bool isVibra);
         
-    bool isSilenceMode() const;
+    bool silenceMode() const;
     void setSilenceMode(bool isSlience);
     
-    bool isOffLineMode() const;    
+    bool offLineMode() const;    
     void setOffLineMode(bool isOffLine);
     
     /*!

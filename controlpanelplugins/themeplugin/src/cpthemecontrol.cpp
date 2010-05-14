@@ -34,6 +34,8 @@
 #include <QStandardItem>
 #include <QTranslator>
 #include <QSortFilterProxyModel>
+#include <QDebug>
+#include <QThread>
 
 #include <hbmainwindow.h>
 #include <hbinstance.h>
@@ -65,7 +67,8 @@ CpThemeControl::CpThemeControl(): mThemeListView(0),
     mThemePreview(0), 
     mThemeChanger(0),
     mListModel(0),
-    mSortModel(0)
+    mSortModel(0),
+    mIdleTimer(0)
 {
     mThemeChanger = new CpThemeChanger();
    
@@ -75,7 +78,11 @@ CpThemeControl::CpThemeControl(): mThemeListView(0),
     QString path = "Z:/resource/qt/translations/";
     translator->load("control_panel_" + lang, path);
     qApp->installTranslator(translator);
-
+    
+    mIdleTimer = new QTimer(this);
+    connect(mIdleTimer, SIGNAL(timeout()), this, SLOT(themeChangeTimeout()));
+    connect(hbInstance->theme(),SIGNAL(changeFinished()), this, SLOT(themeChangeFinished()));
+   
 }
 
 
@@ -229,6 +236,7 @@ void CpThemeControl::themeApplied(const QString& theme)
     success = mThemeChanger->connectToServer();
     
     if (success) {
+        QThread::currentThread()->setPriority(QThread::HighPriority);  
         mThemeChanger->changeTheme(theme);
         emit themeUpdated(mThemeChanger->currentTheme().name, mThemeChanger->currentTheme().icon);
     }
@@ -277,6 +285,20 @@ void CpThemeControl::themeListClosed()
 void CpThemeControl::triggerThemeListClose()
 {
     mThemeListView->closeView();
+}
+
+void CpThemeControl::themeChangeTimeout()
+{
+    //qDebug() << "ThemeChangeTimeout " ;
+    mIdleTimer->stop();
+    QThread::currentThread()->setPriority(QThread::NormalPriority);    
+        
+}
+
+void CpThemeControl::themeChangeFinished()
+{
+    //qDebug() << "ThemeChangeFinished " ;
+    mIdleTimer->start(0);
 }
 
 /*!

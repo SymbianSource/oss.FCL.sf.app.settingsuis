@@ -7,7 +7,7 @@
     <desc></desc>
   </plugin> 
   
-  <plugin displayname = "Advanced security" id = "0X2002E684"  dll = "cpplaceholdernoiconplugin.dll">
+  <plugin displayname = "Advanced security" id = "0X0"  dll = "TBD">
     <desc></desc>
   </plugin> 
   

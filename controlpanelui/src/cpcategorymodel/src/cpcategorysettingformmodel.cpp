@@ -18,7 +18,7 @@
 #include "cpcategorysettingformmodel.h"
 #include <QString>
 
-#include "cputility.h"
+#include "cpcategorymodelutility.h"
 #include <cpitemdatahelper.h>
 
 class CpCategorySettingFormModelPrivate
@@ -55,10 +55,16 @@ void CpCategorySettingFormModel::initialize(CpItemDataHelper &itemDataHelper)
     if (!d->mInitialized) {
         //give derived class a change do their special things before loading config plugins
         beforeLoadingConfigPlugins(itemDataHelper);
-        //load plugins which are configured
-		CpUtility::buildConfigPluginItems(invisibleRootItem(),d->mConfigFile,itemDataHelper);
+        
+        int pluginItemStartPosition = invisibleRootItem()->childCount();
         //give derived class a change do their special things after loading config plugins
         afterLoadingConfigPlugins(itemDataHelper);
+        
+        //load plugins which are configured
+        CpCategoryModelUtility::buildConfigPluginItems(invisibleRootItem(),
+		    d->mConfigFile,
+		    itemDataHelper,
+		    pluginItemStartPosition);
 
         d->mInitialized = true;
     }

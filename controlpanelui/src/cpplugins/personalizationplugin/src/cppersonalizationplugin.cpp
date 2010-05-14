@@ -19,6 +19,7 @@
 #include "cppersonalizationgroupitemdata.h"
 #include <cpcategorysettingformitemdata.h>
 #include <cpitemdatahelper.h>
+#include "cppersonalizationadvanceview.h"
 
 CpPersonalizationPlugin::CpPersonalizationPlugin()
 {
@@ -38,6 +39,14 @@ QList<CpSettingFormItemData*> CpPersonalizationPlugin::createSettingFormItemData
             QString("cppersonalizationplugin.cpcfg") );
 
     return QList<CpSettingFormItemData*>() << personalItemData;
+}
+
+CpBaseSettingView *CpPersonalizationPlugin::createSettingView(const QVariant &hint) const
+{
+    if (hint.toString().compare("profile_view",Qt::CaseInsensitive) == 0) {
+        return new CpPersonalizationAdvanceView;
+    }
+    return 0;
 }
 
 Q_EXPORT_PLUGIN2(cppersonalizationplugin, CpPersonalizationPlugin);

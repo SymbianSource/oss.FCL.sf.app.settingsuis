@@ -11,38 +11,38 @@ EXPORTS
 	_ZN14CpProfileModel14setOffLineModeEb @ 10 NONAME
 	_ZN14CpProfileModel14setSilenceModeEb @ 11 NONAME
 	_ZN14CpProfileModel15activateProfileEi @ 12 NONAME
-	_ZN14CpProfileModel15activeProfileIdEv @ 13 NONAME
-	_ZN14CpProfileModel15profileSettingsEiR17CpProfileSettings @ 14 NONAME
-	_ZN14CpProfileModel15setMasterVolumeEi @ 15 NONAME
-	_ZN14CpProfileModel15setMessageVibraEib @ 16 NONAME
-	_ZN14CpProfileModel15setReminderToneEiRK7QString @ 17 NONAME
-	_ZN14CpProfileModel16setReminderVibraEib @ 18 NONAME
-	_ZN14CpProfileModel16staticMetaObjectE @ 19 NONAME DATA 16
-	_ZN14CpProfileModel17setRingAlertVibraEib @ 20 NONAME
-	_ZN14CpProfileModel18setProfileSettingsEiR17CpProfileSettings @ 21 NONAME
-	_ZN14CpProfileModel19getStaticMetaObjectEv @ 22 NONAME
-	_ZN14CpProfileModel19setNotificationToneEib @ 23 NONAME
-	_ZN14CpProfileModel20setNotificationVibraEib @ 24 NONAME
-	_ZN14CpProfileModel21setKeyTouchScreenToneEii @ 25 NONAME
-	_ZN14CpProfileModel22setKeyTouchScreenVibraEii @ 26 NONAME
-	_ZN14CpProfileModelC1EP7QObject @ 27 NONAME
-	_ZN14CpProfileModelC2EP7QObject @ 28 NONAME
-	_ZN14CpProfileModelD0Ev @ 29 NONAME
-	_ZN14CpProfileModelD1Ev @ 30 NONAME
-	_ZN14CpProfileModelD2Ev @ 31 NONAME
-	_ZNK14CpProfileModel10emailVibraEi @ 32 NONAME
-	_ZNK14CpProfileModel10metaObjectEv @ 33 NONAME
-	_ZNK14CpProfileModel11masterVibraEv @ 34 NONAME
-	_ZNK14CpProfileModel11messageToneEi @ 35 NONAME
+	_ZN14CpProfileModel15profileSettingsEiR17CpProfileSettings @ 13 NONAME
+	_ZN14CpProfileModel15setMasterVolumeEi @ 14 NONAME
+	_ZN14CpProfileModel15setMessageVibraEib @ 15 NONAME
+	_ZN14CpProfileModel15setReminderToneEiRK7QString @ 16 NONAME
+	_ZN14CpProfileModel16setReminderVibraEib @ 17 NONAME
+	_ZN14CpProfileModel16staticMetaObjectE @ 18 NONAME DATA 16
+	_ZN14CpProfileModel17setRingAlertVibraEib @ 19 NONAME
+	_ZN14CpProfileModel18setProfileSettingsEiR17CpProfileSettings @ 20 NONAME
+	_ZN14CpProfileModel19getStaticMetaObjectEv @ 21 NONAME
+	_ZN14CpProfileModel19setNotificationToneEib @ 22 NONAME
+	_ZN14CpProfileModel20setNotificationVibraEib @ 23 NONAME
+	_ZN14CpProfileModel21setKeyTouchScreenToneEii @ 24 NONAME
+	_ZN14CpProfileModel22setKeyTouchScreenVibraEii @ 25 NONAME
+	_ZN14CpProfileModelC1EP7QObject @ 26 NONAME
+	_ZN14CpProfileModelC2EP7QObject @ 27 NONAME
+	_ZN14CpProfileModelD0Ev @ 28 NONAME
+	_ZN14CpProfileModelD1Ev @ 29 NONAME
+	_ZN14CpProfileModelD2Ev @ 30 NONAME
+	_ZNK14CpProfileModel10emailVibraEi @ 31 NONAME
+	_ZNK14CpProfileModel10metaObjectEv @ 32 NONAME
+	_ZNK14CpProfileModel11masterVibraEv @ 33 NONAME
+	_ZNK14CpProfileModel11messageToneEi @ 34 NONAME
+	_ZNK14CpProfileModel11offLineModeEv @ 35 NONAME
 	_ZNK14CpProfileModel11profileNameEi @ 36 NONAME
-	_ZNK14CpProfileModel12masterVolumeEv @ 37 NONAME
-	_ZNK14CpProfileModel12messageVibraEi @ 38 NONAME
-	_ZNK14CpProfileModel12profileNamesEv @ 39 NONAME
-	_ZNK14CpProfileModel12reminderToneEi @ 40 NONAME
-	_ZNK14CpProfileModel13isOffLineModeEv @ 41 NONAME
-	_ZNK14CpProfileModel13isSilenceModeEv @ 42 NONAME
-	_ZNK14CpProfileModel13reminderVibraEi @ 43 NONAME
-	_ZNK14CpProfileModel14ringAlertVibraEi @ 44 NONAME
+	_ZNK14CpProfileModel11silenceModeEv @ 37 NONAME
+	_ZNK14CpProfileModel12masterVolumeEv @ 38 NONAME
+	_ZNK14CpProfileModel12messageVibraEi @ 39 NONAME
+	_ZNK14CpProfileModel12profileNamesEv @ 40 NONAME
+	_ZNK14CpProfileModel12reminderToneEi @ 41 NONAME
+	_ZNK14CpProfileModel13reminderVibraEi @ 42 NONAME
+	_ZNK14CpProfileModel14ringAlertVibraEi @ 43 NONAME
+	_ZNK14CpProfileModel15activeProfileIdEv @ 44 NONAME
 	_ZNK14CpProfileModel16notificationToneEi @ 45 NONAME
 	_ZNK14CpProfileModel17notificationVibraEi @ 46 NONAME
 	_ZNK14CpProfileModel18keyTouchScreenToneEi @ 47 NONAME

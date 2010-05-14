@@ -27,21 +27,30 @@
 //#include <hbslider.h>
 //#include <hbpushbutton.h>
 
+#include <xqsettingsmanager.h>
+#include <ProfileEngineInternalCRKeys.h>
+#include <ProfileInternal.hrh>
+
 CpVolumeController::CpVolumeController(CpProfileModel *profileModel,
                                        const QList<HbDataFormModelItem *> &itemList,
-                                       CpItemDataHelper &itemDataHelper): 
-                                           mProfileModel(profileModel),
-                                           mItemList(itemList)
+                                       CpItemDataHelper &itemDataHelper) : 
+                                       mProfileModel(profileModel),
+                                       mItemList(itemList),
+                                       mSettingManager(0)
 															 
 {
 	//itemDataHelper.addConnection(mMasterVolumeItem,SIGNAL(beepActivated()),this,SLOT(onBeepActivated()));
 	//itemDataHelper.addConnection(mMasterVolumeItem,SIGNAL(silentActivated()),this,SLOT(onSilentActivated()));
 	//itemDataHelper.addConnection(mMasterVolumeItem,SIGNAL(normalValueChanged(int)),this,SLOT(onNormalValueChanged(int)));
 	//updateMasterVolumeValue();
+    
+    
     itemDataHelper.addConnection(
                 mItemList.at(CpVolumeGroupItemData::EVolumeSilenceItem), SIGNAL(toggled(bool)),
                 this, SLOT(silenceModeChange(bool))
             );
+    
+    
     itemDataHelper.addConnection(
                 mItemList.at(CpVolumeGroupItemData::EVolumeMasterVolumeItem), SIGNAL(valueChanged(int)),
                 this, SLOT(masterVolumeChange(int))
@@ -50,29 +59,37 @@ CpVolumeController::CpVolumeController(CpProfileModel *profileModel,
                 mItemList.at(CpVolumeGroupItemData::EVolumeMasterVibraItem), SIGNAL(stateChanged(int)),
                 this, SLOT(masterVibraChange(int))
             );
-    update();
+    updateUi();
+    
+    mSettingManager = new XQSettingsManager();
+    
+    XQCentralRepositorySettingsKey silenceKey(KCRUidProfileEngine.iUid,KProEngSilenceMode);
+    mSettingManager->startMonitoring(silenceKey,XQSettingsManager::TypeInt);
+   
+    XQCentralRepositorySettingsKey masterVolumeKey
+                                    (KCRUidProfileEngine.iUid,KProEngMasterVolume);
+    mSettingManager->startMonitoring(masterVolumeKey,XQSettingsManager::TypeInt);
+    
+    XQCentralRepositorySettingsKey masterVibraKey
+                                    (KCRUidProfileEngine.iUid,KProEngMasterVibra);
+    mSettingManager->startMonitoring(masterVibraKey,XQSettingsManager::TypeInt);
+    
+    connect(mSettingManager, SIGNAL(valueChanged (XQSettingsKey, QVariant)),
+            this, SLOT(settingValueChanged(XQSettingsKey, QVariant)));
 }
 
 CpVolumeController::~CpVolumeController()
 {
-
+    delete mSettingManager;
 }
-
-/*void CpMasterVolumeValueController::onBeepActivated()
-{
-#ifdef Q_OS_SYMBIAN
-	mProfileModel->activateBeep();
-#endif
-}*/
 
 void CpVolumeController::silenceModeChange(bool isSilence)
 {
 #ifdef Q_OS_SYMBIAN
 	mProfileModel->setSilenceMode(isSilence);
-	HbDataFormModelItem *masterVolume = mItemList.at(CpVolumeGroupItemData::EVolumeMasterVolumeItem);
-    masterVolume->setEnabled(!isSilence);
 #endif
 }
+
 
 void CpVolumeController::masterVolumeChange(int value)
 {
@@ -90,23 +107,28 @@ void CpVolumeController::masterVibraChange(int state)
 #endif
 }
 
-void CpVolumeController::update()
+void CpVolumeController::updateUi()
 {
 #ifdef Q_OS_SYMBIAN
-	bool isSilenceMode = mProfileModel->isSilenceMode();
+	bool isSilenceMode = mProfileModel->silenceMode();
 	HbDataFormModelItem *silenceIndicator = mItemList.at(CpVolumeGroupItemData::EVolumeSilenceItem);
-	silenceIndicator->setContentWidgetData("checked",isSilenceMode);
+	if(silenceIndicator) {
+			silenceIndicator->setContentWidgetData("checked",isSilenceMode);		
+	}
 	HbDataFormModelItem *masterVolume = mItemList.at(CpVolumeGroupItemData::EVolumeMasterVolumeItem);
 	if (masterVolume) {
 	    CPFW_LOG("::updateMasterVolumeValue(), Start using profile model.");
 	    QMap<QString, QVariant> iconMaps;
 	    if (isSilenceMode) {
 	        CPFW_LOG("::updateMasterVolumeValue(), Got silent state.");
+	        iconMaps.insert(QString("DecreaseElement"), QVariant(":/icon/hb_vol_slider_decrement.svg"));
+	        iconMaps.insert(QString("IncreaseElement"), QVariant(":/icon/hb_vol_slider_increment.svg"));
 	        iconMaps.insert(QString("IconElement"), QVariant(":/icon/hb_vol_slider_muted.svg"));
 	    }
 	    else {
+            iconMaps.insert(QString("DecreaseElement"), QVariant(":/icon/hb_vol_slider_decrement.svg"));
+	        iconMaps.insert(QString("IncreaseElement"), QVariant(":/icon/hb_vol_slider_increment.svg"));
 	        iconMaps.insert(QString("IconElement"), QVariant(":/icon/hb_vol_slider_unmuted.svg"));
-	        CPFW_LOG("::updateMasterVolumeValue(), Got ring volume.");	        
 	    }
 	    masterVolume->setContentWidgetData("elementIcons", iconMaps);
 	    masterVolume->setEnabled(!isSilenceMode);
@@ -125,11 +147,13 @@ int CpVolumeController::volumeLevelToInt( CpVolumeController::VolumeLevel volume
 {
     switch( volumeLevel ){
         case VolumenLevelSoft:
-            return 1;
+            return EProfileMasterVolumeSoft;
         case VolumeLevelMed:
-            return 5;
+            return EProfileMasterVolumeMed;
         case VolumeLevelLoud:
-            return 10;
+            return EProfileMasterVolumeLoud;
+        default:
+        		return 1;            	
     }
 }
 CpVolumeController::VolumeLevel CpVolumeController::intToVolumeLevel( int value )
@@ -142,3 +166,43 @@ CpVolumeController::VolumeLevel CpVolumeController::intToVolumeLevel( int value 
         return VolumeLevelLoud;
     }
 }
+
+void CpVolumeController::settingValueChanged(const XQSettingsKey &key, const QVariant &value)
+{
+    if (key.uid() == KCRUidProfileEngine.iUid && key.key() == KProEngSilenceMode) {
+        HbDataFormModelItem *masterVolume = mItemList.at(CpVolumeGroupItemData::EVolumeMasterVolumeItem);
+        if (masterVolume) {
+        		QMap<QString, QVariant> iconMaps;
+        		if (value.toBool()) {
+                    iconMaps.insert(QString("DecreaseElement"), QVariant(":/icon/hb_vol_slider_decrement.svg"));
+        		    iconMaps.insert(QString("IncreaseElement"), QVariant(":/icon/hb_vol_slider_increment.svg"));
+        			iconMaps.insert(QString("IconElement"), QVariant(":/icon/hb_vol_slider_muted.svg"));
+        		}
+        		else {
+                    iconMaps.insert(QString("DecreaseElement"), QVariant(":/icon/hb_vol_slider_decrement.svg"));
+        		    iconMaps.insert(QString("IncreaseElement"), QVariant(":/icon/hb_vol_slider_increment.svg"));
+        		    iconMaps.insert(QString("IconElement"), QVariant(":/icon/hb_vol_slider_unmuted.svg"));
+        		}
+        		masterVolume->setContentWidgetData("elementIcons", iconMaps);
+            masterVolume->setEnabled(!value.toBool());
+        }
+        HbDataFormModelItem *silenceMode = mItemList.at(CpVolumeGroupItemData::EVolumeSilenceItem);
+        if (silenceMode) {
+            silenceMode->setContentWidgetData("checked",value.toInt() != 0);
+        }
+    }
+    else if (key.uid() == KCRUidProfileEngine.iUid && key.key() == KProEngMasterVolume) {
+        HbDataFormModelItem *masterVolume = mItemList.at(CpVolumeGroupItemData::EVolumeMasterVolumeItem);
+        if (masterVolume) {
+            masterVolume->setContentWidgetData("value",intToVolumeLevel(value.toInt()));
+        }
+    }
+    else if (key.uid() == KCRUidProfileEngine.iUid && key.key() == KProEngMasterVibra) {
+        HbDataFormModelItem *masterVibra = mItemList.at(CpVolumeGroupItemData::EVolumeMasterVibraItem);
+        if (masterVibra) {
+            masterVibra->setContentWidgetData("checkState",(value.toInt() ? 2 : 0));
+        }
+    }
+}
+
+//End of File

@@ -19,6 +19,7 @@
 
 #include <hbdialog.h>
 #include <cpprofilemodel.h>
+#include <QPointer>
 class HbRadioButtonList;
 class HbDataFormModelItem;
 class CpProfileActivatorEntryItem;
@@ -40,8 +41,8 @@ private:
     CpProfileModel &mProfileModel;
     HbRadioButtonList *mProfileList;
     CpSettingFormItemData *mProfileActivator;
-    HbAction *mConfirmProfile;
-    HbAction *mCancelProfile;
+    QPointer<HbAction> mConfirmProfile;
+    QPointer<HbAction> mCancelProfile;
     QList<ProfileWrapperProfileId> mProfileIds;
 };
 #endif

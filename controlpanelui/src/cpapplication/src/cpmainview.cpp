@@ -18,19 +18,21 @@
 #include "cpmainview.h"
 #include "cpmainmodel.h"
 #include <QList>
+#include <hbmainwindow.h>
 #include <hbdataform.h>
 #include <cpitemdatahelper.h>
 #include <cplogger.h>
 
-CpMainView::CpMainView(QGraphicsItem *parent /*= 0*/)
-: CpBaseSettingView(0,parent), mMainModel(0), mItemDataHelper(0)
-{
-	if (HbDataForm *form = settingForm()) {
-        mItemDataHelper = new CpItemDataHelper(form);
-		mMainModel = new CpMainModel;
-        mMainModel->initialize(*mItemDataHelper);
-		form->setModel(mMainModel);
-	}	
+//CpMainView implementation
+CpMainView::CpMainView(HbMainWindow *mainWindow/*= 0*/)
+: CpBaseSettingView(0,0), 
+  mMainModel(0), 
+  mItemDataHelper(0), 
+  mMainWindow(mainWindow)
+{ 
+    //delay loading
+    connect(mMainWindow,SIGNAL(viewReady()),this,SLOT(initializeMainModel()));
+    
 	setTitle( QObject::tr("Control Panel") );	//should use qtTrId("txt_cp_title_control_panel")
 }
 
@@ -48,4 +50,17 @@ bool CpMainView::event(QEvent *e)
     return CpBaseSettingView::event(e);
 }
 
+void CpMainView::initializeMainModel()
+{
+    if (HbDataForm *form = qobject_cast<HbDataForm *>(widget())) {
+        if (!mMainModel) {  
+            mItemDataHelper = new CpItemDataHelper(form);
+            mMainModel = new CpMainModel;
+            mMainModel->initialize(*mItemDataHelper);
+            form->setModel(mMainModel);
+            
+            connect(form,SIGNAL(activated(QModelIndex)),this,SLOT(onDataFormItemActivated(QModelIndex)));
+        }
+    }   
+}
 // End of File

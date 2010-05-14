@@ -16,6 +16,7 @@
 */
 
 #include "cplauncherservice.h"
+#include <QCoreApplication>
 #include <cpservicemainwindow.h>
 #include <cplauncherinterface.h>
 #include <cppluginloader.h>
@@ -23,7 +24,7 @@
 #include "cpsplogger.h"
 
 CpLauncherService::CpLauncherService(HbMainWindow *mainWindow /* = 0*/)
-: XQServiceProvider("com.nokia.services.cpserviceprovider.Launcher",mainWindow),
+: XQServiceProvider("cpserviceprovider.com.nokia.symbian.ICpPluginLauncher",mainWindow),
   mMainWindow(mainWindow),
   mAsyncRequestIndex(-1),
   mReturnValue(false)
@@ -44,25 +45,28 @@ void CpLauncherService::complete()
     completeRequest(mAsyncRequestIndex, mReturnValue);
 }
 
+void CpLauncherService::setReturnValue(const QVariant &returnValue)
+{
+    mReturnValue = returnValue;
+}
 
 bool CpLauncherService::launchSettingView(const QString &pluginFile,const QVariant &hint)
 {
     CPSP_LOG("Entering CpLauncherService::launchSettingView");
    
     mAsyncRequestIndex = setCurrentRequestAsync();
-    mReturnValue.setValue(false);
+    
+    bool succeed = false;
        
     if (mMainWindow) {
         mMainWindow->show();
         CpLauncherInterface *plugin = CpPluginLoader::loadCpLauncherInterface(pluginFile);
         if (plugin) {
-            CpBaseSettingView *view = plugin->createSettingView(hint);
-            if (view) {
-                connect(view, SIGNAL(aboutToClose()), mMainWindow, SLOT(quit()));
-                mMainWindow->addView(view);
-                mMainWindow->setCurrentView(view);
-                
-                mReturnValue.setValue(true);
+            CpBaseSettingView *settingView = plugin->createSettingView(hint);
+            if (settingView) {
+                connect(settingView, SIGNAL(returnValueDelivered(QVariant)),this,SLOT(setReturnValue(QVariant)));
+                (static_cast<CpServiceMainWindow*>(mMainWindow))->setSettingView(settingView);                
+                succeed = true;
             }
             else {
                 CPSP_LOG("Create setting view failed.");
@@ -72,14 +76,14 @@ bool CpLauncherService::launchSettingView(const QString &pluginFile,const QVaria
             CPSP_LOG(QLatin1String("Load plugin interface(CpLauncherInterface) failed: ") + pluginFile);
         }
         
-        if (!mReturnValue.toBool()) {
-            qobject_cast<CpServiceMainWindow*>(mMainWindow)->quit();
+        if (!succeed) {
+            qApp->quit();  //quit application if loading plugin failed or creating setting view failed.
         }
     }
        
     CPSP_LOG("Leaving CpLauncherService::launchSettingView");
     
-    return mReturnValue.toBool();
+    return succeed;
 }
 
 //End of File

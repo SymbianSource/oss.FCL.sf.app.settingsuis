@@ -19,8 +19,9 @@
 #define CPPROFILEMODEL_P_H
 
 #include <qglobal.h>
-class CpProfileSettings;
+#include <QMap>
 class CpProfileModel;
+class CpProfileSettings;
 class MProfileEngineExtended2;
 class MProfileExtended2;
 class MProfileFeedbackSettings;
@@ -41,9 +42,8 @@ public:
     QString profileName(int profileId)const;
     QStringList profileNames() const;
     int activateProfile(int profileId);
-    int activeProfileId();
-    int setEditingProfile(int profileId);
-    int profileSettings(int profileId, CpProfileSettings& profileSettings);
+    int activeProfileId() const;
+    void profileSettings(int profileId, CpProfileSettings& profileSettings);
     int setProfileSettings(int profileId, CpProfileSettings& profileSettings);
 
     /*!
@@ -58,10 +58,10 @@ public:
     bool masterVibra() const;
     void setMasterVibra(bool isVibra);
 
-    bool isSilenceMode() const;
+    bool silenceMode() const;
     void setSilenceMode(bool isSlience);
 
-    bool isOffLineMode() const;    
+    bool offLineMode() const;    
     void setOffLineMode(bool isOffLine);
 
     QString ringTone(int profileId)const;
@@ -124,18 +124,18 @@ public:
      */
 #ifdef Q_OS_SYMBIAN
 private:
-    void UpdateProfileSettingsL(int profileId);
-    int commitChange();
+    //void UpdateProfileSettingsL(int profileId);
+    //int commitChange();
 
 private:
     MProfileEngineExtended2 *mEngine;
+    QMap<int, MProfileExtended2*> mProfileList;
     //MProfileExtended2 *mProfileExt;
     //TProfileToneSettings *mToneSettings;
     //const MProfileFeedbackSettings *mFeedbackSettings;
     //MProfileSetFeedbackSettings *mSetFeedbackSettings;
     //CRepository *mVibraCenRep;
-    int mEditingProfileId;
-    bool mInitErrFlag;
+    int mInitErrFlag;
     CRepository *mOffLineCenRep;
     CpProfileModel *q_ptr;
 #endif // Q_OS_SYMBIAN

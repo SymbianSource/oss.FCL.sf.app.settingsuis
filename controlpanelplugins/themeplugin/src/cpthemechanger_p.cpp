@@ -1,25 +1,26 @@
 /*
-* Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
-* All rights reserved.
-* This component and the accompanying materials are made available
-* under the terms of "Eclipse Public License v1.0"
-* which accompanies this distribution, and is available
-* at the URL "http://www.eclipse.org/legal/epl-v10.html".
-*
-* Initial Contributors:
-* Nokia Corporation - initial contribution.
-*
-* Contributors:
-*
-* Description:  Private implementation of the theme changer.
+ * Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+ * All rights reserved.
+ * This component and the accompanying materials are made available
+ * under the terms of "Eclipse Public License v1.0""
+ * which accompanies this distribution, and is available
+ * at the URL "http://www.eclipse.org/legal/epl-v10.html".
  *
-*/
+ * Initial Contributors:
+ * Nokia Corporation - initial contribution.
+ *
+ * Contributors:
+ *
+ * Description:  
+ *   
+ */
 
 #include "cpthemechanger.h"
 #include "cpthemechanger_p.h"
 #include <QStringList>
 #include <QSettings>
 #include <QFileSystemWatcher>
+#include <QPixmap>
 #include <QSizeF>
 #include <hbicon.h>
 #include <hbinstance.h>
@@ -37,9 +38,7 @@ namespace {
     static const char* KThemePathKey = "HB_THEMES_DIR";
 #endif
 
-    static const QString KDefaultTheme = "hbdefault";
-    static const char* KSettingsCategory = "currenttheme";
-    static const bool KDefaultPreviewAvailable = true;
+    static const QString KDefaultTheme = "hbdefault";   
 }
 
 CpThemeChangerPrivate::CpThemeChangerPrivate(CpThemeChanger* qq):
@@ -76,8 +75,12 @@ CpThemeChangerPrivate::CpThemeChangerPrivate(CpThemeChanger* qq):
     #endif
 
     // Get our current state
-    QSettings settings(QLatin1String(ORGANIZATION), QLatin1String(THEME_COMPONENT));
-    mCurrentTheme.name = settings.value(KSettingsCategory).toString();
+    if (HbInstance::instance()) {
+        HbTheme *hbTheme = HbInstance::instance()->theme();
+        if (hbTheme) {
+            mCurrentTheme.name = hbTheme->name();
+        }
+    }
     updateThemeList(mCurrentTheme.name);
 
     // Watch for changes to the theme directory in flash.
@@ -154,35 +157,32 @@ void CpThemeChangerPrivate::updateThemeList(const QString& newThemeName)
                     iniSetting.beginGroup("Icon Theme");
                     QString hidden = iniSetting.value("Hidden").toString();
                     QString name = iniSetting.value("Name").toString();
-                    QString iconPath = iniSetting.value("PreviewIconPath").toString();
+                    QString iconPath = iniSetting.value("PreviewThumbnailPath").toString();
+                    QString previewPathPrt = iniSetting.value("PreviewIconPath_prt").toString();
+                    QString previewPathLsc = iniSetting.value("PreviewIconPath_lsc").toString();
                     if (name.isEmpty()) {
                         continue;
                     }
-                    if (!KDefaultPreviewAvailable && iconPath.isEmpty())
-                    {
-                        continue;
-                    }
-                    QString fullPathToIcon(iconThemePath.path() + iconPath);
-                    // Don't treat this as a theme unless it's got a preview.
-                    if (!QFileInfo(fullPathToIcon).exists() && !KDefaultPreviewAvailable) {
-                        continue;
-                    }
-                    if(iconPath.isEmpty()){
-                        
-                        //if no preview graphics path specified,look for the background graphic.
-                        //first look in /scalable folder.  if not there, look in pixmap folder.
                     
+                    QString fullPathToIcon(iconThemePath.path() + iconPath);
+                    
+                    if(iconPath.isEmpty()|| !QFileInfo(fullPathToIcon).exists()){
+                        
                         //Set thumbnail
                         if(QFileInfo(fullPathToIcon + "/scalable/qtg_graf_theme_preview_thumbnail.svg").exists()){
                             nameIconPair.icon = HbIcon(fullPathToIcon + "/scalable/qtg_graf_theme_preview_thumbnail.svg");
                         }else if(QFileInfo(fullPathToIcon + "/scalable/qtg_graf_screen_bg_prt.svg").exists()){
-                            nameIconPair.icon = HbIcon(fullPathToIcon + "/scalable/qtg_graf_screen_bg_prt.svg");
-                            qreal width = nameIconPair.icon.width();
-                            nameIconPair.icon.setHeight(width);
+                            QPixmap px(fullPathToIcon + "/scalable/qtg_graf_screen_bg_prt.svg");
+                            QIcon scaledIcon(px.scaled(QSize(64, 64)));
+                            nameIconPair.icon = HbIcon(scaledIcon);
+                            nameIconPair.icon.setIconName(fullPathToIcon + "/scalable/qtg_graf_screen_bg_prt.svg");
+                           
                         } else if(QFileInfo(fullPathToIcon + "/pixmap/qtg_graf_screen_bg_prt.png").exists()){
-                            nameIconPair.icon = HbIcon(fullPathToIcon + "/pixmap/qtg_graf_screen_bg_prt.png");
-                            qreal width = nameIconPair.icon.width();
-                            nameIconPair.icon.setHeight(width);
+                            QPixmap px(fullPathToIcon + "/pixmap/qtg_graf_screen_bg_prt.png");
+                            QIcon scaledIcon(px.scaled(QSize(64, 64)));
+                            nameIconPair.icon = HbIcon(scaledIcon);
+                            nameIconPair.icon.setIconName(fullPathToIcon + "/scalable/qtg_graf_screen_bg_prt.png");
+                          
                         } else{
                             nameIconPair.icon = HbIcon(":/image/themePreview.svg");
                         }
@@ -190,26 +190,42 @@ void CpThemeChangerPrivate::updateThemeList(const QString& newThemeName)
                         nameIconPair.icon = HbIcon(fullPathToIcon);
                     }
                     
-                    //set portrait preview
-                    if(QFileInfo(fullPathToIcon + "/scalable/qtg_graf_theme_preview_prt.svg").exists()){
-                        nameIconPair.portraitPreviewIcon = HbIcon(fullPathToIcon + "/scalable/qtg_graf_theme_preview_prt.svg");
-                    }else if(QFileInfo(fullPathToIcon + "/scalable/qtg_graf_screen_bg_prt.svg").exists()){
-                        nameIconPair.portraitPreviewIcon = HbIcon(fullPathToIcon + "/scalable/qtg_graf_screen_bg_prt.svg");
-                    } else if(QFileInfo(fullPathToIcon + "/pixmap/qtg_graf_screen_bg_prt.png").exists()){
-                        nameIconPair.portraitPreviewIcon = HbIcon(fullPathToIcon + "/pixmap/qtg_graf_screen_bg_prt.png");
-                    } else{
-                        nameIconPair.portraitPreviewIcon = HbIcon(":/image/themePreview.svg");
+                    //Portrait preview
+                    QString fullPathToPreviewPrt = (iconThemePath.path() + previewPathPrt );
+                    
+                    if(previewPathPrt.isEmpty() || !QFileInfo(fullPathToPreviewPrt).exists()) {
+                    
+                        if(QFileInfo(fullPathToPreviewPrt + "/scalable/qtg_graf_theme_preview_prt.svg").exists()){
+                            nameIconPair.portraitPreviewIcon = HbIcon(fullPathToPreviewPrt + "/scalable/qtg_graf_theme_preview_prt.svg");
+                        }else if(QFileInfo(fullPathToPreviewPrt + "/scalable/qtg_graf_screen_bg_prt.svg").exists()){
+                            nameIconPair.portraitPreviewIcon = HbIcon(fullPathToPreviewPrt + "/scalable/qtg_graf_screen_bg_prt.svg");
+                        } else if(QFileInfo(fullPathToPreviewPrt + "/pixmap/qtg_graf_screen_bg_prt.png").exists()){
+                            nameIconPair.portraitPreviewIcon = HbIcon(fullPathToPreviewPrt + "/pixmap/qtg_graf_screen_bg_prt.png");
+                        } else{
+                            nameIconPair.portraitPreviewIcon = HbIcon(":/image/themePreview.svg");
+                        }
+                    }
+                    else {
+                        nameIconPair.portraitPreviewIcon = HbIcon(fullPathToPreviewPrt);
                     }
                     
-                    //set landscape preview
-                    if(QFileInfo(fullPathToIcon + "/scalable/qtg_graf_theme_preview_lsc.svg").exists()){
-                        nameIconPair.landscapePreviewIcon = HbIcon(fullPathToIcon + "/scalable/qtg_graf_theme_preview_lsc.svg");
-                    }else if(QFileInfo(fullPathToIcon + "/scalable/qtg_graf_screen_bg_lsc.svg").exists()){
-                        nameIconPair.landscapePreviewIcon = HbIcon(fullPathToIcon + "/scalable/qtg_graf_screen_bg_lsc.svg");
-                    } else if(QFileInfo(fullPathToIcon + "/pixmap/qtg_graf_screen_bg_lsc.png").exists()){
-                        nameIconPair.landscapePreviewIcon = HbIcon(fullPathToIcon + "/pixmap/qtg_graf_screen_bg_lsc.png");
-                    } else{
-                        nameIconPair.landscapePreviewIcon = HbIcon(":/image/themePreview.svg");
+                    //Landscape preview
+                    QString fullPathToPreviewLsc = (iconThemePath.path() + previewPathLsc );
+                                    
+                    if(previewPathLsc.isEmpty() || !QFileInfo(fullPathToPreviewLsc).exists()) {
+                                
+                        if(QFileInfo(fullPathToPreviewLsc + "/scalable/qtg_graf_theme_preview_lsc.svg").exists()){
+                            nameIconPair.landscapePreviewIcon = HbIcon(fullPathToPreviewLsc + "/scalable/qtg_graf_theme_preview_lsc.svg");
+                        }else if(QFileInfo(fullPathToPreviewLsc + "/scalable/qtg_graf_screen_bg_lsc.svg").exists()){
+                            nameIconPair.landscapePreviewIcon = HbIcon(fullPathToPreviewLsc + "/scalable/qtg_graf_screen_bg_lsc.svg");
+                        } else if(QFileInfo(fullPathToPreviewLsc + "/pixmap/qtg_graf_screen_bg_lsc.png").exists()){
+                            nameIconPair.landscapePreviewIcon = HbIcon(fullPathToPreviewLsc + "/pixmap/qtg_graf_screen_bg_lsc.png");
+                        } else{
+                            nameIconPair.landscapePreviewIcon = HbIcon(":/image/themePreview.svg");
+                        }
+                    }
+                    else {
+                        nameIconPair.landscapePreviewIcon = HbIcon(fullPathToPreviewLsc);
                     }
                 
                     nameIconPair.name = name;
@@ -236,21 +252,23 @@ void CpThemeChangerPrivate::updateThemeList(const QString& newThemeName)
             }
         }
     }
-    // Include default
-    CpThemeChanger::ThemeInfo def;
-    def.name = KDefaultTheme;
-    def.icon = HbIcon(":/image/themePreview.svg");
-    themeList.append(def);
+    
     if (mCurrentTheme.name == KDefaultTheme)
     {
-        mCurrentTheme = def;
+        // Include default
+         CpThemeChanger::ThemeInfo def;
+         def.name = KDefaultTheme;
+         def.icon = HbIcon(":/image/themePreview.svg");
+         themeList.append(def);
+  
+         mCurrentTheme = def;
     }
 
 }
 
 const QList<CpThemeChanger::ThemeInfo>& CpThemeChangerPrivate::themes() const
 {
-    return themeList;
+   return themeList;
 }
 
 bool CpThemeChangerPrivate::connectToServer()
@@ -289,7 +307,7 @@ bool CpThemeChangerPrivate::changeTheme(const QString& newTheme)
     if (exists) {
         result = themeClient->changeTheme(newTheme);
 		updateThemeList(newTheme);
-}
+    }
     return result;
 }
 

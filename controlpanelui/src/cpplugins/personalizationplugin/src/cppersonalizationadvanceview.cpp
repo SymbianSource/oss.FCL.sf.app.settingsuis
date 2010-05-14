@@ -25,6 +25,7 @@
 #include "cpprofilesettingform.h"
 #include "cpprofilenameeditdialog.h"
 
+#include <cppluginutility.h>
 #include <hbaction.h>
 #include <hbmenu.h>
 CpPersonalizationAdvanceView::CpPersonalizationAdvanceView(QGraphicsItem *parent /*=0*/):
@@ -36,7 +37,9 @@ CpPersonalizationAdvanceView::CpPersonalizationAdvanceView(QGraphicsItem *parent
     // 4.use cppersonalizationentryitemdata class to create ringtone, message tone...
     // 5.ignore cpmastervolumeslider class, please use default slideritem to create keyandscreen slider, new property added in slider, if any question, please contact me.
     // 6. don't forget the cfg file in data folder, you can try to add the profile activator plugin and ringtone plugin here
-    setSettingForm( new CpProfileSettingForm() );
+    HbDataForm *form = new CpProfileSettingForm();
+    setWidget( form );
+    CpPluginUtility::addCpItemPrototype(form);
     initMenu();
 }
 CpPersonalizationAdvanceView::~CpPersonalizationAdvanceView()

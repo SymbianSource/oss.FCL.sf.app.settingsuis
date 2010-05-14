@@ -19,17 +19,32 @@
 #define CPPROFILESETTINGFORM_H
 
 #include <hbdataform.h>
+#include <QHash>
 
 class HbDataFormModel;
 class HbDataFormModelItem;
 class CpItemDataHelper;
 class CpProfileModel;
 class QFileIconProvider;
+class XQSettingsManager;
+class XQSettingsKey;
+class QVariant;
 
 class CpProfileSettingForm : public HbDataForm
 {
     Q_OBJECT
 public:
+    
+    enum ProfileItemId {
+        ProfileItemRingTone,
+        ProfileItemMessageTone,
+        ProfileItemEmailTone,
+        ProfileItemReminderTone,
+        ProfileItemNotificationTones,
+        ProfileItemKeyandTouchScreenTones,
+        ProfileItemTouchScreenVibra
+    };
+    
     CpProfileSettingForm();
     virtual ~CpProfileSettingForm();
     
@@ -49,7 +64,7 @@ private slots:
 
     //meeting tones
     void on_meeting_notificationTones_stateChanged(int state);
-    void on_meeting_keysAndScreenSlider_ValueChanged( int value );
+    void on_meeting_keysAndScreenToneSlider_ValueChanged( int value );
     
     //meeting vibar
     void on_meeting_ringVibar_stateChanged( int state );
@@ -58,6 +73,8 @@ private slots:
     void on_meeting_reminderVibra_stateChanged( int state );
     void on_meeting_notificationVibra_stateChanged( int state );
     void on_meeting_screenVibra_ValueChanged( int value );
+    
+    void settingValueChanged(const XQSettingsKey &key, const QVariant &value);
 private:
     void initModel();
     void initGeneralTonesGroup();
@@ -69,6 +86,9 @@ private:
  //   void initMessageToneGroup(HbDataFormModelItem *parent);
  //   void initAlertToneGroup(HbDataFormModelItem *parent);
  //   void initKeyAndScreenToneGroup(HbDataFormModelItem *parent);
+    
+    void initProfileItems(int profileId,HbDataFormModelItem *parent);
+    HbDataFormModelItem *profileItem(int profileId,int profileItemId);
 private:
     HbDataFormModel *mModel;
     CpItemDataHelper *mItemDataHelper;
@@ -80,10 +100,14 @@ private:
     
     HbDataFormModelItem *mCurrentPage;
     
-    HbDataFormModelItem *mGeneralKeysAndScreenToneSlider;
-    HbDataFormModelItem *mGeneralSreenVibra;
-    HbDataFormModelItem *mMeetingKeysAndScreenToneSlider;
-    HbDataFormModelItem *mMeetingSreenVibra;
+  //  HbDataFormModelItem *mGeneralKeysAndScreenToneSlider;
+ //   HbDataFormModelItem *mGeneralSreenVibra;
+ //   HbDataFormModelItem *mMeetingKeysAndScreenToneSlider;
+  //  HbDataFormModelItem *mMeetingSreenVibra;
+    
+    XQSettingsManager *mSettingManager;
+    
+    QHash< int,QHash<int,HbDataFormModelItem*>  > mProfileModelItems;
 };
 
 

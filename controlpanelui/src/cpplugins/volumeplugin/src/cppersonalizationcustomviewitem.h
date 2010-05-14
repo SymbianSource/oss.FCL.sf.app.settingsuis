@@ -39,6 +39,7 @@ public:
 public slots:
 		virtual void load();
 		virtual void store();
+		virtual void restore();
 /*private slots:
 	void onValueChanged(int value);*/
 protected:

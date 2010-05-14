@@ -22,6 +22,9 @@
 class CpProfileModel;
 class HbDataFormModelItem;
 class CpItemDataHelper;
+class XQSettingsManager;
+class XQSettingsKey;
+class QVariant;
 
 class CpVolumeController : public QObject
 {
@@ -41,14 +44,18 @@ private slots:
     void silenceModeChange(bool isSilence);
     void masterVolumeChange(int value);
     void masterVibraChange(int state);
+    
+    void settingValueChanged(const XQSettingsKey &key, const QVariant &value);
+    
 private:
-	void update();
+	void updateUi();
 	int volumeLevelToInt( CpVolumeController::VolumeLevel volumeLevel );
 	CpVolumeController::VolumeLevel intToVolumeLevel( int value );
 	
 private:
 	CpProfileModel *mProfileModel;
 	QList<HbDataFormModelItem *> mItemList;
+	XQSettingsManager *mSettingManager;
 };
 
 #endif

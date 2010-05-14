@@ -16,12 +16,13 @@
 
 HEADERS += $$PWD/src/cpplaceholderitemdata.h \
 		   $$PWD/src/cppluginconfigreader.h \		 
-		   $$PWD/src/cputility.h 
+		   $$PWD/src/cpcategorymodelutility.h 
 
 SOURCES += $$PWD/src/cpcategorysettingformitemdata.cpp \
 		   $$PWD/src/cpcategorysettingformmodel.cpp \
 		   $$PWD/src/cpplaceholderitemdata.cpp \
 		   $$PWD/src/cppluginconfig.cpp \
 		   $$PWD/src/cppluginconfigreader.cpp \
-		   $$PWD/src/cputility.cpp
+		   $$PWD/src/cpcategorymodelutility.cpp \
+		   $$PWD/src/cptaskexecutor.cpp
 					 

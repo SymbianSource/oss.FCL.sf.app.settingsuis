@@ -21,7 +21,7 @@ CONFIG += hb plugin
 RESOURCES += personalizationplugin.qrc
 
 LIBS +=  -lcpprofilewrapper
-LIBS += -lxqservice -lxqserviceutil
+LIBS +=  -lxqsettingsmanager -lcpringtoneview
 
 include ( ../cpplugincommon.pri )
 include ( personalizationplugin.pri )

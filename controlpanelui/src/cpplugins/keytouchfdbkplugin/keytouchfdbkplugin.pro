@@ -25,5 +25,14 @@ include ( ../cpplugincommon.pri )
 include ( keytouchfdbkplugin.pri )
 
 symbian { 
+    INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE \
+	                 $$MOC_DIR
+    HEADERS += src/cpkeyscreenmodel_p.h
+    SOURCES += src/cpkeyscreenmodel_p.cpp
+
+    LIBS += -lcentralrepository \
+            -lfeatmgr
     TARGET.UID3 = 0X20025FDE
+    TARGET.CAPABILITY = All -TCB 
+    TARGET.EPOCALLOWDLLDATA = 1
 }

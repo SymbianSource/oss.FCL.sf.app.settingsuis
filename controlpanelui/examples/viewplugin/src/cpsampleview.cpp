@@ -29,7 +29,7 @@ CpSampleView::CpSampleView(QGraphicsItem *parent) :
     mCheckBoxItem(0)
 
 {
-    HbDataForm *form = settingForm();
+    HbDataForm *form = qobject_cast<HbDataForm*>(widget());
     if (form) {
         HbDataFormModel *model = new HbDataFormModel;
         

@@ -1,20 +1,19 @@
 /*
-* Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
-* All rights reserved.
-* This component and the accompanying materials are made available
-* under the terms of "Eclipse Public License v1.0"
-* which accompanies this distribution, and is available
-* at the URL "http://www.eclipse.org/legal/epl-v10.html".
-*
-* Initial Contributors:
-* Nokia Corporation - initial contribution.
-*
-* Contributors:
-*
-* Description:  Implementation of the HbThemeChanger class
+ * Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+ * All rights reserved.
+ * This component and the accompanying materials are made available
+ * under the terms of "Eclipse Public License v1.0""
+ * which accompanies this distribution, and is available
+ * at the URL "http://www.eclipse.org/legal/epl-v10.html".
  *
-*/
-
+ * Initial Contributors:
+ * Nokia Corporation - initial contribution.
+ *
+ * Contributors:
+ *
+ * Description:  
+ *   
+ */
 
 #include "cpthemechanger.h"
 #include "cpthemechanger_p.h"
@@ -47,19 +46,10 @@ CpThemeChanger::CpThemeChanger(QObject* p) :
 QAbstractItemModel& CpThemeChanger::model()
 {
     Q_D(CpThemeChanger);
-
+   
     return d->model;
 }
 
-/*! 
-  Provide a list of currently available themes.
-*/
-const QList<CpThemeChanger::ThemeInfo> CpThemeChanger::themes() const
-{
-    Q_D(const CpThemeChanger);
-
-    return d->themes();
-}
 
 /*!
   Creates a connection to the theme server for the purpose of 

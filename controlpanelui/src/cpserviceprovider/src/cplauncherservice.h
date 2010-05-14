@@ -21,6 +21,7 @@
 #include <xqserviceprovider.h>
 
 class HbMainWindow;
+
 class CpLauncherService : public XQServiceProvider
 {
     Q_OBJECT
@@ -30,6 +31,8 @@ public:
     void complete();
 public slots:
     bool launchSettingView(const QString &pluginFile,const QVariant &hint);
+private slots:
+    void setReturnValue(const QVariant &returnValue);
 private:
     HbMainWindow *mMainWindow;
     int mAsyncRequestIndex;

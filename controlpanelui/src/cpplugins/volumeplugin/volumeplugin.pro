@@ -19,7 +19,7 @@ TARGET = cpvolumeplugin
 
 CONFIG += hb plugin
 RESOURCES += volumeplugin.qrc
-LIBS += -lcpprofilewrapper
+LIBS += -lcpprofilewrapper -lxqsettingsmanager
 
 include ( ../cpplugincommon.pri )
 include ( volumeplugin.pri )

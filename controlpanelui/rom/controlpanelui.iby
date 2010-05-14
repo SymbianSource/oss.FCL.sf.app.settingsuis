@@ -25,12 +25,15 @@
 
 file=ABI_DIR\BUILD_DIR\controlpanel.exe         			 SHARED_LIB_DIR\controlpanel.exe 
 CP_UPGRADABLE_APP_REG_RSC(controlpanel)    
-S60_APP_RESOURCE(controlpanel)   
 
+file=ABI_DIR\BUILD_DIR\cpserviceprovider.exe         			 SHARED_LIB_DIR\cpserviceprovider.exe 
+CP_UPGRADABLE_APP_REG_RSC(cpserviceprovider)    
 
 file=ABI_DIR\BUILD_DIR\cpcategorymodel.dll			  	 SHARED_LIB_DIR\cpcategorymodel.dll
 file=ABI_DIR\BUILD_DIR\seccodeui.dll                 SHARED_LIB_DIR\seccodeui.dll
 file=ABI_DIR\BUILD_DIR\cpprofilewrapper.dll           SHARED_LIB_DIR\cpprofilewrapper.dll
+file=ABI_DIR\BUILD_DIR\cpringtoneview.dll           SHARED_LIB_DIR\cpringtoneview.dll 
+
 
 file=ABI_DIR\BUILD_DIR\cppersonalizationplugin.dll           SHARED_LIB_DIR\cppersonalizationplugin.dll
 file=ABI_DIR\BUILD_DIR\cpcommunicationplugin.dll             SHARED_LIB_DIR\cpcommunicationplugin.dll

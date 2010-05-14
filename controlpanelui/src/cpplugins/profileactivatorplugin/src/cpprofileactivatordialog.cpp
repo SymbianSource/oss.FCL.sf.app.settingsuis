@@ -26,9 +26,7 @@ CpProfileActivatorDialog::CpProfileActivatorDialog(CpSettingFormItemData *profil
                                                     QGraphicsItem *parent):HbDialog(parent),
                                                      mProfileModel(profileModel),
                                                      mProfileList(0),
-                                                     mProfileActivator(profileActivator),
-                                                     mConfirmProfile(0),
-                                                     mCancelProfile(0)
+                                                     mProfileActivator(profileActivator)
 {
     mProfileIds << EProfileWrapperGeneralId
                 << EProfileWrapperMeetingId;
@@ -47,8 +45,8 @@ CpProfileActivatorDialog::CpProfileActivatorDialog(CpSettingFormItemData *profil
     connect(mCancelProfile, SIGNAL(triggered(bool)), this, SLOT(cancelProfileSelection()));
         
     
-    this->setPrimaryAction(mConfirmProfile);
-    this->setSecondaryAction(mCancelProfile);
+    this->addAction(mConfirmProfile);
+    this->addAction(mCancelProfile);
     
     this->setContentWidget(mProfileList);
     this->setModal(true);
@@ -58,8 +56,7 @@ CpProfileActivatorDialog::CpProfileActivatorDialog(CpSettingFormItemData *profil
 
 CpProfileActivatorDialog::~CpProfileActivatorDialog()
 {
-    delete mConfirmProfile;
-    delete mCancelProfile;
+    
 }
 void CpProfileActivatorDialog::confirmProfileSelection()
 {

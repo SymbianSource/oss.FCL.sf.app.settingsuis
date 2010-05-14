@@ -49,11 +49,13 @@ void CpPersonalizationGroupItemData::beforeLoadingConfigPlugins(CpItemDataHelper
 
 	CPFW_LOG("CpPersonalizationGroupItemData::beforeLoadingConfigPlugins(), END");
 }
+
 void CpPersonalizationGroupItemData::afterLoadingConfigPlugins(CpItemDataHelper &itemDataHelper)
 {
     CPFW_LOG("CpPersonalizationGroupItemData::afterLoadingConfigPlugins(), START");
     CpSettingFormEntryItemData *advanceSettingItem = 
-            new CpSettingFormEntryItemDataImpl<CpPersonalizationAdvanceView>(itemDataHelper, hbTrId("txt_cp_button_advanced_settings"));
+            new CpSettingFormEntryItemDataImpl<CpPersonalizationAdvanceView>(CpSettingFormEntryItemData::ButtonEntryItem,
+            		itemDataHelper, hbTrId("txt_cp_button_advanced_settings"));
     appendChild(advanceSettingItem);
     CPFW_LOG("CpPersonalizationGroupItemData::afterLoadingConfigPlugins(), END");
 }

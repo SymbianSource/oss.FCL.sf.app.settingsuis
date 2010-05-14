@@ -16,6 +16,10 @@
 *
 */
 
+file=ABI_DIR\BUILD_DIR\CpPluginLauncherClient.exe         			 SHARED_LIB_DIR\CpPluginLauncherClient.exe 
+CP_UPGRADABLE_APP_REG_RSC(CpPluginLauncherClient)    
+S60_APP_RESOURCE(CpPluginLauncherClient)   
+
 file=ABI_DIR\BUILD_DIR\cpgroupplugin.dll   SHARED_LIB_DIR\cpgroupplugin.dll
 file=ABI_DIR\BUILD_DIR\cpviewplugin.dll    SHARED_LIB_DIR\cpviewplugin.dll
 

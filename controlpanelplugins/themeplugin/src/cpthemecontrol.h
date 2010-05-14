@@ -20,6 +20,7 @@
 
 #include <QObject>
 #include <QList>
+#include <QTimer>
 
 #include "cpthemechanger.h"
 #include <hbicon.h>
@@ -55,6 +56,8 @@ public slots:
     void previewClosed();
     void themeApplied(const QString& theme);
     void themeListClosed();
+    void themeChangeTimeout();
+    void themeChangeFinished();
 
 private:
     void createThemeList();
@@ -67,6 +70,7 @@ private:
     CpThemeChanger* mThemeChanger;
     QAbstractItemModel* mListModel;
     QSortFilterProxyModel* mSortModel;
+    QTimer* mIdleTimer;
 };
 
 #endif //CPTHEMECONTROL_H

@@ -41,7 +41,8 @@ CpThemePlugin::~CpThemePlugin()
 /*!
     create the control panel entry item data for Theme settins.
 */
-CpSettingFormItemData *CpThemePlugin::createSettingFormItemData(CpItemDataHelper &itemDataHelper) const
+
+QList<CpSettingFormItemData*> CpThemePlugin::createSettingFormItemData(CpItemDataHelper &itemDataHelper) const
 {
 
     //create a cpthemepluginentryitemdata with default values and return it.
@@ -50,7 +51,7 @@ CpSettingFormItemData *CpThemePlugin::createSettingFormItemData(CpItemDataHelper
         tr("Theme"),
         tr("Theme Name"),
         HbIcon(":/image/qgn_menu_note.svg"));
-	return entryItem;
+        return QList<CpSettingFormItemData*>() << entryItem;
 }
 
 Q_EXPORT_PLUGIN2(cpthemeplugin, CpThemePlugin);

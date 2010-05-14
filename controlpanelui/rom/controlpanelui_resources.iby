@@ -24,5 +24,6 @@
 data=DATAZ_\QT_TRANSLATIONS_DIR\control_panel.qm QT_TRANSLATIONS_DIR\control_panel.qm
 data=DATAZ_\APP_RESOURCE_DIR\ControlPanel.RSC APP_RESOURCE_DIR\ControlPanel.rsc
 
+data=DATAZ_\APP_RESOURCE_DIR\cpserviceprovider.RSC APP_RESOURCE_DIR\cpserviceprovider.rsc
 
 #endif // CONTROLPANELUI_RESOURCES

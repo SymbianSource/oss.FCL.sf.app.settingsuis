@@ -15,5 +15,11 @@
 #
 
 # Input
-HEADERS += src/*.h
-SOURCES += src/*.cpp
+HEADERS += src/cpkeyscreenplugin.h \
+           src/cpkeyscreenview.h \
+           src/cpkeyscreenmodel.h \
+           src/cpkeyscreenconstants.h
+
+SOURCES += src/cpkeyscreenplugin.cpp \
+           src/cpkeyscreenview.cpp \
+           src/cpkeyscreenmodel.cpp
