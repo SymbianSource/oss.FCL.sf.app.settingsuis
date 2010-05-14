@@ -39,36 +39,11 @@ CpProfileActivatorEntryItem::~CpProfileActivatorEntryItem()
 }
 void CpProfileActivatorEntryItem::onLaunchView()
 {
-    QScopedPointer<CpProfileActivatorDialog> dialog
-        (new CpProfileActivatorDialog(this, *mProfileModel));
-    dialog->exec();
-//    //launch media fetcher
-//    if (!mReq)
-//    {
-//        mReq = mAppMgr.create("com.nokia.services.media.Music", "fetch(QString)", true);
-//
-//        if (!mReq)
-//        {
-//            return;
-//        }
-//        else
-//        {
-//            connect(mReq, SIGNAL(requestOk(const QVariant&)), SLOT(handleOk(const QVariant&)));
-//            connect(mReq, SIGNAL(requestError(int,const QString&)), SLOT(handleError(int,const QString&)));
-//        }
-//    }
-//
-//    // Set arguments for request (music fetcher application title)
-//    QList<QVariant> args;
-//    args << QVariant( text() );
-//    mReq->setArguments(args);
-//
-//    // Make the request
-//    if (!mReq->send())
-//    {
-//        //report error
-//        return;
-//    }
+    CpProfileActivatorDialog *dialog = 
+        new CpProfileActivatorDialog(this, *mProfileModel);
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+   // dialog->open(this, SLOT(ultimateDialogSlot(HbAction*)));
+    dialog->show();
     
 }
 /*void CpPersonalizationEntryItemData::handleOk(const QVariant &result)

@@ -1,20 +1,19 @@
 /*
-* Copyright (c) 2008-2010 Nokia Corporation and/or its subsidiary(-ies).
-* All rights reserved.
-* This component and the accompanying materials are made available
-* under the terms of "Eclipse Public License v1.0"
-* which accompanies this distribution, and is available
-* at the URL "http://www.eclipse.org/legal/epl-v10.html".
-*
-* Initial Contributors:
-* Nokia Corporation - initial contribution.
-*
-* Contributors:
-*
-* Description: 
-*
-*/
-
+ * Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+ * All rights reserved.
+ * This component and the accompanying materials are made available
+ * under the terms of "Eclipse Public License v1.0""
+ * which accompanies this distribution, and is available
+ * at the URL "http://www.eclipse.org/legal/epl-v10.html".
+ *
+ * Initial Contributors:
+ * Nokia Corporation - initial contribution.
+ *
+ * Contributors:
+ *
+ * Description:  
+ *   
+ */
 
 #include "cpthemeclientqt_p.h"
 #include <QLocalSocket>
@@ -25,11 +24,7 @@
 #include <QDir>
 
 #include <hbinstance.h>
-// TODO Do we need these?
-//#include <hbtheme_p.h>
-//#include <hbtheme.h>
-//#include <hbevent.h>
-//#include "hbthemecommon_p.h"
+
 
 #define WAIT_TIME_TO_CONNECT_TO_SERVER 500
 #define WAIT_TIME_TO_START_SERVER 5000

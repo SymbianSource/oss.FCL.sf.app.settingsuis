@@ -16,7 +16,7 @@
 */
 #include "cpcategorysettingformitemdata.h"
 #include <QString>
-#include "cputility.h"
+#include "cpcategorymodelutility.h"
 
 class CpCategorySettingFormItemDataPrivate
 {
@@ -64,13 +64,20 @@ void CpCategorySettingFormItemData::initialize(CpItemDataHelper &itemDataHelper)
 {
     //avoid to be called twice
     if (!d->mInitialized) {
-        //give derived class a change do their special things before loading config plugins
+        //give derived class a chance do their special things before loading config plugins
         beforeLoadingConfigPlugins(itemDataHelper);
-        //load plugins which are configured
-		CpUtility::buildConfigPluginItems(this,d->mConfigFile,itemDataHelper);
-        //give derived class a change do their special things after loading config plugins
+        
+        int pluginItemStartPosition = childCount();
+        //give derived class a chance do their special things after loading config plugins
         afterLoadingConfigPlugins(itemDataHelper);
-
+        
+        //load plugins which are configured
+        CpCategoryModelUtility::buildConfigPluginItems(
+		    this,
+		    d->mConfigFile,
+		    itemDataHelper,
+		    pluginItemStartPosition);
+		    
         d->mInitialized = true;
     }
 }

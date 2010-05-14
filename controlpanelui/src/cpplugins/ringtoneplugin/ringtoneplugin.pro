@@ -16,17 +16,13 @@
 
 TEMPLATE = lib
 TARGET = cpringtoneplugin
-
-
 CONFIG += hb plugin
-
-LIBS +=  -lcpprofilewrapper
-LIBS += -lxqservice -lxqserviceutil
 
 include ( ../cpplugincommon.pri )
 include ( ringtoneplugin.pri )
 
 symbian { 
+    LIBS +=  -lcpprofilewrapper -lxqservice -lxqserviceutil -lcpringtoneview -lxqsettingsmanager
     TARGET.UID3 = 0X20028738
     TARGET.CAPABILITY = All -TCB 
     TARGET.EPOCALLOWDLLDATA = 1

@@ -5,11 +5,7 @@
   	</plugin>
   	<plugin displayname = "Personalization" id = "0X20025FE5" dll = "cppersonalizationplugin.dll">
 	 			<desc></desc>
-  	</plugin>   
-  	
-  	<plugin displayname = "Look &amp; feel" id = "0X20025FE0" dll = "cplookfeelplugin.dll">
-	 			<desc></desc>
-  	</plugin> 
+  	</plugin>  
   	
     <plugin displayname = "Communication" id = "0X20025FDF" dll = "cpcommunicationplugin.dll">
         <desc></desc>

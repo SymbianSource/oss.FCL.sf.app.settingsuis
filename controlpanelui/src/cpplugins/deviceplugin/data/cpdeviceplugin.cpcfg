@@ -3,16 +3,16 @@
   <plugin displayname = "Time &amp; data" id = "0X102818E9"  dll = "datetimesettingsplugin.dll">
     <desc></desc>
   </plugin>
-  <plugin displayname = "Language" id = "0X20025FDD"  dll = "cpplaceholdernoiconplugin.dll">
+  <plugin displayname = "Language" id = "0X0"  dll = "TBD">
     <desc></desc>
   </plugin>
-  <plugin displayname = "Text and keyboard" id = "0X20025FDD"  dll = "cpplaceholdernoiconplugin.dll">
+  <plugin displayname = "Text and keyboard" id = "0X0"  dll = "TBD">
     <desc></desc>
   </plugin>
   <plugin displayname = "Positioning" id = "0x2002C318"  dll = "possettingsplugin.dll">
     <desc></desc>
   </plugin>
-   <plugin displayname = "Voice commands" id = "0X20025FDD"  dll = "cpplaceholdernoiconplugin.dll">
+   <plugin displayname = "Voice commands" id = "0X0"  dll = "TBD">
     <desc></desc>
   </plugin> 
   <plugin displayname = "Device updates" id = "0X2002DD04"  dll = "deviceupdatesplugin.dll">
@@ -21,7 +21,7 @@
   <plugin displayname = "Reset" id = "0x10275117"  dll = "cprfsplugin.dll">
     <desc></desc>
   </plugin> 
-  <plugin displayname = "About" id = "0X20025FDD"  dll = "cpplaceholdernoiconplugin.dll">
+  <plugin displayname = "About" id = "0X0"  dll = "TBD">
     <desc></desc>
   </plugin> 
 </childplugins>

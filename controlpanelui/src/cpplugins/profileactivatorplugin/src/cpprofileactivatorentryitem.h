@@ -14,8 +14,8 @@
  * Description:
  *
  */
-#ifndef CPPERSONALIZATIONENTRYITEMDATA_H
-#define CPPERSONALIZATIONENTRYITEMDATA_H
+#ifndef CPPROFILEACTIVATORENTRYITEM_H
+#define CPPROFILEACTIVATORENTRYITEM_H
 
 #include <cpsettingformentryitemdata.h>
 
@@ -39,4 +39,4 @@ private:
     CpProfileModel *mProfileModel;
 };
 
-#endif // CPPERSONALIZATIONENTRYITEMDATA_H
+#endif // CPPROFILEACTIVATORENTRYITEM_H

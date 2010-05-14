@@ -62,15 +62,6 @@ int CpProfileModelPrivate::activeProfileId()
 }
 
 /*
- * Set a profile as current editing profile
- */
-int CpProfileModelPrivate::setEditingProfile(int profileId)
-{
-    Q_UNUSED(profileId);
-    return -1;
-}
-
-/*
  * Get path and file name of ring tone file
  */
 QString CpProfileModelPrivate::ringTone()

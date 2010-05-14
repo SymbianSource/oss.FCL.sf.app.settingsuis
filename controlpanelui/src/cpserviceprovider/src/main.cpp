@@ -15,6 +15,9 @@
 *
 */
 #include <hbapplication.h>
+#include <hbstyleloader.h>
+#include <QDir>
+#include <cpbasepath.h>
 #include "cpservicemainwindow.h"
 #include "cpsplogger.h"
 
@@ -25,6 +28,8 @@ int main(int argc, char **argv)
     Logger::instance(CPSP_LOGGER_NAME)->configure(
             CPSP_LOGGER_CONFIG_PATH,QSettings::IniFormat);
     CPSP_LOG("Entering CpServiceProvider.exe...");
+    
+    HbStyleLoader::registerFilePath(CP_RESOURCE_PATH + QDir::separator() + WIDGETML_SUB_PATH);
     
     CpServiceMainWindow wnd;
     wnd.show();

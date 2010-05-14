@@ -40,6 +40,7 @@ CpVolumeGroupItemData::CpVolumeGroupItemData(CpItemDataHelper &itemDataHelper)
 CpVolumeGroupItemData::~CpVolumeGroupItemData()
 {
     delete mProfileModel;
+    delete mVolumeController;
 }
 
 void CpVolumeGroupItemData::initItems(CpItemDataHelper &itemDataHelper)
@@ -73,13 +74,15 @@ void CpVolumeGroupItemData::initItems(CpItemDataHelper &itemDataHelper)
     masterVolume->setContentWidgetData("minimum", 1);
     masterVolume->setContentWidgetData("maximum", 3);
     masterVolume->setContentWidgetData("majorTickInterval",1);
-    
+    masterVolume->setContentWidgetData("tickPosition",Hb::SliderTicksBelow);
+
     QStringList tickLabels;
-    tickLabels<<hbTrId("Soft")
-              <<hbTrId("Med")
-              <<hbTrId("Loud");
+    tickLabels<<hbTrId("txt_cp_setlabel_volume_val_soft")
+              <<hbTrId("txt_cp_setlabel_volume_val_med")
+              <<hbTrId("txt_cp_setlabel_volume_val_loud");
     masterVolume->setContentWidgetData("majorTickLabels",tickLabels);
     
+    masterVolume->setContentWidgetData("iconCheckable",false);
     this->appendChild(masterVolume);
     
     HbDataFormModelItem *masterVibra = new HbDataFormModelItem(HbDataFormModelItem::CheckBoxItem);
@@ -90,36 +93,3 @@ void CpVolumeGroupItemData::initItems(CpItemDataHelper &itemDataHelper)
     
     mVolumeController = new CpVolumeController(mProfileModel, mItemList, itemDataHelper);
 }
-//void CpVolumeGroupItemData::activateProfile(int profileIndex)
-//{
-//    switch (profileIndex) {
-//    case 0: // general
-//    {
-//        mProfileModel->activateProfile(EProfileWrapperGeneralId);
-//        int volumeValue = mProfileModel->ringVolume();
-//        // update the master volume when profile changed
-//        // should be used profileChangedObserver in the future;
-//        mMasterVolume->setContentWidgetData(/*"visible"*/"enabled",true);
-//        mMasterVolume->setContentWidgetData("value", volumeValue);
-//        break;
-//    }
-//    case 1: // meeting
-//    {
-//        mProfileModel->activateProfile(EProfileWrapperMeetingId);
-//        int volumeValue = mProfileModel->ringVolume();
-//        mMasterVolume->setContentWidgetData(/*"visible"*/"enabled",true);
-//        mMasterVolume->setContentWidgetData("value", volumeValue);
-//        break;
-//    }
-//    case 2: // silent
-//    {
-//        mProfileModel->activateProfile(EProfileWrapperSilentId);
-//        mMasterVolume->setContentWidgetData("value", 0);
-//        mMasterVolume->setContentWidgetData(/*"visible"*/"enabled",false);
-//        break;
-//    }
-//    default:
-//        break;
-//        
-//    }
-//}

@@ -29,6 +29,17 @@ CpPlaceHolderItemData::CpPlaceHolderItemData(CpItemDataHelper &itemDataHelper,
 {
 }
 
+CpPlaceHolderItemData::CpPlaceHolderItemData(CpItemDataHelper &itemDataHelper,
+                                            const QString &displayName,
+                                            const QString &pluginFile) 
+                                            : CpSettingFormEntryItemData (
+                                            itemDataHelper,
+                                            displayName,
+                                            pluginFile)
+{
+    
+}
+
 CpPlaceHolderItemData::~CpPlaceHolderItemData()
 {
 }

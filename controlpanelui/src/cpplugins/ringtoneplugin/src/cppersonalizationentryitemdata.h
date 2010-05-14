@@ -18,33 +18,44 @@
 #define CPPERSONALIZATIONENTRYITEMDATA_H
 
 #include <cpsettingformentryitemdata.h>
-#include <xqappmgr.h>
+#include <xqsettingskey.h>
 
 class CpProfileModel;
-class XQApplicationManager;
-class XQAiwRequest;
-
+class XQSettingsManager;
 
 class CpPersonalizationEntryItemData : public CpSettingFormEntryItemData
 {
-        Q_OBJECT
+    Q_OBJECT
 public:
-    explicit CpPersonalizationEntryItemData(CpItemDataHelper &itemDataHelper,
+        typedef enum
+        {
+            TONE_Ring = 0,
+            TONE_Message,
+            TONE_Email,
+            TONE_Reminder
+        }Profile_Tone_Types;
+
+        explicit CpPersonalizationEntryItemData(CpItemDataHelper &itemDataHelper,
                 const QString &text = QString(),
                 const QString &description = QString(),
                 const HbIcon &icon = HbIcon(),
+                Profile_Tone_Types toneType = TONE_Ring,
+                int profileId = -1,
                 const HbDataFormModelItem *parent = 0);
         virtual ~CpPersonalizationEntryItemData();
 private slots:
-        void onLaunchView();
-        void handleOk(const QVariant &result);
-        void handleError(int errorCode, const QString& errorMessage);
+        void handleOk(const QString &strFname);
+        void handleError( int errorCode, const QString& errorMessage );
+        void settingValueChanged( const XQSettingsKey& key, const QVariant& value );
 private:
         virtual CpBaseSettingView *createSettingView() const;
+        QString loadStringValue() const;
+        void storeStringValue( const QString &strvalue ) const;
 private:
-        XQApplicationManager mAppMgr;
-        XQAiwRequest* mReq;
         CpProfileModel *mProfileModel;
+        int m_profileID;
+        Profile_Tone_Types mToneType;
+        XQSettingsManager *mSettingManager;
 };
 
 #endif // CPPERSONALIZATIONENTRYITEMDATA_H

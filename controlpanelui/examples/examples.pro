@@ -15,7 +15,9 @@
 #
 
 TEMPLATE = subdirs
-SUBDIRS = groupplugin/groupplugin.pro viewplugin/viewplugin.pro themeplugin/themeplugin.pro
+SUBDIRS = groupplugin/groupplugin.pro \
+          viewplugin/viewplugin.pro \
+          pluginlauncherclient/pluginlauncherclient.pro
 CONFIG += ordered
 
 include (rom/rom.pri)

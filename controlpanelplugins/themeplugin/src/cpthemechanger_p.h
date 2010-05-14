@@ -1,20 +1,19 @@
 /*
-* Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
-* All rights reserved.
-* This component and the accompanying materials are made available
-* under the terms of "Eclipse Public License v1.0"
-* which accompanies this distribution, and is available
-* at the URL "http://www.eclipse.org/legal/epl-v10.html".
-*
-* Initial Contributors:
-* Nokia Corporation - initial contribution.
-*
-* Contributors:
-*
-* Description:  HbThemeChangerPrivate class definition
-*
-*/
-
+ * Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+ * All rights reserved.
+ * This component and the accompanying materials are made available
+ * under the terms of "Eclipse Public License v1.0""
+ * which accompanies this distribution, and is available
+ * at the URL "http://www.eclipse.org/legal/epl-v10.html".
+ *
+ * Initial Contributors:
+ * Nokia Corporation - initial contribution.
+ *
+ * Contributors:
+ *
+ * Description:  
+ *   
+ */
 
 #ifndef HBTHEMECHANGER_P_H
 #define HBTHEMECHANGER_P_H
@@ -70,8 +69,6 @@ public:
 
     const QList<CpThemeChanger::ThemeInfo>& themes() const;
     void updateThemeList(const QString& currentThemeName = QString());
-
-    const QStringList directories() const;
 
     const CpThemeChanger::ThemeInfo& currentTheme() const;
     int indexOf(const CpThemeChanger::ThemeInfo& theme) const;

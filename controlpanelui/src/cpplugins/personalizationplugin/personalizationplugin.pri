@@ -16,17 +16,15 @@
 
 # Input
 HEADERS += src/cppersonalizationplugin.h  \
-			     src/cppersonalizationgroupitemdata.h \
-			     src/cpmastervolumeslider.h \
+			     src/cppersonalizationgroupitemdata.h\
            src/cpprofilesettingform.h \
-           src/cppersonalizationentryitemdata.h \
+           ../ringtoneplugin/src/cppersonalizationentryitemdata.h \
            src/cppersonalizationadvanceview.h \
            src/cpprofilenameeditdialog.h \
 			     
 SOURCES += src/cppersonalizationplugin.cpp \
 		       src/cppersonalizationgroupitemdata.cpp \
-		       src/cpmastervolumeslider.cpp \
 		       src/cpprofilesettingform.cpp \
-           src/cppersonalizationentryitemdata.cpp \
+           ../ringtoneplugin/src/cppersonalizationentryitemdata.cpp \
            src/cppersonalizationadvanceview.cpp \
            src/cpprofilenameeditdialog.cpp \

@@ -15,5 +15,5 @@
 #
 
 TEMPLATE = subdirs
-SUBDIRS = cpprofilewrapper cpcategorymodel cpapplication seccodeui cpplugins
+SUBDIRS = cpprofilewrapper cpcategorymodel cpringtoneview cpapplication cpserviceprovider  tonefetcher cpplugins
 CONFIG += ordered

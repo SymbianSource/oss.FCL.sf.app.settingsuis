@@ -22,6 +22,7 @@
 #include <hbaction.h>
 
 #include <QGraphicsLinearLayout>
+#include <QScopedPointer>
 
 CpProfileNameEditDialog::CpProfileNameEditDialog( QGraphicsItem *parent )
     :HbDialog( parent )
@@ -49,8 +50,8 @@ void CpProfileNameEditDialog::init()
     
     connect( mTextEdit, SIGNAL( contentsChanged() ), this, SLOT( checkPrimaryAction() ) );
     
-    setPrimaryAction( new HbAction( hbTrId( "txt_common_button_ok" ), this ));
-    setSecondaryAction( new HbAction( hbTrId( "txt_common_button_cancel" ), this ) );
+    addAction( new HbAction( hbTrId( "txt_common_button_ok" ), this ));
+    addAction( new HbAction( hbTrId( "txt_common_button_cancel" ), this ) );
     
     setTimeout( NoTimeout );
 }
@@ -69,24 +70,26 @@ QString CpProfileNameEditDialog::getLineEditText()
 
 bool CpProfileNameEditDialog::launchProfileNameEditDialog( QString &profileName )
 {
-    CpProfileNameEditDialog * profileEditNameDialog = new CpProfileNameEditDialog();
+    CpProfileNameEditDialog *profileEditNameDialog = new CpProfileNameEditDialog();
+    
     profileEditNameDialog->setLineEditText( profileName );
     profileEditNameDialog->checkPrimaryAction();
     
-    if( profileEditNameDialog->exec() == profileEditNameDialog->secondaryAction() ){
-        return false;
-    }
-    else{
-        profileName = profileEditNameDialog->getLineEditText();
-        return true;
-    }
+    HbAction *secondAction = qobject_cast<HbAction *>
+                                 (profileEditNameDialog->actions().at(1));
+    profileEditNameDialog->show();
+    return false;
 }
 
 void CpProfileNameEditDialog::checkPrimaryAction()
 {
-    if( !mTextEdit->text().isEmpty() ){
-        primaryAction()->setEnabled( true );
-    } else {
-        primaryAction()->setEnabled( false );
+    HbAction *const primaryAction = qobject_cast<HbAction *>
+                                                (actions().at(0));
+    if (primaryAction) {
+        if ( !mTextEdit->text().isEmpty() ) {
+            primaryAction->setEnabled(true);        
+        } else {        
+            primaryAction->setEnabled(false);        
+        }
     }
 }

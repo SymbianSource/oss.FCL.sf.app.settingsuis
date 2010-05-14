@@ -16,6 +16,8 @@
 
 INTERNAL_HEADERS += $$PWD/cpcategorysettingformmodel.h \
                     $$PWD/cpcategorysettingformitemdata.h \
-                    $$PWD/cpcategoryglobal.h 
+                    $$PWD/cpcategoryglobal.h \
+                    $$PWD/cptaskexecutor.h \
+                    $$PWD/cpevent.h
                     
 HEADERS += $$INTERNAL_HEADERS

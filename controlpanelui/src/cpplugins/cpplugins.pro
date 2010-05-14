@@ -20,16 +20,12 @@ SUBDIRS = communicationplugin \
   			  privacyplugin \
   			  personalizationplugin \
 			  	lookfeelplugin \
-			  		pincodeplugin \
-					devicelockplugin \
 					profileactivatorplugin \
 					volumeplugin \
-					ringtoneplugin
-					#keytouchfdbkplugin \ 
+					ringtoneplugin \
+					keytouchfdbkplugin 
 					#displayplugin \
 					#applicationsettingsplugin \
 					#accountsplugin
-					#placeholdernoiconplugin \
-					#placeholderplugin \
  
 CONFIG += ordered

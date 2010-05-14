@@ -63,7 +63,7 @@ int CpProfileModel::activateProfile(int profileId)
 /*
  * Get active profile's id
  */
-int CpProfileModel::activeProfileId()
+int CpProfileModel::activeProfileId() const
 {
     return d_ptr->activeProfileId();
 }
@@ -71,9 +71,9 @@ int CpProfileModel::activeProfileId()
 /*!
      Get profile settings, store in center repository keys 
  */
-int CpProfileModel::profileSettings(int profileId, CpProfileSettings& profileSettings)
+void CpProfileModel::profileSettings(int profileId, CpProfileSettings& profileSettings)
 {
-    return d_ptr->profileSettings(profileId, profileSettings);
+    d_ptr->profileSettings(profileId, profileSettings);
 }
 
 /*!
@@ -139,9 +139,9 @@ void CpProfileModel::setMasterVibra(bool isVibra)
      Return the silence mode of device, silence mode will kill all outgoing 
      audio.
  */
-bool CpProfileModel::isSilenceMode() const
+bool CpProfileModel::silenceMode() const
 {
-    return d_ptr->isSilenceMode();
+    return d_ptr->silenceMode();
 }
 
 /*!
@@ -155,9 +155,9 @@ void CpProfileModel::setSilenceMode(bool isSilence)
 /*!
      Return the status of off line mode (air plane mode) of device
  */
-bool CpProfileModel::isOffLineMode() const
+bool CpProfileModel::offLineMode() const
 {
-    return d_ptr->isOffLineMode();
+    return d_ptr->offLineMode();
 }
 
 /*!

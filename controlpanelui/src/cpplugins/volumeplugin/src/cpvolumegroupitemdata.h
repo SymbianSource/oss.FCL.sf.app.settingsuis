@@ -15,8 +15,8 @@
  *
  */
 
-#ifndef CPPROFILESGROUPITEMDATA_H
-#define CPPROFILESGROUPITEMDATA_H
+#ifndef CPVOLUMEGROUPITEMDATA_H
+#define CPVOLUMEGROUPITEMDATA_H
 
 #include <cpsettingformitemdata.h>
 #include <cpprofilemodel.h>

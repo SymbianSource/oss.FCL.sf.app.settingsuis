@@ -28,6 +28,7 @@ class CpPlaceHolderItemData : public CpSettingFormEntryItemData
     Q_OBJECT
 public:
     CpPlaceHolderItemData(CpItemDataHelper &itemDataHelper,const CpPluginConfig &pluginConfig);
+    CpPlaceHolderItemData(CpItemDataHelper &itemDataHelper,const QString &displayName,const QString &pluginFile);
     virtual ~CpPlaceHolderItemData();
 private slots:
 	virtual void onLaunchView();

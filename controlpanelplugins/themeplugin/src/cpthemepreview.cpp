@@ -18,7 +18,7 @@
 #include <QString>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsLinearLayout>
-
+#include <QDebug>
 #include <hbaction.h>
 #include <hbtoolbar.h>
 #include <hbicon.h>
@@ -42,7 +42,8 @@
 CpThemePreview::CpThemePreview(const CpThemeChanger::ThemeInfo& theme, QGraphicsItem *parent) :
      HbView(parent), 
      mTheme(theme),
-     mSoftKeyBackAction(0)
+     mSoftKeyBackAction(0),
+     mPreviewIcon(0)
 {
     
     //Create the layout and add heading and and preview icon to the layout.
@@ -77,16 +78,18 @@ CpThemePreview::CpThemePreview(const CpThemeChanger::ThemeInfo& theme, QGraphics
 
     QObject::connect( cancelAction, SIGNAL(triggered()), 
                       this, SIGNAL(aboutToClose()));
-
-    HbIconItem* layoutItem;
-    //layout->addItem(&HbIconItem(mTheme.icon, this ));
+    
+    QObject::connect( mainWindow(), SIGNAL(orientationChanged(Qt::Orientation)),
+                      this, SLOT(previewOrientationChanged(Qt::Orientation)));
+       
+   
     if(mainWindow()->orientation() == Qt::Horizontal) {
-        layoutItem = new HbIconItem(mTheme.landscapePreviewIcon, this);
+        mPreviewIcon = new HbIconItem(mTheme.landscapePreviewIcon, this);
     }
     else {
-        layoutItem = new HbIconItem(mTheme.portraitPreviewIcon, this);
+        mPreviewIcon = new HbIconItem(mTheme.portraitPreviewIcon, this);
     }
-    layout->addItem(layoutItem);
+    layout->addItem(mPreviewIcon);
     layout->setAlignment(layout->itemAt(0), Qt::AlignTop);
     
     setToolBar(mToolBar);
@@ -94,7 +97,7 @@ CpThemePreview::CpThemePreview(const CpThemeChanger::ThemeInfo& theme, QGraphics
 
     //Setup the Back button action and set softkey. Back button 
     //takes the user to the theme list view.
-    mSoftKeyBackAction = new HbAction(Hb::BackAction, this);
+    mSoftKeyBackAction = new HbAction(Hb::BackNaviAction, this);
     QObject::connect(mSoftKeyBackAction, SIGNAL(triggered()), 
             this, SIGNAL(aboutToClose()) );
 
@@ -140,3 +143,29 @@ void CpThemePreview::themeSelected()
     emit applyTheme(mTheme.name);
 }
 
+/*! 
+ *  Slot to handle landscape/portrait orientation change to use the
+ *  right graphics.
+ */
+void CpThemePreview::previewOrientationChanged(Qt::Orientation orientation)
+{
+   
+    QGraphicsLinearLayout* previewLayout = dynamic_cast<QGraphicsLinearLayout*>(layout());
+   
+    if(mPreviewIcon == dynamic_cast<HbIconItem*>(previewLayout->itemAt(1)) ) {
+        previewLayout->removeAt(1);
+        delete mPreviewIcon;
+        mPreviewIcon = 0;
+        
+        if(orientation == Qt::Horizontal) {
+            mPreviewIcon = new HbIconItem(mTheme.landscapePreviewIcon, this);
+        }
+        else {
+            mPreviewIcon = new HbIconItem(mTheme.portraitPreviewIcon, this);
+        }
+        
+        previewLayout->addItem(mPreviewIcon);
+    }
+    
+}
+    

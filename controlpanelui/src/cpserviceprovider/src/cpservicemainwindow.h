@@ -19,8 +19,10 @@
 #define CPSERVICEMAINWINDOW_H
 
 #include <hbmainwindow.h>
+#include <QPointer>
 
 class CpLauncherService;
+class CpBaseSettingView;
 
 class CpServiceMainWindow : public HbMainWindow
 {
@@ -28,10 +30,14 @@ class CpServiceMainWindow : public HbMainWindow
 public:
     explicit CpServiceMainWindow(QWidget *parent = 0);
     virtual ~CpServiceMainWindow();
+    
+    void setSettingView(CpBaseSettingView *settingView);
+    
 public slots:
     void quit();
 private:
     CpLauncherService *mLauncherService;
+    QPointer<CpBaseSettingView> mSettingViewPointer;
 };
 
 #endif // CPSERVICEMAINWINDOW_H

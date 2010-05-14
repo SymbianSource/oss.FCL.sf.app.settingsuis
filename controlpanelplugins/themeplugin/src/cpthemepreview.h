@@ -48,10 +48,13 @@ signals:
 
 public slots:
     void themeSelected();
+    void previewOrientationChanged(Qt::Orientation orientation);
 
 private:
     CpThemeChanger::ThemeInfo mTheme;
     HbAction* mSoftKeyBackAction;
+    HbIconItem* mPreviewIcon;
+
 };
 
 #endif //CPTHEMEPREVIEW_H

@@ -23,19 +23,23 @@ class CpMainModel;
 class HbAbstractViewItem;
 class HbDataFormModelItem;
 class CpItemDataHelper;
+class HbMainWindow;
 
 class CpMainView : public CpBaseSettingView
 {
 	Q_OBJECT
 public:
-    explicit CpMainView(QGraphicsItem *parent = 0);
+    explicit CpMainView(HbMainWindow *mainWindow = 0);
     virtual ~CpMainView();
     bool event(QEvent *e);
+private slots:
+    void initializeMainModel();
 private:
     Q_DISABLE_COPY(CpMainView)
 private:
 	CpMainModel *mMainModel;
     CpItemDataHelper *mItemDataHelper;
+    HbMainWindow *mMainWindow;
 };
 
 #endif
