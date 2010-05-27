@@ -30,7 +30,7 @@
 #include <QModelIndex>
 #include <QMap>
 
-#include <XQSettingsManager.h>
+#include <xqsettingsmanager.h>
 #include <ProfileEngineInternalCRKeys.h>
 
 CpProfileSettingForm::CpProfileSettingForm()

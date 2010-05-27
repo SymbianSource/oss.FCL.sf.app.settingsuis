@@ -33,14 +33,14 @@
 #include <MProfileFeedbackSettings.h>
 #include <MProfileSetFeedbackSettings.h>
 #include <MProfilesNamesArray.h>
-#include <SettingsInternalCRKeys.h>
+#include <settingsinternalcrkeys.h>
 #include <hbglobal.h>
 #include <QtCore/QStringList>
 #include <MProfileExtended2.h>
 #include <MProfileSetExtraTones2.h>
 #include <MProfileExtraTones2.h>
 #include <MProfileVibraSettings.h>
-#include <MPRofileSetVibraSettings.h>
+#include <MProfileSetVibraSettings.h>
 #include <TProfileToneSettings.h>
 #include <hwrmvibrasdkcrkeys.h>
 #include <centralrepository.h>

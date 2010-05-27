@@ -39,7 +39,7 @@ ToneFetcher::~ToneFetcher()
 
 }
 
-void ToneFetcher::fetch(QString)
+void ToneFetcher::fetch()
 {
     mAsyncRequestIndex = setCurrentRequestAsync();    
     if (mMainWindow) {

@@ -25,11 +25,9 @@
 
 file=ABI_DIR\BUILD_DIR\controlpanel.exe         			 SHARED_LIB_DIR\controlpanel.exe 
 CP_UPGRADABLE_APP_REG_RSC(controlpanel)    
-S60_APP_RESOURCE(controlpanel)   
 
 file=ABI_DIR\BUILD_DIR\cpserviceprovider.exe         			 SHARED_LIB_DIR\cpserviceprovider.exe 
 CP_UPGRADABLE_APP_REG_RSC(cpserviceprovider)    
-S60_APP_RESOURCE(cpserviceprovider)  
 
 file=ABI_DIR\BUILD_DIR\cpcategorymodel.dll			  	 SHARED_LIB_DIR\cpcategorymodel.dll
 file=ABI_DIR\BUILD_DIR\seccodeui.dll                 SHARED_LIB_DIR\seccodeui.dll

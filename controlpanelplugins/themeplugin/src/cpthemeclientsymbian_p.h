@@ -18,43 +18,23 @@
 #ifndef CPTHEMECLIENTSYMBIAN_P_H
 #define CPTHEMECLIENTSYMBIAN_P_H
 
-
-#include <QIcon>
-// TODO Do we need this?
-//#include "hbthemecommon_p.h"
-//ToDo: replace this with forward declaration
+#include <QString>
 #if !defined(__E32BASE_H__)
 #include <e32base.h>
 #endif
 
-class CThemeListenerPrivate;
-class QSizeF;
-class HbEffectFxmlData;
-struct MeshItem;
-
-class CpThemeClientPrivate : public RSessionBase
+class CpThemeClientPrivate
 {
 public:
     CpThemeClientPrivate();
 
     bool connectToServer();
+    
+    bool changeTheme(const QString& newtheme);
+    
     bool isConnected();
 
-    bool changeTheme(const QString& newtheme);
     ~CpThemeClientPrivate();
-    
-public:
-    bool clientConnected;
-
-private:
-    TVersion Version() const;
-    TInt StartServer();
-    TInt CreateServerProcess();
-    
-private:
-    CThemeListenerPrivate *themelistener;
-    QString themeName;
-    bool connected;
 };
 
 #endif /* CPTHEMECLIENTSYMBIAN_P_H */

@@ -38,9 +38,7 @@ namespace {
     static const char* KThemePathKey = "HB_THEMES_DIR";
 #endif
 
-    static const QString KDefaultTheme = "hbdefault";
-    static const char* KSettingsCategory = "currenttheme";
-   
+    static const QString KDefaultTheme = "hbdefault";   
 }
 
 CpThemeChangerPrivate::CpThemeChangerPrivate(CpThemeChanger* qq):
@@ -77,8 +75,12 @@ CpThemeChangerPrivate::CpThemeChangerPrivate(CpThemeChanger* qq):
     #endif
 
     // Get our current state
-    QSettings settings(QLatin1String(ORGANIZATION), QLatin1String(THEME_COMPONENT));
-    mCurrentTheme.name = settings.value(KSettingsCategory).toString();
+    if (HbInstance::instance()) {
+        HbTheme *hbTheme = HbInstance::instance()->theme();
+        if (hbTheme) {
+            mCurrentTheme.name = hbTheme->name();
+        }
+    }
     updateThemeList(mCurrentTheme.name);
 
     // Watch for changes to the theme directory in flash.

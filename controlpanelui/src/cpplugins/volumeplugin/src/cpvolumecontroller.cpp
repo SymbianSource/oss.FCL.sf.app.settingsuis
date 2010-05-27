@@ -27,7 +27,7 @@
 //#include <hbslider.h>
 //#include <hbpushbutton.h>
 
-#include <XQSettingsManager.h>
+#include <xqsettingsmanager.h>
 #include <ProfileEngineInternalCRKeys.h>
 #include <ProfileInternal.hrh>
 

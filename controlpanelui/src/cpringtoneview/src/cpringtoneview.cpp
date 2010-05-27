@@ -72,10 +72,10 @@ void CpRingToneView::onTypeSelected(HbListWidgetItem *item)
                 emit aboutToClose();
                 break;
         case 1:         //tone
-        //        launchMediaFetcher( "com.nokia.symbian.IToneFetch", "fetch(QString)" );
+                launchMediaFetcher( "com.nokia.symbian.IToneFetch", "fetch()" );
                 break;
         case 2:         //music
-                launchMediaFetcher("com.nokia.symbian.IMusicFetch", "fetch(void)" );
+                launchMediaFetcher("com.nokia.symbian.IMusicFetch", "fetch()" );
                 break;
         case 3:         //recording
         case 4:         //get more tones
@@ -110,7 +110,7 @@ void CpRingToneView::launchMediaFetcher( const QString &strService, const QStrin
         mReq = 0;
     }
         //launch media fetcher
-    mReq = mAppMgr.create( strService, strItface, true);
+    mReq = mAppMgr.create(strService, strItface, true);
     if (!mReq)
     {
       CPFW_LOG("CpRingToneView::launchMediaFetcher, Mediafetcher start failed");
@@ -121,12 +121,10 @@ void CpRingToneView::launchMediaFetcher( const QString &strService, const QStrin
         connect(mReq, SIGNAL( requestOk( const QVariant&)), SLOT( handleOk(const QVariant&)) );
         connect(mReq, SIGNAL( requestError( int,const QString&)), SLOT(handleError(int,const QString&)) );
     }
-
-    // Set arguments for request (music fetcher application title)
-    //QList<QVariant> args;
-    //args << QVariant( strTitle );
-    //mReq->setArguments(args);
-
+    
+    QList<QVariant> args;
+    args << QVariant(QString("<app_name>"));
+    mReq->setArguments(args);
     // Make the request
     if (!mReq->send())
     {

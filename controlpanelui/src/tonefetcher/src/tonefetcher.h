@@ -39,7 +39,7 @@ public:
     bool isActive();
         
 public slots:
-    void fetch(QString);
+    void fetch();
     
 private slots:
     void setSelectedPath(const QString &tonePath);
