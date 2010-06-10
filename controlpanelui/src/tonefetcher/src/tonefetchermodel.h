@@ -38,6 +38,7 @@ public:
     void insertInOrder(QStandardItem *fileName, QStandardItem *filePath, int role = Qt::DisplayRole);    
     QString path(const QModelIndex &index) const;
     void refresh();
+    void toBeFreshed();
     void clearAll();
 private:
     /*

@@ -82,6 +82,11 @@ public:
     void preview(const QString &file);
     
     bool IsPlaying();
+    
+    /*
+     * stop previewing
+     */
+    void stop();
 signals:
     void mdeSessionOpened();
     void mdeSessionError(int error);
@@ -89,6 +94,8 @@ signals:
     void queryError(int error);
     void notifyPreviewEvent(ToneFetcherEngine::TPreviewEvent event, int errorId);
     void notifyObjectChanged();
+    void notifyRefreshStart();
+    void notifyRefreshFinish();
 private:
     ToneSelectionEnginePrivate *d;
     TonePreviewPrivate *mAudioPlayer;

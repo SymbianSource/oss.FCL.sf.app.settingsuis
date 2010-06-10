@@ -188,9 +188,18 @@ void CpProfileSettingForm::initProfileItems(int profileId,HbDataFormModelItem *p
     //Touch Screen Vibra item
     modelItem = mModel->appendDataFormItem( HbDataFormModelItem::SliderItem, QString( hbTrId( "txt_cp_setlabel_touch_screen_vibra" ) ), parent );
      //TODO: profileModel need provide Max and Min value( 0-5 ), current max value from profileModel is 3
+    sliderElements.clear();
+    sliderElements << QVariant(HbSlider::IncreaseElement) << QVariant(HbSlider::TrackElement)
+                << QVariant(HbSlider::DecreaseElement);
+    modelItem->setContentWidgetData("sliderElements",sliderElements);
+        
     modelItem->setContentWidgetData( QString( "minimum" ), 0 );
     modelItem->setContentWidgetData( QString( "maximum" ), 5 );
     modelItem->setContentWidgetData( QString("value"), profileSettings.mKeyTouchScreenVibra );
+    QMap< QString, QVariant > iconElements;
+    iconElements.insert(QString("IncreaseElement") , QVariant(":/icon/hb_vol_slider_increment.svg"));
+    iconElements.insert(QString("DecreaseElement"), QVariant(":/icon/hb_vol_slider_decrement.svg") );
+    modelItem->setContentWidgetData( QString( "elementIcons" ), iconElements );
     
     if (profileId == EProfileWrapperGeneralId) {
         addConnection( modelItem, SIGNAL( valueChanged( int )), this, SLOT( on_general_screenVibra_ValueChanged( int )));

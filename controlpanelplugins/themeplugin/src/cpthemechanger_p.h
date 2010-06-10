@@ -22,38 +22,16 @@
 
 #include <QObject>
 
-#include <QAbstractListModel>
-#include <QDir>
-#include <QModelIndex>
-#include <QString>
-#include <QStringList>
-
 #include "cpthemechanger.h"
+#include "cpthemelistmodel.h"
 
 QT_BEGIN_NAMESPACE
+class QString;
+class QStringList;
 class QFileSystemWatcher;
 QT_END_NAMESPACE
 
 class CpThemeClient;
-
-class HbThemeListModel : public QAbstractListModel
-{
-    Q_OBJECT
-
-public:
-   
-    HbThemeListModel(CpThemeChangerPrivate* dd, QObject *parent = 0);
-    virtual ~HbThemeListModel();
-
-    virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
-    virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
-
-public slots:
-    void themeListChanged();
-
-private:
-    CpThemeChangerPrivate *mThemeChangerPrivate;
-};
 
 class CpThemeChangerPrivate
 {
@@ -80,14 +58,15 @@ public:
 
     CpThemeChanger::ThemeInfo mCurrentTheme;
 
-    QString themeRootPath;
-    QString themeRootPathPostfix;
+    QString mThemeRootPath;
+    QString mThemeRootPathPostfix;
+    QStringList mThemesPathList;
 
-    CpThemeClient* themeClient;
-    QFileSystemWatcher* fileWatcher;
-    QList<CpThemeChanger::ThemeInfo> themeList;
-	HbThemeListModel model;
-	friend class HbThemeChangerModel;
+    CpThemeClient* mThemeClient;
+    QFileSystemWatcher* mFileWatcher;
+    QList<CpThemeChanger::ThemeInfo> mThemeList;
+	CpThemeListModel mModel;
+	friend class CpThemeListModel;
 };
 
 #endif /* HBTHEMECHANGER_P_H */

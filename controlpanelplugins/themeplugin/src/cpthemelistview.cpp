@@ -22,6 +22,7 @@
 #include <hbview.h>
 #include <hblabel.h>
 #include <hblistview.h>
+#include <hblistviewitem.h>
 
 #include "cpthemelistview.h"
 
@@ -45,17 +46,17 @@ CpThemeListView::CpThemeListView(QGraphicsItem *parent) : CpBaseSettingView(0, p
     //Create a layout with a heading "Select theme" at top and the list below it.
     HbWidget* contentWidget = new HbWidget(this);
     QGraphicsLinearLayout* layout = new QGraphicsLinearLayout(Qt::Vertical);
-    	
-   
     
     //setup the heading.
-    HbLabel* label = new HbLabel(hbTrId("txt_cp_title_select_theme"), contentWidget);
-    label->setFontSpec(HbFontSpec(HbFontSpec::Primary));
+    HbLabel* label = new HbLabel(hbTrId("txt_cp_title_select_theme"), contentWidget);//txt_cp_title_select_theme
     layout->addItem(label);
 
     connect(mThemeList, SIGNAL(activated(const QModelIndex&)),
             this, SIGNAL(newThemeSelected(const QModelIndex&)));
     
+    HbListViewItem* listViewItem = mThemeList->listItemPrototype();
+    listViewItem->setGraphicsSize(HbListViewItem::LargeIcon);
+   
     //add the list to layout.
     layout->addItem(mThemeList);
 

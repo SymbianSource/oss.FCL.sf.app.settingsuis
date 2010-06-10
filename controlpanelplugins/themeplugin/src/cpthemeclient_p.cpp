@@ -16,12 +16,7 @@
  */
 
 #include "cpthemeclient_p.h"
-
-#ifdef Q_OS_SYMBIAN
-#include "cpthemeclientsymbian_p.h"
-#else
-#include "cpthemeclientqt_p.h"
-#endif
+#include "cpthemeclient_p_p.h"
 
 static CpThemeClient *clientInst=0;
 
@@ -39,12 +34,14 @@ CpThemeClient::CpThemeClient():d_ptr(new CpThemeClientPrivate)
 bool CpThemeClient::connectToServer()
 {
     Q_D(CpThemeClient);
+    
     return d->connectToServer();
 }
 
 bool CpThemeClient::isConnected()
 {
-    Q_D(CpThemeClient);
+    Q_D(const CpThemeClient);
+    
     return d->isConnected();
 }
 
@@ -54,10 +51,9 @@ bool CpThemeClient::isConnected()
 bool CpThemeClient::changeTheme(const QString& newtheme)
 {
     Q_D(CpThemeClient);
+    
     return d->changeTheme(newtheme);
 }
-
-
 
 /**
  * CpThemeClient::~CpThemeClient()
@@ -65,10 +61,9 @@ bool CpThemeClient::changeTheme(const QString& newtheme)
 CpThemeClient::~CpThemeClient()
 {
     Q_D(CpThemeClient);
+    
     delete d;
 }
-
-
 
 /**
  * CpThemeClient::global()

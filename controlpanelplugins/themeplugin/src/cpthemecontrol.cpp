@@ -30,12 +30,10 @@
 
 #include <QString>
 #include <QModelIndex>
-#include <QStandardItemModel>
-#include <QStandardItem>
 #include <QTranslator>
 #include <QSortFilterProxyModel>
-#include <QDebug>
 #include <QThread>
+#include <QTimer>
 
 #include <hbmainwindow.h>
 #include <hbinstance.h>
@@ -45,7 +43,9 @@
 #include "cpthemelistview.h"
 #include "cpthemepreview.h"
 
-static const QString KPlaceholderPreview = ":/image/themePreview.svg";
+#include <hbdialog.h>
+#include <hblabel.h>
+
 
 /*!
 	Helper function to fetch the main window.
@@ -68,10 +68,10 @@ CpThemeControl::CpThemeControl(): mThemeListView(0),
     mThemeChanger(0),
     mListModel(0),
     mSortModel(0),
-    mIdleTimer(0)
+    mThemeChangeFinished(false),
+    mWaitDialog(0)
 {
     mThemeChanger = new CpThemeChanger();
-   
        
     QTranslator *translator = new QTranslator(this);
     QString lang = QLocale::system().name();
@@ -79,12 +79,9 @@ CpThemeControl::CpThemeControl(): mThemeListView(0),
     translator->load("control_panel_" + lang, path);
     qApp->installTranslator(translator);
     
-    mIdleTimer = new QTimer(this);
-    connect(mIdleTimer, SIGNAL(timeout()), this, SLOT(themeChangeTimeout()));
     connect(hbInstance->theme(),SIGNAL(changeFinished()), this, SLOT(themeChangeFinished()));
    
 }
-
 
 
 /*!
@@ -100,6 +97,9 @@ CpThemeControl::~CpThemeControl()
 
     delete mThemePreview;
     mThemePreview = 0;
+    
+    delete mWaitDialog;
+    mWaitDialog = 0;
 }
 
 /*!
@@ -142,8 +142,9 @@ void CpThemeControl::createThemeList()
 CpBaseSettingView* CpThemeControl::themeListView()
 {
     //If the view was removed before by control panel app, create it again.
-    if(!mThemeListView)
+    if(!mThemeListView) {
         createThemeList();
+    }
 
     return mThemeListView;
 }
@@ -219,8 +220,7 @@ void CpThemeControl::newThemeSelected(const QModelIndex& index)
     } else {
         mThemePreview->setThemeInfo(themeInfo);
     }
-    //TODO: use qtTrId(text_id).
-    mThemePreview->setTitle(tr("Control Panel"));
+    mThemePreview->setTitle(hbTrId("txt_cp_title_control_panel"));
 	  	
     mWindow->setCurrentView(mThemePreview);
 	
@@ -240,14 +240,16 @@ void CpThemeControl::themeApplied(const QString& theme)
         mThemeChanger->changeTheme(theme);
         emit themeUpdated(mThemeChanger->currentTheme().name, mThemeChanger->currentTheme().icon);
     }
-
-    //Go back to control panel view. Close theme preview.
-    previewClosed();
-    //ask the themelistview to close.  Control Panel will
-    //take care of removing it from window.
-    triggerThemeListClose();
-
+    
+    //Start a timer. If theme change takes more than 1 seconds,
+    //we will show a dialog (mWaitDialog) until theme change
+    //is done (themeChangeFinished is called).
+    QTimer::singleShot(1000, this, SLOT(themeWaitTimeout()));
+        
+    mThemeChangeFinished = false;
+   
 }
+
 /*!
 	Slot called when the theme preview view is closed.
 */
@@ -289,16 +291,49 @@ void CpThemeControl::triggerThemeListClose()
 
 void CpThemeControl::themeChangeTimeout()
 {
-    //qDebug() << "ThemeChangeTimeout " ;
-    mIdleTimer->stop();
-    QThread::currentThread()->setPriority(QThread::NormalPriority);    
-        
+    //Theme change is finished and idle timer has timed out,
+    //so revert back the application priority to normal
+    //and go back to control panel view.
+    if(mWaitDialog && mWaitDialog->isVisible()) {
+        mWaitDialog->hide();
+    }
+    
+    previewClosed();
+    //ask the themelistview to close.  Control Panel will
+    //take care of removing it from window.
+    triggerThemeListClose();
+    
+    QThread::currentThread()->setPriority(QThread::NormalPriority); 
+}
+
+void CpThemeControl::themeWaitTimeout()
+{
+    //If after this timeOut, theme change is still in progress,
+    //show a processing dialog.
+    if(!mThemeChangeFinished)
+    {
+        if(!mWaitDialog) {
+            mWaitDialog = new HbDialog();
+            mWaitDialog->setModal(false);
+            mWaitDialog->setDismissPolicy(HbPopup::NoDismiss);
+            //TODO: need localized text for Hb Dialog
+            // Create and set HbLabel as content widget.
+            HbLabel *label = new HbLabel("Processing ...");
+            label->setAlignment(Qt::AlignCenter);
+            mWaitDialog->setContentWidget(label);
+        }
+       // as we do not need any signals, calling show() instead of open()
+       mWaitDialog->show();
+    }
 }
 
 void CpThemeControl::themeChangeFinished()
 {
-    //qDebug() << "ThemeChangeFinished " ;
-    mIdleTimer->start(0);
+    //Theme change is done. Start an idle timer to let the UI
+    //finish remaining tasks.
+    QTimer::singleShot(0, this, SLOT(themeChangeTimeout()));
+    mThemeChangeFinished = true;
+    
 }
 
 /*!

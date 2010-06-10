@@ -88,6 +88,11 @@ void ToneFetcherModel::refresh()
     emit layoutChanged();
 }
 
+void ToneFetcherModel::toBeFreshed()
+{
+    emit layoutAboutToBeChanged();
+}
+
 void ToneFetcherModel::clearAll()
 {
     mUserDataLst.clear();

@@ -27,4 +27,5 @@ symbian {
     TARGET.UID3 = 0X20028739
     TARGET.CAPABILITY = All -TCB 
     TARGET.EPOCALLOWDLLDATA = 1
+    LIBS +=  -lprofileeng
 }

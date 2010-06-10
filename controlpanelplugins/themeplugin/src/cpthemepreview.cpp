@@ -18,7 +18,7 @@
 #include <QString>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsLinearLayout>
-#include <QDebug>
+
 #include <hbaction.h>
 #include <hbtoolbar.h>
 #include <hbicon.h>
@@ -26,6 +26,7 @@
 #include <hblabel.h>
 #include <hbiconitem.h>
 #include <hbmainwindow.h>
+#include <HbParameterLengthLimiter>
 
 #include "cpthemepreview.h"
 
@@ -51,13 +52,9 @@ CpThemePreview::CpThemePreview(const CpThemeChanger::ThemeInfo& theme, QGraphics
 
     
     //setup the heading.
-    //TODO: translation of string  hbTrId("txt_cp_title_preview_1")
-    
-    QString themeHeading = tr("Preview: ") + mTheme.name;
+    QString themeHeading = HbParameterLengthLimiter("txt_cp_title_preview_1").arg(mTheme.name);   
     HbLabel* label = new HbLabel(themeHeading, this);
-    label->setFontSpec(HbFontSpec(HbFontSpec::Primary));
    
-    label->setPreferredHeight(5.0);
     layout->addItem(label);
     
     layout->setAlignment(layout->itemAt(0), Qt::AlignTop);
@@ -90,8 +87,7 @@ CpThemePreview::CpThemePreview(const CpThemeChanger::ThemeInfo& theme, QGraphics
         mPreviewIcon = new HbIconItem(mTheme.portraitPreviewIcon, this);
     }
     layout->addItem(mPreviewIcon);
-    layout->setAlignment(layout->itemAt(0), Qt::AlignTop);
-    
+ 
     setToolBar(mToolBar);
     setLayout(layout);
 
@@ -101,7 +97,7 @@ CpThemePreview::CpThemePreview(const CpThemeChanger::ThemeInfo& theme, QGraphics
     QObject::connect(mSoftKeyBackAction, SIGNAL(triggered()), 
             this, SIGNAL(aboutToClose()) );
 
-    this->setNavigationAction(mSoftKeyBackAction);
+    setNavigationAction(mSoftKeyBackAction);
 }
 
 /*!
@@ -152,16 +148,14 @@ void CpThemePreview::previewOrientationChanged(Qt::Orientation orientation)
    
     QGraphicsLinearLayout* previewLayout = dynamic_cast<QGraphicsLinearLayout*>(layout());
    
-    if(mPreviewIcon == dynamic_cast<HbIconItem*>(previewLayout->itemAt(1)) ) {
+    if(mPreviewIcon && mPreviewIcon == dynamic_cast<HbIconItem*>(previewLayout->itemAt(1)) ) {
         previewLayout->removeAt(1);
-        delete mPreviewIcon;
-        mPreviewIcon = 0;
         
         if(orientation == Qt::Horizontal) {
-            mPreviewIcon = new HbIconItem(mTheme.landscapePreviewIcon, this);
+            mPreviewIcon->setIcon(mTheme.landscapePreviewIcon);
         }
         else {
-            mPreviewIcon = new HbIconItem(mTheme.portraitPreviewIcon, this);
+            mPreviewIcon->setIcon(mTheme.portraitPreviewIcon);
         }
         
         previewLayout->addItem(mPreviewIcon);

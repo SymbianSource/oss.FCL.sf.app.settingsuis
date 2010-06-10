@@ -15,7 +15,7 @@
  *   
  */
 
-#include "cpthemeclientqt_p.h"
+#include "cpthemeclient_p_p.h"
 #include <QLocalSocket>
 #include <QProcess>
 #include <QFile>
@@ -28,8 +28,6 @@
 
 #define WAIT_TIME_TO_CONNECT_TO_SERVER 500
 #define WAIT_TIME_TO_START_SERVER 5000
-//static const QString SERVERFILEPATH = QLatin1String(HB_BIN_DIR) + QDir::separator() + QLatin1String("hbthemeserver");
-
 /**
  * Constructor
  */
@@ -87,7 +85,7 @@ bool CpThemeClientPrivate::connectToServer()
 /**
  * isConnected
  */
-bool CpThemeClientPrivate::isConnected()
+bool CpThemeClientPrivate::isConnected() const
 {
     return clientConnected;
 }

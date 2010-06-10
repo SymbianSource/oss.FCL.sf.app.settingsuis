@@ -1,7 +1,5 @@
 <RCC>
     <qresource prefix="/" >
-        <file>image/qgn_menu_note.svg</file>
-        <file>image/themePreview.png</file>
-        <file>image/themePreview.svg</file>
+        <file>image/themePreview.nvg</file>
     </qresource>
 </RCC>

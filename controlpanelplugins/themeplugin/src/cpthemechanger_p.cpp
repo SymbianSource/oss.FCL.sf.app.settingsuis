@@ -17,35 +17,50 @@
 
 #include "cpthemechanger.h"
 #include "cpthemechanger_p.h"
+#include "cpthemelistmodel.h"
+#include "cpthemeclient_p.h"
+#include "cpthemecommon_p.h"
+
 #include <QStringList>
 #include <QSettings>
 #include <QFileSystemWatcher>
 #include <QPixmap>
-#include <QSizeF>
+#include <QFileInfoList>
+#include <QDir>
+
 #include <hbicon.h>
 #include <hbinstance.h>
-#include "cpthemeclient_p.h"
-#include "cpthemecommon_p.h"
-#ifdef Q_OS_SYMBIAN
-#include "cpthemeclientsymbian_p.h"
-#else
-#include "cpthemeclientqt_p.h"
-#endif
 
-namespace {
+
 #if !defined(Q_OS_SYMBIAN)
     #include <stdio.h>
     static const char* KThemePathKey = "HB_THEMES_DIR";
 #endif
-
-    static const QString KDefaultTheme = "hbdefault";   
-}
+    static const QString KDefaultTheme = "sfblacktheme";
+    static const QString KDefaultThemeIcon = ":/image/themePreview.nvg";
+    static const QString KPreviewThumbnailNVG = "/scalable/qtg_graf_theme_preview_thumbnail.nvg";
+    static const QString KPreviewThumbnailSVG = "/scalable/qtg_graf_theme_preview_thumbnail.svg";
+    
+    static const QString KPreviewPrtNVG =       "/scalable/qtg_graf_theme_preview_prt.nvg";
+    static const QString KPreviewLscNVG =       "/scalable/qtg_graf_theme_preview_lsc.nvg";
+    static const QString KPreviewPrtSVG =       "/scalable/qtg_graf_theme_preview_prt.svg";
+    static const QString KPreviewLscSVG =       "/scalable/qtg_graf_theme_preview_lsc.svg";
+   
+    static const QString KBackgroundPrtNVG =    "/scalable/qtg_graf_screen_bg_prt.nvg";
+    static const QString KBackgroundLscNVG =    "/scalable/qtg_graf_screen_bg_lsc.nvg";
+    static const QString KBackgroundPrtSVG =    "/scalable/qtg_graf_screen_bg_prt.svg";
+    static const QString KBackgroundLscSVG =    "/scalable/qtg_graf_screen_bg_lsc.svg";
+    
+    static const QString KBackgroundPrtPNG =    "/pixmap/qtg_graf_screen_bg_prt.png";                     
+    static const QString KBackgroundLscPNG =    "/pixmap/qtg_graf_screen_bg_lsc.png";
+                     
+   
 
 CpThemeChangerPrivate::CpThemeChangerPrivate(CpThemeChanger* qq):
     q_ptr(qq),
-    themeClient(CpThemeClient::global()),
-    fileWatcher(new QFileSystemWatcher(qq)),
-    model(this, qq)
+    mThemeClient(CpThemeClient::global()),
+    mFileWatcher(new QFileSystemWatcher(qq)),
+    mModel(this, qq)
 
 {
     Q_Q(CpThemeChanger);
@@ -53,26 +68,26 @@ CpThemeChangerPrivate::CpThemeChangerPrivate(CpThemeChanger* qq):
     // Figure out where our themes are. This is platform-dependent,
     // but not worth breaking out into platform-private implementations
     // at the moment. Ideally, this would be given to us by the theme server,
-    #ifdef Q_OS_WIN
-    static char* _path=NULL;
-    static size_t _size=0;
+#ifdef Q_OS_WIN
+    static char* _path = NULL;
+    static size_t _size = 0;
     _dupenv_s(&_path, &_size, KThemePathKey);
-    themeRootPath = QString(_path);
-    themeRootPathPostfix = QString();
+    mThemeRootPath = QString(_path);
+    mThemeRootPathPostfix = QString();
     free(_path);
-    #elif defined(Q_OS_SYMBIAN)
-    themeRootPath = "c:\\resource\\hb";
-    themeRootPathPostfix  = "resource\\hb";
-    #elif defined(Q_OS_UNIX)
-    themeRootPath = QString(getenv(KThemePathKey));
-    themeRootPathPostfix = QString();
-    #elif defined(Q_OS_MACX)
-    themeRootPath = QDir::homePath() + '/' + "Library" + QString("hb");
-    themeRootPathPostfix = QString();
-    #else
-    themeRootPath = "c:\\resource\\hb";
-    themeRootPathPostfix = QString();
-    #endif
+#elif defined(Q_OS_SYMBIAN)
+    mThemeRootPath = "c:\\resource\\hb";
+    mThemeRootPathPostfix = "resource\\hb";
+#elif defined(Q_OS_MACX)
+    mThemeRootPath = QDir::homePath() + '/' + "Library" + QString("hb");
+    mThemeRootPathPostfix = QString();
+#elif defined(Q_OS_UNIX)
+    mThemeRootPath = QString(getenv(KThemePathKey));
+    mThemeRootPathPostfix = QString();
+#else
+    mThemeRootPath = "c:\\resource\\hb";
+    mThemeRootPathPostfix = QString();
+#endif
 
     // Get our current state
     if (HbInstance::instance()) {
@@ -81,13 +96,31 @@ CpThemeChangerPrivate::CpThemeChangerPrivate(CpThemeChanger* qq):
             mCurrentTheme.name = hbTheme->name();
         }
     }
-    updateThemeList(mCurrentTheme.name);
-
+  
     // Watch for changes to the theme directory in flash.
     // This may change once we start offering a model.
-    fileWatcher->addPath(themeRootPath+"/themes/");
-    q->connect(fileWatcher, SIGNAL(directoryChanged(const QString&)),
+#if defined(Q_OS_SYMBIAN)
+    QFileInfoList driveInfoList = QDir::drives();
+    foreach (const QFileInfo &driveInfo, driveInfoList) {
+        const QString drive = driveInfo.absolutePath();
+        mThemesPathList << drive + mThemeRootPathPostfix;
+    }
+#else
+    mThemesPathList << mThemeRootPath;
+#endif
+    foreach (const QString &path, mThemesPathList) {
+        QDir themeDir;
+        themeDir.setPath( path ) ;
+        QStringList list = themeDir.entryList(QDir::AllDirs|QDir::NoDotAndDotDot,QDir::Name);
+        if(list.contains("themes", Qt::CaseSensitive )) {
+            mFileWatcher->addPath(themeDir.path() + "/themes/");
+        }
+    }
+    
+    q->connect(mFileWatcher, SIGNAL(directoryChanged(const QString&)),
                q, SLOT(_q_themeDirectoryChanged(const QString&)));
+
+    updateThemeList(mCurrentTheme.name);
 
     // Connect to the theme server
     connectToServer();
@@ -95,7 +128,8 @@ CpThemeChangerPrivate::CpThemeChangerPrivate(CpThemeChanger* qq):
 
 CpThemeChangerPrivate::~CpThemeChangerPrivate()
 {
-    themeClient->releaseInstance();
+    mThemeClient->releaseInstance();
+    mThemeClient = 0;
 }
 
 const CpThemeChanger::ThemeInfo& CpThemeChangerPrivate::currentTheme() const
@@ -110,50 +144,33 @@ const QString& CpThemeChangerPrivate::currentThemeName() const
 
 int CpThemeChangerPrivate::indexOf(const CpThemeChanger::ThemeInfo& theme) const
 {
-    return themeList.indexOf(theme);
+    return mThemeList.indexOf(theme);
 }
 
 void CpThemeChangerPrivate::updateThemeList(const QString& newThemeName)
 {
-    if(!themeList.isEmpty()) {
-        themeList.clear();
+    if(!mThemeList.isEmpty()) {
+        mThemeList.clear();
     }
 
     mCurrentTheme.name = newThemeName.isEmpty() ? KDefaultTheme : newThemeName;
 
-    // Get the list of Drives here
-    QStringList themesPathList;
-
-#if defined(Q_OS_WIN32)
-    themesPathList << themeRootPath;
-#elif defined(Q_OS_SYMBIAN)
-    QFileInfoList driveInfoList = QDir::drives();
-    foreach (const QFileInfo &driveInfo, driveInfoList) {
-        const QString drive = driveInfo.absolutePath();
-        themesPathList << drive + themeRootPathPostfix;
-    }
-#elif defined(Q_OS_UNIX)
-    themesPathList << themeRootPath;
-#elif defined(Q_OS_MACX)
-    themesPathList << themeRootPath;
-#endif
-
-    foreach (const QString &path, themesPathList) {
+    foreach (const QString &path, mThemesPathList) {
         QDir themeDir;
         themeDir.setPath( path ) ;
         QStringList iconthemeslist;
         QStringList list = themeDir.entryList(QDir::AllDirs|QDir::NoDotAndDotDot,QDir::Name);
         CpThemeChanger::ThemeInfo nameIconPair;
 
-        if(list.contains("themes",Qt::CaseSensitive )) {
+        if(list.contains("themes", Qt::CaseSensitive )) {
             QDir root(themeDir.path());
-            themeDir.setPath(root.path()+"/themes/icons/") ;
-            iconthemeslist=themeDir.entryList(QDir::AllDirs|QDir::NoDotAndDotDot,QDir::Name);
+            themeDir.setPath(root.path() + "/themes/icons/") ;
+            iconthemeslist = themeDir.entryList(QDir::AllDirs|QDir::NoDotAndDotDot,QDir::Name);
             foreach(QString themefolder, iconthemeslist) {
-                QDir iconThemePath(root.path()+"/themes/icons/"+themefolder);
+                QDir iconThemePath(root.path() + "/themes/icons/" + themefolder);
                 if(iconThemePath.exists("index.theme") &&
                    (iconThemePath.exists("scalable") || iconThemePath.exists("pixmap") )) {
-                    QSettings iniSetting(iconThemePath.path()+"/index.theme",QSettings::IniFormat);
+                    QSettings iniSetting(iconThemePath.path() + "/index.theme", QSettings::IniFormat);
                     iniSetting.beginGroup("Icon Theme");
                     QString hidden = iniSetting.value("Hidden").toString();
                     QString name = iniSetting.value("Name").toString();
@@ -164,89 +181,90 @@ void CpThemeChangerPrivate::updateThemeList(const QString& newThemeName)
                         continue;
                     }
                     
-                    QString fullPathToIcon(iconThemePath.path() + iconPath);
-                    
-                    if(iconPath.isEmpty()|| !QFileInfo(fullPathToIcon).exists()){
-                        
-                        //Set thumbnail
-                        if(QFileInfo(fullPathToIcon + "/scalable/qtg_graf_theme_preview_thumbnail.svg").exists()){
-                            nameIconPair.icon = HbIcon(fullPathToIcon + "/scalable/qtg_graf_theme_preview_thumbnail.svg");
-                        }else if(QFileInfo(fullPathToIcon + "/scalable/qtg_graf_screen_bg_prt.svg").exists()){
-                            QPixmap px(fullPathToIcon + "/scalable/qtg_graf_screen_bg_prt.svg");
-                            QIcon scaledIcon(px.scaled(QSize(64, 64)));
-                            nameIconPair.icon = HbIcon(scaledIcon);
-                            nameIconPair.icon.setIconName(fullPathToIcon + "/scalable/qtg_graf_screen_bg_prt.svg");
-                           
-                        } else if(QFileInfo(fullPathToIcon + "/pixmap/qtg_graf_screen_bg_prt.png").exists()){
-                            QPixmap px(fullPathToIcon + "/pixmap/qtg_graf_screen_bg_prt.png");
-                            QIcon scaledIcon(px.scaled(QSize(64, 64)));
-                            nameIconPair.icon = HbIcon(scaledIcon);
-                            nameIconPair.icon.setIconName(fullPathToIcon + "/scalable/qtg_graf_screen_bg_prt.png");
-                          
-                        } else{
-                            nameIconPair.icon = HbIcon(":/image/themePreview.svg");
+                    QString fullPathToIcon(iconThemePath.path());
+                     
+                    if(iconPath.isEmpty()|| !QFileInfo(fullPathToIcon + iconPath).exists()){
+                       //Set thumbnail
+                        if(QFileInfo(fullPathToIcon + KPreviewThumbnailNVG).exists()){
+                            nameIconPair.icon = HbIcon(fullPathToIcon + KPreviewThumbnailNVG);
+                        }else if(QFileInfo(fullPathToIcon + KPreviewThumbnailSVG).exists()){
+                            nameIconPair.icon = HbIcon(fullPathToIcon + KPreviewThumbnailSVG);
+                        }else if(QFileInfo(fullPathToIcon + KBackgroundPrtNVG).exists()){
+                            nameIconPair.icon = HbIcon(fullPathToIcon + KBackgroundPrtNVG);
+                        } else if(QFileInfo(fullPathToIcon + KBackgroundPrtSVG).exists()){
+                            nameIconPair.icon = HbIcon(fullPathToIcon + KBackgroundPrtSVG);
+                        } else if(QFileInfo(fullPathToIcon + KBackgroundPrtPNG).exists()){
+                            nameIconPair.icon = HbIcon(fullPathToIcon + KBackgroundPrtPNG); 
+                        }else{
+                            nameIconPair.icon = HbIcon(KDefaultThemeIcon);
                         }
+
                     } else {
-                        nameIconPair.icon = HbIcon(fullPathToIcon);
+                        nameIconPair.icon = HbIcon(fullPathToIcon + iconPath);
                     }
                     
                     //Portrait preview
-                    QString fullPathToPreviewPrt = (iconThemePath.path() + previewPathPrt );
                     
-                    if(previewPathPrt.isEmpty() || !QFileInfo(fullPathToPreviewPrt).exists()) {
+                    if(previewPathPrt.isEmpty() || !QFileInfo(fullPathToIcon + previewPathPrt).exists()) {
                     
-                        if(QFileInfo(fullPathToPreviewPrt + "/scalable/qtg_graf_theme_preview_prt.svg").exists()){
-                            nameIconPair.portraitPreviewIcon = HbIcon(fullPathToPreviewPrt + "/scalable/qtg_graf_theme_preview_prt.svg");
-                        }else if(QFileInfo(fullPathToPreviewPrt + "/scalable/qtg_graf_screen_bg_prt.svg").exists()){
-                            nameIconPair.portraitPreviewIcon = HbIcon(fullPathToPreviewPrt + "/scalable/qtg_graf_screen_bg_prt.svg");
-                        } else if(QFileInfo(fullPathToPreviewPrt + "/pixmap/qtg_graf_screen_bg_prt.png").exists()){
-                            nameIconPair.portraitPreviewIcon = HbIcon(fullPathToPreviewPrt + "/pixmap/qtg_graf_screen_bg_prt.png");
+                        if(QFileInfo(fullPathToIcon + KPreviewPrtNVG).exists()){
+                            nameIconPair.portraitPreviewIcon = HbIcon(fullPathToIcon + KPreviewPrtNVG);
+                        }else if(QFileInfo(fullPathToIcon + KPreviewPrtSVG).exists()){
+                            nameIconPair.portraitPreviewIcon = HbIcon(fullPathToIcon + KPreviewPrtSVG);
+                        }else if(QFileInfo(fullPathToIcon + KBackgroundPrtNVG).exists()){
+                            nameIconPair.portraitPreviewIcon = HbIcon(fullPathToIcon + KBackgroundPrtNVG);
+                        } else if(QFileInfo(fullPathToIcon + KBackgroundPrtSVG).exists()){
+                            nameIconPair.portraitPreviewIcon = HbIcon(fullPathToIcon + KBackgroundPrtSVG);
+                        } else if(QFileInfo(fullPathToIcon + KBackgroundPrtPNG).exists()){
+                            nameIconPair.portraitPreviewIcon = HbIcon(fullPathToIcon + KBackgroundPrtPNG);
                         } else{
-                            nameIconPair.portraitPreviewIcon = HbIcon(":/image/themePreview.svg");
+                            nameIconPair.portraitPreviewIcon = HbIcon(KDefaultThemeIcon);
                         }
                     }
                     else {
-                        nameIconPair.portraitPreviewIcon = HbIcon(fullPathToPreviewPrt);
+                        nameIconPair.portraitPreviewIcon = HbIcon(fullPathToIcon + previewPathPrt);
                     }
                     
                     //Landscape preview
-                    QString fullPathToPreviewLsc = (iconThemePath.path() + previewPathLsc );
-                                    
-                    if(previewPathLsc.isEmpty() || !QFileInfo(fullPathToPreviewLsc).exists()) {
-                                
-                        if(QFileInfo(fullPathToPreviewLsc + "/scalable/qtg_graf_theme_preview_lsc.svg").exists()){
-                            nameIconPair.landscapePreviewIcon = HbIcon(fullPathToPreviewLsc + "/scalable/qtg_graf_theme_preview_lsc.svg");
-                        }else if(QFileInfo(fullPathToPreviewLsc + "/scalable/qtg_graf_screen_bg_lsc.svg").exists()){
-                            nameIconPair.landscapePreviewIcon = HbIcon(fullPathToPreviewLsc + "/scalable/qtg_graf_screen_bg_lsc.svg");
-                        } else if(QFileInfo(fullPathToPreviewLsc + "/pixmap/qtg_graf_screen_bg_lsc.png").exists()){
-                            nameIconPair.landscapePreviewIcon = HbIcon(fullPathToPreviewLsc + "/pixmap/qtg_graf_screen_bg_lsc.png");
+                    
+                    if(previewPathLsc.isEmpty() || !QFileInfo(fullPathToIcon + previewPathLsc).exists()) {
+                        if(QFileInfo(fullPathToIcon + KPreviewLscNVG).exists()){
+                            nameIconPair.landscapePreviewIcon = HbIcon(fullPathToIcon + KPreviewLscNVG);
+                        }else if(QFileInfo(fullPathToIcon + KPreviewLscSVG).exists()){
+                            nameIconPair.landscapePreviewIcon = HbIcon(fullPathToIcon + KPreviewLscSVG);
+                        }else if(QFileInfo(fullPathToIcon + KBackgroundLscNVG).exists()){
+                            nameIconPair.landscapePreviewIcon = HbIcon(fullPathToIcon + KBackgroundLscNVG);
+                        } else if(QFileInfo(fullPathToIcon + KBackgroundLscSVG).exists()){
+                            nameIconPair.landscapePreviewIcon = HbIcon(fullPathToIcon + KBackgroundLscSVG);
+                        } else if(QFileInfo(fullPathToIcon + KBackgroundLscPNG).exists()){
+                            nameIconPair.landscapePreviewIcon = HbIcon(fullPathToIcon + KBackgroundLscPNG);
                         } else{
-                            nameIconPair.landscapePreviewIcon = HbIcon(":/image/themePreview.svg");
+                            nameIconPair.landscapePreviewIcon = HbIcon(KDefaultThemeIcon);
                         }
                     }
                     else {
-                        nameIconPair.landscapePreviewIcon = HbIcon(fullPathToPreviewLsc);
+                        nameIconPair.landscapePreviewIcon = HbIcon(fullPathToIcon + previewPathLsc);
                     }
                 
                     nameIconPair.name = name;
                                         
-                    themeList.append(nameIconPair);
+                    mThemeList.append(nameIconPair);
 
                     if (name == mCurrentTheme.name) {
                         mCurrentTheme = nameIconPair;
                     }
 
                     iniSetting.endGroup();
-                    if((hidden == "true") ||( hidden == "")||(name!=themefolder) ) {
+                    if((hidden == "true") ||( hidden == "")||(name != themefolder) ) {
                         iconthemeslist.removeOne(themefolder);
-                        if(!themeList.isEmpty()) {
-                            themeList.removeLast();
+                        if(!mThemeList.isEmpty()) {
+                            mThemeList.removeLast();
                         }
                     }
                 } else {
                     iconthemeslist.removeOne(themefolder);
-                    if(!themeList.isEmpty()) {
-                        themeList.removeLast();
+                    if(!mThemeList.isEmpty()) {
+                        mThemeList.removeLast();
                     }
                 }
             }
@@ -258,8 +276,8 @@ void CpThemeChangerPrivate::updateThemeList(const QString& newThemeName)
         // Include default
          CpThemeChanger::ThemeInfo def;
          def.name = KDefaultTheme;
-         def.icon = HbIcon(":/image/themePreview.svg");
-         themeList.append(def);
+         def.icon = HbIcon(KDefaultThemeIcon);
+         mThemeList.append(def);
   
          mCurrentTheme = def;
     }
@@ -268,12 +286,12 @@ void CpThemeChangerPrivate::updateThemeList(const QString& newThemeName)
 
 const QList<CpThemeChanger::ThemeInfo>& CpThemeChangerPrivate::themes() const
 {
-   return themeList;
+   return mThemeList;
 }
 
 bool CpThemeChangerPrivate::connectToServer()
 {
-    return themeClient->connectToServer();
+    return mThemeClient->connectToServer();
 }
 
 /**
@@ -281,7 +299,7 @@ bool CpThemeChangerPrivate::connectToServer()
  */
 bool CpThemeChangerPrivate::isConnected() const
 {
-    return themeClient->isConnected();
+    return mThemeClient->isConnected();
 }
 
 /**
@@ -291,13 +309,14 @@ bool CpThemeChangerPrivate::changeTheme(const QString& newTheme)
 {
     bool result = false;
     // Skip doing this if the request is for the current theme
-    if (newTheme.isEmpty() || newTheme == mCurrentTheme.name) return result;
+    if (newTheme.isEmpty() || newTheme == mCurrentTheme.name) {
+        return result;
+    }
 
-    // Make sure it's a valid theme name
+    // Make sure it's a valid theme name and set the current theme.
     bool exists = false;
-    QList<CpThemeChanger::ThemeInfo> themeList = themes();
     QList<CpThemeChanger::ThemeInfo>::const_iterator i;
-    for (i = themeList.constBegin(); i != themeList.constEnd(); ++i) {
+    for (i = mThemeList.constBegin(); i != mThemeList.constEnd(); ++i) {
         if ( newTheme == i->name) {
             exists = true;
             break;
@@ -305,8 +324,10 @@ bool CpThemeChangerPrivate::changeTheme(const QString& newTheme)
     }
 
     if (exists) {
-        result = themeClient->changeTheme(newTheme);
-		updateThemeList(newTheme);
+        result = mThemeClient->changeTheme(newTheme);
+        if(result) {
+            mCurrentTheme = *i;
+        }
     }
     return result;
 }
@@ -316,88 +337,6 @@ void CpThemeChangerPrivate::_q_themeDirectoryChanged(const QString&)
     updateThemeList();
 }
 
-/*
-    HbThemeChangerModel provides an interface to the data contained in the
-    HbThemeChanger using QAbstractListModel.
-*/
 
-/*
-    Constructor
-*/
-HbThemeListModel::HbThemeListModel(CpThemeChangerPrivate *dd, QObject* parent)
-    : QAbstractListModel(parent)
-    , mThemeChangerPrivate(dd)
-{
-    connect(dd->fileWatcher, SIGNAL(directoryChanged(const QString&)),
-        this, SLOT(themeListChanged()));
-}
-
-/*
-    Destructor
-*/
-HbThemeListModel::~HbThemeListModel()
-{
-
-}
-
-/*
-    Reimplemented from QAbstractListModel.
-*/
-int HbThemeListModel::rowCount(const QModelIndex&) const
-{
-    return mThemeChangerPrivate->themeList.size();
-}
-
-/*
-    Reimplemented from QAbstractListModel.  Provides the data for Qt::DisplayRole and
-    Qt::DecorationRole.
-*/
-QVariant HbThemeListModel::data(const QModelIndex& index, int role) const
-{
-    QVariant retVal = QVariant();
-
-    if (index.isValid()) {
-        switch (role) {
-            case Qt::DisplayRole:
-                retVal = mThemeChangerPrivate->themeList.at(index.row()).name;
-                break;
-
-            case Qt::DecorationRole:
-                retVal = mThemeChangerPrivate->themeList.at(index.row()).icon;
-                break;
-
-        case Qt::SizeHintRole:
-                retVal = mThemeChangerPrivate->themeList.at(index.row()).icon.size();
-                break;
-        case CpThemeChanger::PortraitPreviewRole:
-                retVal = mThemeChangerPrivate->themeList.at(index.row()).portraitPreviewIcon;
-                break;
-        case CpThemeChanger::LandscapePreviewRole:
-                retVal = mThemeChangerPrivate->themeList.at(index.row()).landscapePreviewIcon;
-
-            default:
-                // do nothing
-                qt_noop();
-        }
-    }
-
-    return retVal;
-}
-
-/*
-    Responds appropriately when the underlying data in the theme changer is modified.
-
-    Unfortunately the directory watcher from QFileWatcher only says when something changed
-    not what changed.  Therefore the model is considered reset rather than having rows
-    with dataChanged.
-*/
-void HbThemeListModel::themeListChanged()
-{
-    beginResetModel();
-
-    mThemeChangerPrivate->themes();
-
-    endResetModel();
-}
 
 // End of file

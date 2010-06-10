@@ -15,7 +15,7 @@
  *   
  */
 
-#include "cpthemeclientsymbian_p.h"
+#include "cpthemeclient_p_p.h"
 #include "cpthemesymbiancommon_p.h"
 #include <e32property.h>
 
@@ -40,7 +40,7 @@ bool CpThemeClientPrivate::connectToServer()
 /**
 Indicates a connection to the server
 */
-bool CpThemeClientPrivate::isConnected()
+bool CpThemeClientPrivate::isConnected() const
 {
     return true;
 }

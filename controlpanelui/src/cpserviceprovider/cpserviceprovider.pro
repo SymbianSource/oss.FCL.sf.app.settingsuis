@@ -27,7 +27,7 @@ LIBS+=-lxqservice -lxqserviceutil -lcpframework
 
 SERVICE.FILE = service_conf.xml
 SERVICE.OPTIONS = embeddable
-SERVICE.OPTIONS += hidden embeddable
+SERVICE.OPTIONS += hidden
 
 libFiles.sources = xqservice.dll
 libFiles.path = "!:\sys\bin"

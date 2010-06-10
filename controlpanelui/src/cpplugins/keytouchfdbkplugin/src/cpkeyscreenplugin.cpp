@@ -30,7 +30,7 @@ QList<CpSettingFormItemData*> CpKeyScreenPlugin::createSettingFormItemData(CpIte
 {
     CpSettingFormItemData* itemData = new CpSettingFormEntryItemDataImpl<CpKeyScreenView>(
 			itemDataHelper,
-			hbTrId("Keys & screen"));
+			hbTrId("txt_cp_list_keys_screen"));
     return QList<CpSettingFormItemData*>() << itemData;
 }
 

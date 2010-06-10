@@ -19,8 +19,6 @@
 #define CPTHEMECLIENT_P_H
 
 #include <qglobal.h>
-#include <QByteArray>
-
 
 class CpThemeClientPrivate;
 

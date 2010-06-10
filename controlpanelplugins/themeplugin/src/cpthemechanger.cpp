@@ -17,10 +17,10 @@
 
 #include "cpthemechanger.h"
 #include "cpthemechanger_p.h"
+#include "cpthemelistmodel.h"
 
 /*!
   @alpha
-  @hbcore
   \class CpThemeChanger
 
   \brief CpThemeChanger provides an interface for changing the current
@@ -46,8 +46,8 @@ CpThemeChanger::CpThemeChanger(QObject* p) :
 QAbstractItemModel& CpThemeChanger::model()
 {
     Q_D(CpThemeChanger);
-   
-    return d->model;
+
+    return d->mModel;
 }
 
 
@@ -83,13 +83,17 @@ bool CpThemeChanger::isConnected() const
 const CpThemeChanger::ThemeInfo& CpThemeChanger::currentTheme() const
 {
     Q_D(const CpThemeChanger);
-
+    
     return d->currentTheme();
 }
 
+/*
+ *  Returns index of theme from the theme list (not the model).
+ */
 int CpThemeChanger::indexOf(const ThemeInfo& theme) const
 {
     Q_D(const CpThemeChanger);
+    
     return d->indexOf(theme);
 }
 

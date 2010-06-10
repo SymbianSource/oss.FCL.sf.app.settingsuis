@@ -19,6 +19,7 @@
 #define CPTHEMECHANGER_H
 
 #include <QStringList>
+
 #include <hbicon.h>
 #include <hbglobal.h>
 
@@ -36,8 +37,12 @@ public:
      explicit CpThemeChanger(QObject* parent=0);
     ~CpThemeChanger();
 
-    struct ThemeInfo 
-    {
+    enum ThemeListUserRole {
+           PortraitPreviewRole = Qt::UserRole,
+           LandscapePreviewRole
+    };
+      
+    struct ThemeInfo{
         QString name;
         HbIcon  icon;
         HbIcon portraitPreviewIcon;
@@ -48,11 +53,6 @@ public:
         bool operator == (const struct ThemeInfo &other) const {
             return name.localeAwareCompare(other.name) == 0;
         }
-    };
-    
-    enum ThemeListUserRole {
-        PortraitPreviewRole = Qt::UserRole,
-        LandscapePreviewRole
     };
     
     QAbstractItemModel& model();
