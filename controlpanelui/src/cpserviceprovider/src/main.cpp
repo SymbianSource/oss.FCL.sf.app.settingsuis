@@ -17,6 +17,8 @@
 #include <hbapplication.h>
 #include <hbstyleloader.h>
 #include <QDir>
+#include <QTranslator>
+#include <QLocale>
 #include <cpbasepath.h>
 #include "cpservicemainwindow.h"
 #include "cpsplogger.h"
@@ -28,6 +30,12 @@ int main(int argc, char **argv)
     Logger::instance(CPSP_LOGGER_NAME)->configure(
             CPSP_LOGGER_CONFIG_PATH,QSettings::IniFormat);
     CPSP_LOG("Entering CpServiceProvider.exe...");
+    
+    QTranslator translator;
+    if (translator.load("control_panel_" + QLocale::system().name(),"Z:/resource/qt/translations"))
+    {
+        qApp->installTranslator(&translator);
+    }
     
     HbStyleLoader::registerFilePath(CP_RESOURCE_PATH + QDir::separator() + WIDGETML_SUB_PATH);
     

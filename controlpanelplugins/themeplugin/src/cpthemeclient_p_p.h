@@ -15,41 +15,60 @@
  *   
  */
 
-#ifndef CPTHEMECLIENTQT_P_H
-#define CPTHEMECLIENTQT_P_H
+#ifndef CPTHEMECLIENT_P_P_H
+#define CPTHEMECLIENT_P_P_H
 
 #include <QIcon>
 #include "cpthemecommon_p.h"
 
-class QString;
-class QSizeF;
-class QLocalSocket;
+#ifdef Q_OS_SYMBIAN
+#include <e32base.h>
+#endif
 
-class CpThemeClientPrivate : public QObject
+class QSizeF;
+#ifndef Q_OS_SYMBIAN
+class QLocalSocket;
+#endif
+
+class CpThemeClientPrivate :
+#ifdef Q_OS_SYMBIAN
+public RSessionBase
+#else
+public QObject
+#endif
 {
+#ifndef Q_OS_SYMBIAN
     Q_OBJECT
+#endif
 
 public:
     CpThemeClientPrivate();
     bool connectToServer();
-    bool isConnected();
-
-    bool changeTheme(const QString& newtheme);
-
+    bool isConnected() const;
+	bool changeTheme(const QString& newTheme);
     ~CpThemeClientPrivate();
     
+#ifndef Q_OS_SYMBIAN
 public slots:
-    void themeChanged();
+    void changeTheme();
+#endif
 
 public:
     bool clientConnected;
 
 private:
-    void handleThemeChangeRequest(QDataStream &dataStream);
+#ifdef Q_OS_SYMBIAN
+    TVersion Version() const;
+    TInt StartServer();
+    TInt CreateServerProcess();
+#endif
 
 private:
+#ifdef Q_OS_SYMBIAN
+	friend class CThemeListenerPrivate;
+#else
     QLocalSocket* localSocket;
-    QString themeName;
+#endif 
 };
 
-#endif // HBTHEMECLIENTQT_P_H
+#endif // HBTHEMECLIENT_P_P_H

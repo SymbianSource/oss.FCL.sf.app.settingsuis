@@ -73,7 +73,7 @@ void ToneFetcherWidget::on_list_activated(const QModelIndex &index)
     
     //stop previewing when clicking another item.
     if (mServiceEngine->IsPlaying()) {
-        mServiceEngine->preview(getCurrentItemPath());
+        mServiceEngine->stop();
     }
     /*
      * when one item is selected, reselecting it will deselect it. selecting another 
@@ -171,7 +171,12 @@ QString ToneFetcherWidget::getCurrentItemPath()
 
 void ToneFetcherWidget::playOrPause() 
 {
+    if(mServiceEngine->IsPlaying()) {
+        mServiceEngine->stop();
+    } else {    
     mServiceEngine->preview(getCurrentItemPath());
+    }
+    
 }
 
 void ToneFetcherWidget::previewEvent(ToneFetcherEngine::TPreviewEvent event, int errorId) 
@@ -186,6 +191,11 @@ void ToneFetcherWidget::previewEvent(ToneFetcherEngine::TPreviewEvent event, int
 
 void ToneFetcherWidget::onObjectChanged()
 {
+    if (mServiceEngine->IsPlaying()) {
+        mServiceEngine->stop();      
+    }
+    emit triggerToolBar(false);
+    mToneModel->toBeFreshed();
     mToneModel->clearAll();
     mDigitalSoundList.clear();
     mSimpleSoundList.clear();

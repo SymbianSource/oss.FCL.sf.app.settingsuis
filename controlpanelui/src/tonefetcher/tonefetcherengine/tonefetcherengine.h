@@ -82,6 +82,11 @@ public:
     void preview(const QString &file);
     
     bool IsPlaying();
+    
+    /*
+     * stop previewing
+     */
+    void stop();
 signals:
     void mdeSessionOpened();
     void mdeSessionError(int error);

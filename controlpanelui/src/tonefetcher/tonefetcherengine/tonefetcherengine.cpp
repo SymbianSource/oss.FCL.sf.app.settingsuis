@@ -59,4 +59,10 @@ bool ToneFetcherEngine::IsPlaying()
 {
     mAudioPlayer->IsPlaying();
 }
+
+void ToneFetcherEngine::stop()
+{
+    mAudioPlayer->Stop();
+}
+
 //End of File

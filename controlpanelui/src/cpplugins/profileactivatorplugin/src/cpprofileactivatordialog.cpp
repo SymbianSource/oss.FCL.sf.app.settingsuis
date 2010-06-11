@@ -61,6 +61,9 @@ CpProfileActivatorDialog::~CpProfileActivatorDialog()
 void CpProfileActivatorDialog::confirmProfileSelection()
 {
     int currentIndex = mProfileList->selected();
+    if (currentIndex == -1) {
+        return;
+    }
     
     // the best choice is no need to convert the index to id
     mProfileModel.activateProfile(mProfileIds.at(currentIndex));

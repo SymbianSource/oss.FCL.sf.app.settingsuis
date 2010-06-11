@@ -20,6 +20,8 @@
 #include <cpsettingformentryitemdata.h>
 
 class CpProfileModel;
+class CpProfileMonitor;
+
 class CpProfileActivatorEntryItem : public CpSettingFormEntryItemData
 {
 Q_OBJECT
@@ -31,12 +33,14 @@ public:
     virtual ~CpProfileActivatorEntryItem();
 private slots:
     void onLaunchView();
+    void onProfileChanged(int activeProfileId);
     //void handleOk(const QVariant &result);
     //void handleError(int errorCode, const QString& errorMessage);
 private:
     virtual CpBaseSettingView *createSettingView() const;
 private:
     CpProfileModel *mProfileModel;
+    CpProfileMonitor *mProfileMonitor;
 };
 
 #endif // CPPROFILEACTIVATORENTRYITEM_H

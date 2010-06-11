@@ -27,6 +27,7 @@
 #include <e32property.h>
 #include <QObject>
 #include "tonefetcherengine.h"
+#include <coemain.h>
 
 class C3DRingingToneInterface;
 class RWindow;
@@ -164,7 +165,8 @@ protected:
 
 class TonePreviewPrivate : public CMFPreviewHandlerBase,
                            public MDrmAudioPlayerCallback,
-                           public MMdaAudioToneObserver
+                           public MMdaAudioToneObserver,
+                           public MCoeForegroundObserver
 
 {
 Q_OBJECT
@@ -196,6 +198,9 @@ private:
     void MdapcInitComplete(TInt aError,
             const TTimeIntervalMicroSeconds& aDuration);
     void MdapcPlayComplete(TInt aError);
+    // from MCoeForegroundObserver
+    void HandleLosingForeground();
+    void HandleGainingForeground();
 
 private:
     // audio player

@@ -237,6 +237,8 @@ TonePreviewPrivate::TonePreviewPrivate( QObject *parent ) : CMFPreviewHandlerBas
     iAudioPlayerStatus = EPlayerNotCreated;
     CMFPreviewHandlerBase::ConstructL();
     iTonePlayerStatus = EPlayerNotCreated;
+    CCoeEnv* coeEnv = CCoeEnv::Static();
+    coeEnv->AddForegroundObserverL( *this );
     }
 
 TonePreviewPrivate::~TonePreviewPrivate()
@@ -264,12 +266,7 @@ TBool TonePreviewPrivate::IsPlaying()
     }
 
 void TonePreviewPrivate::Play()
-    {
-    if( IsPlaying() )
-        {
-        Stop();
-        return;
-        }
+    {    
     //sequence for playing a beep once sound
     _LIT8( KFileListBeepSequence, "\x00\x11\x06\x0A\x08\x73\x0A\x40\x28\x0A\xF7\
     \x05\xFC\x40\x64\x0A\x08\x40\x32\x0A\xF7\x06\x0B" ); 
@@ -600,4 +597,16 @@ void TonePreviewPrivate::MdapcPlayComplete( TInt aError )
     {  
     Cancel();
     emit notifyPreviewEvent( ToneFetcherEngine::EAudioPreviewComplete, aError );
+    }
+
+void TonePreviewPrivate::HandleLosingForeground()
+    {
+    if ( IsPlaying() )
+        {
+        Stop();
+        }
+    }
+void TonePreviewPrivate::HandleGainingForeground()
+    {
+    
     }

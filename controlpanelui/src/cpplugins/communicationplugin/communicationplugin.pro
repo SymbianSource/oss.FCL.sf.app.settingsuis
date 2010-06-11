@@ -26,6 +26,7 @@ include ( communicationplugin.pri )
 
 symbian { 
     TARGET.UID3 = 0x20025FDF
+    LIBS +=  -lxqsettingsmanager
 }
 
 symbian { 

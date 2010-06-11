@@ -32,7 +32,7 @@ QList<CpSettingFormItemData*> CpCommunicationPlugin::createSettingFormItemData(C
     CpCategorySettingFormItemData *itemData = 
             new CpCommunicationGroupItemData(
             HbDataFormModelItem::GroupItem,
-            QString("Connectivity"),
+            hbTrId("txt_cp_subhead_connectivity"),
             QString("cpcommunicationplugin.cpcfg") );
     return QList<CpSettingFormItemData*>() << itemData;
 }

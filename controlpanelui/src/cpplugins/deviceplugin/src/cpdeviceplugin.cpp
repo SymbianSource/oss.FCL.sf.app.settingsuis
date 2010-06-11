@@ -32,7 +32,7 @@ QList<CpSettingFormItemData*> CpDevicePlugin::createSettingFormItemData(CpItemDa
     CpCategorySettingFormItemData *itemData = 
             new CpCategorySettingFormItemData(
             HbDataFormModelItem::GroupItem,
-            tr("Device"),
+            hbTrId("txt_cp_subhead_device"),
             QString("cpdeviceplugin.cpcfg") );
     return QList<CpSettingFormItemData*>() << itemData;
 }

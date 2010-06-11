@@ -30,11 +30,8 @@
 
 #include <QString>
 #include <QModelIndex>
-#include <QStandardItemModel>
-#include <QStandardItem>
 #include <QTranslator>
 #include <QSortFilterProxyModel>
-#include <QDebug>
 #include <QThread>
 
 #include <hbmainwindow.h>
@@ -142,8 +139,9 @@ void CpThemeControl::createThemeList()
 CpBaseSettingView* CpThemeControl::themeListView()
 {
     //If the view was removed before by control panel app, create it again.
-    if(!mThemeListView)
+    if(!mThemeListView) {
         createThemeList();
+    }
 
     return mThemeListView;
 }
@@ -248,6 +246,7 @@ void CpThemeControl::themeApplied(const QString& theme)
     triggerThemeListClose();
 
 }
+
 /*!
 	Slot called when the theme preview view is closed.
 */
@@ -289,15 +288,13 @@ void CpThemeControl::triggerThemeListClose()
 
 void CpThemeControl::themeChangeTimeout()
 {
-    //qDebug() << "ThemeChangeTimeout " ;
     mIdleTimer->stop();
-    QThread::currentThread()->setPriority(QThread::NormalPriority);    
+    QThread::currentThread()->setPriority(QThread::NormalPriority); 
         
 }
 
 void CpThemeControl::themeChangeFinished()
 {
-    //qDebug() << "ThemeChangeFinished " ;
     mIdleTimer->start(0);
 }
 
