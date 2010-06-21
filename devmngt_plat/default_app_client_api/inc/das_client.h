@@ -22,7 +22,7 @@
 
 #include <e32def.h>
 #include <e32base.h>
-#include <aknserverapp.h>
+#include <AknServerApp.h>
 
 class RDefaultAppService; 
  
