@@ -94,6 +94,8 @@ signals:
     void queryError(int error);
     void notifyPreviewEvent(ToneFetcherEngine::TPreviewEvent event, int errorId);
     void notifyObjectChanged();
+    void notifyRefreshStart();
+    void notifyRefreshFinish();
 private:
     ToneSelectionEnginePrivate *d;
     TonePreviewPrivate *mAudioPlayer;

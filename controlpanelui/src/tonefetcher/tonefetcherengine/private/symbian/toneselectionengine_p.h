@@ -32,8 +32,29 @@
 #include <QStringList>
 // FORWARD DECLARATIONS
 class ToneFetcherEngine;
+class ToneSelectionEnginePrivate;
 // CONSTANTS
 _LIT( KMimeMp3, "mp3" );
+
+class CTimeOutTimer : public CTimer
+{
+public:
+    static CTimeOutTimer* NewL(ToneSelectionEnginePrivate& aObserver);
+    static CTimeOutTimer* NewLC(ToneSelectionEnginePrivate& aObserver);
+
+    ~CTimeOutTimer();   
+
+protected:
+    virtual void RunL();    
+
+private:
+    CTimeOutTimer(ToneSelectionEnginePrivate& aObserver);
+    void ConstructL(); 
+
+private:
+
+    ToneSelectionEnginePrivate& iObserver;
+};
 
 // CLASS DECLARATION
 /**
@@ -74,14 +95,15 @@ public:
 public:
     ToneSelectionEnginePrivate(  ToneFetcherEngine *engine );
     virtual ~ToneSelectionEnginePrivate();
-    
+    void ChangeObject();
 signals:
     void mdeSessionOpened();
     void mdeSessionError( int error );
-    void queryComplete( QStringList nameList, QStringList uriList );
+    void queryComplete( const QStringList& nameList, const QStringList& uriList );
     void queryError( int error );
     void notifyObjectChanged();
-
+    void notifyRefreshStart();
+    void notifyRefreshFinish();
 
 public:
     static CMdEPropertyDef& PropertyDefL(CMdESession* aSession, TInt aAttr);
@@ -137,6 +159,12 @@ private:
     
     // query error
     TInt iQueryError;
+    
+    // for refresh
+    CTimeOutTimer *iTimer;
+    TBool iContinue;
+    TBool iTimerStarted;
+    TBool iFreshing;
 };
 #endif /* TONESELECTIONENGINE_H_ */
 

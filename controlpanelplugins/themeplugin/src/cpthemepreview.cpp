@@ -26,6 +26,7 @@
 #include <hblabel.h>
 #include <hbiconitem.h>
 #include <hbmainwindow.h>
+#include <HbParameterLengthLimiter>
 
 #include "cpthemepreview.h"
 
@@ -51,10 +52,8 @@ CpThemePreview::CpThemePreview(const CpThemeChanger::ThemeInfo& theme, QGraphics
 
     
     //setup the heading.
-    //TODO: translation of string  hbTrId("txt_cp_title_preview_1")
-    QString themeHeading = tr("Preview: ") + mTheme.name;
+    QString themeHeading = HbParameterLengthLimiter("txt_cp_title_preview_1").arg(mTheme.name);   
     HbLabel* label = new HbLabel(themeHeading, this);
-    label->setFontSpec(HbFontSpec(HbFontSpec::Primary));
    
     layout->addItem(label);
     

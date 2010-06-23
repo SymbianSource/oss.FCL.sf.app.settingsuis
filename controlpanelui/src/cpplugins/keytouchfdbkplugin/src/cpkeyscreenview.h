@@ -17,6 +17,7 @@
 #ifndef	CPKEYSCREENVIEW_H
 #define	CPKEYSCREENVIEW_H
 
+#include <QMap>
 #include <cpbasesettingview.h>
 #include <hbdataformmodelitem.h>
 
@@ -24,6 +25,8 @@ class HbDataFormModelItem;
 class HbDataFormModel;
 class CpSettingFormItemData;
 class CpKeyScreenModel;
+class QPersistentModelIndex;
+class QVariant;
 
 class CpKeyScreenView : public CpBaseSettingView
 {
@@ -39,17 +42,18 @@ private:
     void makeCallibrationItem(HbDataFormModel& model);
     
 private slots:
-    //need handling your member's value change
-    void screenValueChanged(int index);
+    void screenValueChanged(const QString&);
     void rotateValueChanged(int value);
     void brightValueChanged(int value);
     void launchCallib();
 
 private:
-    CpSettingFormItemData *mScreenRadioButton;
+    CpSettingFormItemData *mScreenComboButton;
     CpSettingFormItemData *mRotateCheckbox;
 	CpSettingFormItemData *mBrightSliderItem;
 	CpSettingFormItemData *mCallibItem;
 	CpKeyScreenModel* mModel;
+	
+	QMap<int,QString> mScreenLockValues;
 };
 #endif//	CPKEYSCREENVIEW_H

@@ -18,16 +18,6 @@
 #ifndef CPKEYSCREENCONSTANTS_H
 #define CPKEYSCREENCONSTANTS_H
 
-enum KeyscreenLockItems{
-    EKeyScreenLockItem1,
-    EKeyScreenLockItem2,
-    EKeyScreenLockItem3,
-    EKeyScreenLockItem4,
-    EKeyScreenLockItem5
-};
-
-const int KCpKeyscreenTimeCoeff = 15;
-
 const int KCpKeyscreenLock15s = 15;
 const int KCpKeyscreenLock30s = 30;
 const int KCpKeyscreenLock45s = 45;

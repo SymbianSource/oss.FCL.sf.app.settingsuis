@@ -35,6 +35,10 @@ ToneFetcherEngine::ToneFetcherEngine(QObject* parent) : QObject(parent)
             this, SIGNAL(queryError(int)));
     connect(d, SIGNAL(notifyObjectChanged()),
             this, SIGNAL(notifyObjectChanged()));
+    connect(d, SIGNAL(notifyRefreshStart()),
+            this, SIGNAL(notifyRefreshStart()));
+    connect(d, SIGNAL(notifyRefreshFinish()),
+            this, SIGNAL(notifyRefreshFinish()));
     connect(mAudioPlayer, SIGNAL(notifyPreviewEvent(ToneServiceEngine::TPreviewEvent, int)),
             this, SIGNAL(notifyPreviewEvent(ToneServiceEngine::TPreviewEvent, int)));
 }

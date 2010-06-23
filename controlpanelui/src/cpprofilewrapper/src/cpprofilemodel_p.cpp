@@ -142,9 +142,9 @@ QString CpProfileModelPrivate::profileName(int profileId) const
     // so hard code here, wait for engine's correcting.
     switch (profileId) {
     case EProfileWrapperGeneralId:
-        return hbTrId("txt_cp_setlabel_active_profile_val_general");
+        return hbTrId("txt_cp_list_general");
     case EProfileWrapperMeetingId:
-        return hbTrId("txt_cp_setlabel_active_profile_val_meeting");
+        return hbTrId("txt_cp_list_meeting");
     default:
         return QString("");
     }
@@ -153,8 +153,8 @@ QStringList CpProfileModelPrivate::profileNames() const
 {
     //hard code, until engine part support qt localized name
     QStringList nameList;
-    nameList<<hbTrId("txt_cp_setlabel_active_profile_val_general")
-            <<hbTrId("txt_cp_setlabel_active_profile_val_meeting");
+    nameList<<hbTrId("txt_cp_list_general")
+            <<hbTrId("txt_cp_list_meeting");
     return nameList;
 }
 

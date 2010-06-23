@@ -23,11 +23,68 @@
 #include "tonefetcherengine.h"
 #include <centralrepository.h>
 #include <ProfileEngineDomainCRKeys.h>
+#include <cplogger.h>
+
+
+CTimeOutTimer* CTimeOutTimer::NewL(ToneSelectionEnginePrivate& aObserver)
+    {
+    CTimeOutTimer* self = CTimeOutTimer::NewLC(aObserver);
+    CleanupStack::Pop(self);
+    return self;
+    }
+
+ 
+
+CTimeOutTimer* CTimeOutTimer::NewLC(ToneSelectionEnginePrivate& aObserver)
+    {
+    CTimeOutTimer* self = new (ELeave) CTimeOutTimer(aObserver);
+    CleanupStack::PushL(self);
+    self->ConstructL();
+    return self;
+    } 
+
+ 
+
+CTimeOutTimer::CTimeOutTimer(ToneSelectionEnginePrivate& aObserver)
+    : CTimer(EPriorityStandard),
+      iObserver( aObserver )
+    { 
+
+    }
+
+ 
+
+CTimeOutTimer::~CTimeOutTimer()
+    {
+    Cancel();
+    }
+
+ 
+
+void CTimeOutTimer::ConstructL()
+    {
+    CTimer::ConstructL();
+    CActiveScheduler::Add(this);
+    }
+
+ 
+
+void CTimeOutTimer::RunL()
+    {
+    iObserver.ChangeObject();
+    }
 
 ToneSelectionEnginePrivate::ToneSelectionEnginePrivate( ToneFetcherEngine *engine ) : mServiceEngine( engine )
 
     {
     iSession = CMdESession::NewL( *this );
+    
+    iTimer = CTimeOutTimer::NewLC( *this );
+    iContinue = EFalse;
+    iTimerStarted = EFalse;
+    iFreshing = EFalse;
+    CleanupStack::Pop();
+    
     
     }
 
@@ -78,11 +135,23 @@ void ToneSelectionEnginePrivate::HandleQueryNewResults( CMdEQuery& /*aQuery*/,
 
 void ToneSelectionEnginePrivate::HandleObjectNotification( CMdESession& /*aSession*/, 
                                         TObserverNotificationType aType,
-                                        const RArray<TItemId>& /*aObjectIdArray*/ )
+                                        const RArray<TItemId>& aObjectIdArray )
     {    
-    if ( aType == ENotifyAdd || aType == ENotifyModify || aType == ENotifyRemove )
+    if ( aObjectIdArray.Count() > 0 && ( aType == ENotifyAdd || aType == ENotifyModify || aType == ENotifyRemove ) )
         {
-        emit notifyObjectChanged();
+        CPFW_LOG("ToneSelectionEnginePrivate::HandleObjectNotification count = " + QVariant(aObjectIdArray.Count()).toString() + " type = " + QVariant(aType).toString());
+        const TInt KOneSecond = 1000*1000;
+        if ( !iFreshing )
+            {
+            emit notifyRefreshStart();
+            iFreshing = ETrue;
+            }
+        if ( !iTimerStarted ) 
+            {            
+            iTimer->After( 5 * KOneSecond );
+            iTimerStarted = ETrue;
+            }        
+        iContinue = ETrue;        
         }
     }
 
@@ -103,7 +172,18 @@ void ToneSelectionEnginePrivate::HandleObjectPresentNotification( CMdESession& /
     {
     if( aObjectIdArray.Count() > 0 )
         {
-        emit notifyObjectChanged();
+        const TInt KOneSecond = 1000*1000;
+        if ( !iFreshing )
+            {
+            emit notifyRefreshStart();
+            iFreshing = ETrue;
+            }
+        if ( !iTimerStarted ) 
+            {            
+            iTimer->After( 5 * KOneSecond );
+            iTimerStarted = ETrue;
+            }        
+        iContinue = ETrue;       
         }    
     }
 
@@ -268,5 +348,29 @@ void ToneSelectionEnginePrivate::SetAttr( int attr, int value )
             }
         }
 }
+
+void ToneSelectionEnginePrivate::ChangeObject()
+    {    
+    if ( iTimerStarted )
+        {
+        emit notifyObjectChanged();
+        iTimerStarted = EFalse;
+        }
+    
+    if ( iContinue  )
+        {
+        iContinue = EFalse;
+        iTimer->After( 5000*1000 );
+        iTimerStarted = ETrue;
+        }
+    else 
+        {
+        if ( iFreshing )
+            {
+            emit notifyRefreshFinish();
+            iFreshing = EFalse;
+            }        
+        }
+    }
 // End of File
 

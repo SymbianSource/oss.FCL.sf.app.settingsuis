@@ -49,7 +49,8 @@ CpCommunicationGroupItemData::~CpCommunicationGroupItemData()
 void CpCommunicationGroupItemData::beforeLoadingConfigPlugins(CpItemDataHelper &itemDataHelper)
 {
     mAirplaneModeItem = new HbDataFormModelItem(HbDataFormModelItem::ToggleValueItem,
-                                                hbTrId("txt_cp_setlabel_offline_airplane_mode"));
+                                              hbTrId("txt_cp_setlabel_offline_airplane_mode"));
+    mAirplaneModeItem->setDescription(hbTrId("txt_cp_info_in_offline_mode_all_wireless_communica"));
     
     itemDataHelper.addConnection(mAirplaneModeItem,
             SIGNAL(clicked()),

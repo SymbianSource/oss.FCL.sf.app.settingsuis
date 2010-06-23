@@ -28,7 +28,7 @@
 #include <hbslider.h>
 
 CpVolumeGroupItemData::CpVolumeGroupItemData(CpItemDataHelper &itemDataHelper)
-: CpSettingFormItemData(HbDataFormModelItem::GroupItem,tr("txt_cp_subhead_volume")),//mSilenceIndicator(0),
+: CpSettingFormItemData(HbDataFormModelItem::GroupItem,hbTrId("txt_cp_subhead_volume")),//mSilenceIndicator(0),
                                                                                    //mMasterVolume(0),
                                                                                    //mMasterVibra(0),
                                                                                    mVolumeController(0),

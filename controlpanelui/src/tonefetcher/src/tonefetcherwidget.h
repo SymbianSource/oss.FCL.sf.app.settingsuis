@@ -32,6 +32,7 @@ class HbAbstractViewItem;
 class ToneFetcherView;
 class ToneFetcherModel;
 class HbLabel;
+class HbProgressDialog;
 
 class ToneFetcherWidget : public HbWidget
 {
@@ -55,6 +56,8 @@ private slots:
     void queryError(int error );
     void previewEvent(ToneFetcherEngine::TPreviewEvent event, int errorId);
     void onObjectChanged();
+    void refreshFinish();
+    void refreshStart();
     
 private:
     void init();
@@ -73,5 +76,6 @@ private:
     QFileInfoList mDigitalSoundList;    
     bool mSelected;
     QModelIndex mOldSeletedItem;
+    HbProgressDialog *mWaitNote;
 };
 #endif /* TONEFETCHERWIDGET_H_ */

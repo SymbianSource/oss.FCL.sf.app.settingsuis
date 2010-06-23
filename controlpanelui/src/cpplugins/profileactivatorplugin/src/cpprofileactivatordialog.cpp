@@ -20,7 +20,11 @@
 #include <hbaction.h>
 #include <hbdataformmodelitem.h>
 #include <hbpopup.h>
+#include <hblabel.h>
 #include "cpprofileactivatorentryitem.h"
+#include <QGraphicsLinearLayout>
+#include <QGraphicsWidget>
+
 CpProfileActivatorDialog::CpProfileActivatorDialog(CpSettingFormItemData *profileActivator,
                                                     CpProfileModel &profileModel,
                                                     QGraphicsItem *parent):HbDialog(parent),
@@ -28,11 +32,19 @@ CpProfileActivatorDialog::CpProfileActivatorDialog(CpSettingFormItemData *profil
                                                      mProfileList(0),
                                                      mProfileActivator(profileActivator)
 {
+    mTitleLabel = new HbLabel(this);
+    mTitleLabel->setPlainText(hbTrId("txt_cp_title_profile"));
+    mContentWidget = new QGraphicsWidget(this);
+    setContentWidget(mContentWidget);
+    mLayout = new QGraphicsLinearLayout();
+    mLayout->setOrientation( Qt::Vertical );
     mProfileIds << EProfileWrapperGeneralId
                 << EProfileWrapperMeetingId;
     mProfileList = new HbRadioButtonList();
     mProfileList->setItems(profileModel.profileNames());
-    
+    mLayout->addItem(mTitleLabel);
+    mLayout->addItem(mProfileList);
+       
     int currentId = mProfileModel.activeProfileId();
     mProfileList->setSelected(mProfileIds.indexOf(static_cast<ProfileWrapperProfileId>(currentId)));
     
@@ -46,12 +58,11 @@ CpProfileActivatorDialog::CpProfileActivatorDialog(CpSettingFormItemData *profil
         
     
     this->addAction(mConfirmProfile);
-    this->addAction(mCancelProfile);
-    
-    this->setContentWidget(mProfileList);
+    this->addAction(mCancelProfile);    
     this->setModal(true);
     this->setDismissPolicy(HbPopup::NoDismiss);
     this->setTimeout(HbPopup::NoTimeout);
+    mContentWidget->setLayout( mLayout );
 }
 
 CpProfileActivatorDialog::~CpProfileActivatorDialog()

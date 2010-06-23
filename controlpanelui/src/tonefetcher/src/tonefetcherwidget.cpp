@@ -34,6 +34,7 @@
 #include "tonefetcherview.h"
 #include "tonefetchermodel.h"
 #include <hbmessagebox.h>
+#include <hbprogressdialog.h>
 
 ToneFetcherWidget::ToneFetcherWidget( ToneFetcherView *serviceView  ) 
     : HbWidget(this),
@@ -42,7 +43,8 @@ ToneFetcherWidget::ToneFetcherWidget( ToneFetcherView *serviceView  )
       mLayout(0),
       mToneModel(0),
       mServiceView(serviceView),         
-      mServiceEngine(0)
+      mServiceEngine(0),
+      mWaitNote(0)
       
 {
     mSelected = false;
@@ -60,11 +62,18 @@ ToneFetcherWidget::ToneFetcherWidget( ToneFetcherView *serviceView  )
            this, SLOT(previewEvent(ToneServiceEngine::TPreviewEvent, int)));
     connect( mServiceEngine, SIGNAL(notifyObjectChanged()),
             this, SLOT(onObjectChanged()));
+    connect( mServiceEngine, SIGNAL(notifyRefreshStart()),
+                this, SLOT(refreshStart()));
+    connect( mServiceEngine, SIGNAL(notifyRefreshFinish()),
+                this, SLOT(refreshFinish()));
 }
 
 ToneFetcherWidget::~ToneFetcherWidget()
 {
-    delete mToneModel;    
+    delete mToneModel;
+    mToneModel = 0;
+    delete mWaitNote;
+    mWaitNote = 0;
 }
 
 void ToneFetcherWidget::on_list_activated(const QModelIndex &index)
@@ -125,6 +134,12 @@ void ToneFetcherWidget::init()
     
     connect(mListView, SIGNAL(activated(QModelIndex)),
         this, SLOT(on_list_activated(QModelIndex )));
+    if( !mWaitNote ){
+        mWaitNote = new HbProgressDialog( HbProgressDialog::WaitDialog );
+        mWaitNote->setText( hbTrId( "Refreshing..." ) );
+        QAction *action = mWaitNote->actions().at(0);//disable Cancel buttion.
+        action->setEnabled(false);
+    }
 }
 
 void ToneFetcherWidget::mdeSessionOpened()
@@ -225,6 +240,20 @@ void ToneFetcherWidget::addRomFiles()
         fileName = new QStandardItem(fileInfo.fileName());
         filePath = new QStandardItem(fileInfo.absoluteFilePath());
         mToneModel->insertInOrder(fileName, filePath);  
+    }
+}
+
+void ToneFetcherWidget::refreshFinish()
+{
+    if (mWaitNote) {
+        mWaitNote->close();
+    }
+}
+
+void ToneFetcherWidget::refreshStart()
+{
+    if (mWaitNote) {
+        mWaitNote->open();
     }
 }
 //End of File
