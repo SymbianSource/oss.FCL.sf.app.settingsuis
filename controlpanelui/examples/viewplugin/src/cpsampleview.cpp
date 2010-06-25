@@ -60,12 +60,12 @@ CpSampleView::~CpSampleView()
 void CpSampleView::sliderValueChanged(int value)
 {
     //TODO: store your changes
-    HbMessageBox::launchInformationMessageBox(QString("slider value changed to:%1").arg(value));
+   // HbMessageBox::message(QString("slider value changed to:%1").arg(value));
 }
 void CpSampleView::checkBoxStateChanged(int state)
 {
     //TODO: store your changes
     QString str = (state ? "checked" : "un-checked");
-    HbMessageBox::launchInformationMessageBox(str);
+   // HbMessageBox::message(str);
 }
 

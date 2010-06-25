@@ -14,19 +14,20 @@
  * Description:  
  *   
  */
+#include <QString>
 
 #include "cpthemechanger.h"
-#include "cpthemechanger_p.h"
-#include "cpthemelistmodel.h"
+#include "cpthemeutil.h"
+#include "cpthemeinfo.h"
+
+#include <hbinstance.h>
+#include <restricted/hbthemeservices_r.h>
 
 /*!
-  @alpha
   \class CpThemeChanger
 
   \brief CpThemeChanger provides an interface for changing the current
-  theme and enumerating the available themes (e.g., for the UI to provide 
-  a list of themes to show).
-
+  theme.
   This API is only for use with the control panel and its theme
   changing plugin.
 */
@@ -36,75 +37,76 @@
 */
 CpThemeChanger::CpThemeChanger(QObject* p) :
     QObject(p),
-    d_ptr(new CpThemeChangerPrivate(this))
+    mCurrentTheme(0)
 {
+    connect(hbInstance->theme(),SIGNAL(changeFinished()), this, SLOT(changeFinished()));
+       
+    setCurrentTheme();
 }
 
 /*!
-    Provides a list of themes as a const QAbstractItemModel*.
-*/
-QAbstractItemModel& CpThemeChanger::model()
-{
-    Q_D(CpThemeChanger);
+    Returns a ThemeInfo object containing the current theme name and
+    corresponding icons.
 
-    return d->mModel;
-}
-
-
-/*!
-  Creates a connection to the theme server for the purpose of 
-  changing the theme.
- */
-bool CpThemeChanger::connectToServer()
-{
-    Q_D(CpThemeChanger);
-
-    return d->connectToServer();
-}
-
-/*!
-  Indicates if the client is connected to the theme server.
-*/
-bool CpThemeChanger::isConnected() const
-{
-    Q_D(const CpThemeChanger);
-
-    return d->isConnected();
-}
-
-
-/*!
-    Returns a ThemeInfo struct containing the current theme name and
-    a repersentative HbIcon.
-
-    If no repersentative icon exists, the HbIcon returned will be
+    If no repersentative icons exist, the HbIcon returned will be
     uninitialized.
 */
-const CpThemeChanger::ThemeInfo& CpThemeChanger::currentTheme() const
+const CpThemeInfo* CpThemeChanger::currentTheme() const
 {
-    Q_D(const CpThemeChanger);
-    
-    return d->currentTheme();
+    return mCurrentTheme;
 }
 
-/*
- *  Returns index of theme from the theme list (not the model).
+/*!
+ * Private helper function that gets the current theme from hbinstance and s
+ * ets class' current theme.  
  */
-int CpThemeChanger::indexOf(const ThemeInfo& theme) const
+void CpThemeChanger::setCurrentTheme()
 {
-    Q_D(const CpThemeChanger);
-    
-    return d->indexOf(theme);
+    QString themeName = "";
+    if (HbInstance::instance()) {
+        HbTheme *hbTheme = HbInstance::instance()->theme();
+        if(hbTheme) {
+            themeName = hbTheme->name();
+        }
+         
+    }
+       
+    if(mCurrentTheme && mCurrentTheme->name() == themeName) {
+        return;
+    }
+    else {
+        //buildThemeInfo creates new theme info.
+        CpThemeInfo* tmpTheme = CpThemeUtil::buildThemeInfo(HbThemeServices::themePath(), themeName);
+         
+        //delete old value. set the new value.
+        if(tmpTheme) {
+            if(mCurrentTheme){
+                delete mCurrentTheme;
+            }
+            mCurrentTheme = tmpTheme;
+        }
+    }
 }
+
 
 /*!
  Change a theme. Returns true on success, false otherwise.
  */
-bool CpThemeChanger::changeTheme(const QString& newtheme)
+bool CpThemeChanger::changeTheme(const QString& newTheme)
 {
-    Q_D(CpThemeChanger);
+    bool result = false;
+    // Skip doing this if the request is for the current theme
+    if (newTheme.isEmpty() || newTheme == mCurrentTheme->name()) {
+        return result;
+    }
 
-    return d->changeTheme(newtheme);
+    QString themePath = CpThemeUtil::themePath(newTheme);
+    
+    if(!themePath.isEmpty()) {
+        HbThemeServices::setTheme(themePath);
+        result = true;
+    }
+    return result;
 }
 
 /*!
@@ -112,11 +114,21 @@ bool CpThemeChanger::changeTheme(const QString& newtheme)
  */
 CpThemeChanger::~CpThemeChanger()
 {
-    delete d_ptr;
-    d_ptr = 0;
+    delete mCurrentTheme;
+    mCurrentTheme = 0;
 }
 
-#include "moc_cpthemechanger.cpp"
+/*!
+ *  Slot to handle notification from theme server that theme change
+ *  is done.  Notify the owner.
+ */
+void CpThemeChanger::changeFinished()
+{
+  
+    setCurrentTheme();
+    
+    emit themeChangeFinished();
+}
 
 // End of file
 

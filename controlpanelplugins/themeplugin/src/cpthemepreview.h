@@ -21,7 +21,9 @@
 #include <hbview.h>
 #include <QObject>
 #include <hbicon.h>
-#include <cpthemechanger.h>
+#include "cpthemechanger.h"
+#include "cpthemeinfo.h"
+
 
 QT_BEGIN_NAMESPACE
 class QString;
@@ -36,9 +38,9 @@ class CpThemePreview : public HbView
     Q_OBJECT
 
 public:
-    explicit CpThemePreview(const CpThemeChanger::ThemeInfo &theme, QGraphicsItem *parent = 0);
+    explicit CpThemePreview(const CpThemeInfo &theme, QGraphicsItem *parent = 0);
     ~CpThemePreview();
-    void setThemeInfo(const CpThemeChanger::ThemeInfo& theme);
+    void setThemeInfo(const CpThemeInfo& theme);
     const QString& themeName() const;
     const HbIcon& themeIcon() const;
 	
@@ -51,7 +53,7 @@ public slots:
     void previewOrientationChanged(Qt::Orientation orientation);
 
 private:
-    CpThemeChanger::ThemeInfo mTheme;
+    CpThemeInfo mTheme;
     HbAction* mSoftKeyBackAction;
     HbIconItem* mPreviewIcon;
 

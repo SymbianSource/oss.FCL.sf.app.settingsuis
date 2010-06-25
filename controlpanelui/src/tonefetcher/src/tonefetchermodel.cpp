@@ -15,9 +15,11 @@
  *     The source file for tone list model
  */
 #include "tonefetchermodel.h"
+#include <QFileInfo>
+#include <QtAlgorithms>
 
 ToneFetcherModel::ToneFetcherModel(QObject *parent) 
-    : QStandardItemModel(parent)
+    : QStringListModel(parent)
 {
 }
 
@@ -27,75 +29,37 @@ ToneFetcherModel::~ToneFetcherModel()
 
 QVariant ToneFetcherModel::data(const QModelIndex &index, int role) const
 {
-    if (role == Qt::UserRole) {
-        return  mUserDataLst.at(index.row());
+    if (role == Qt::DisplayRole) {
+        return  QFileInfo(QStringListModel::data(index, role).toString()).baseName();        
     } else {
-        return QStandardItemModel::data(index, role);
-    }    
-}
-
-void ToneFetcherModel::insertInOrder(QStandardItem *fileName, QStandardItem *filePath, int role)
-{
-    QString name = fileName->text();
-    QString path = filePath->text();
-    int index = this->insertIndex(0, rowCount(), name);
-    
-    mUserDataLst.insert(index, path);
-    QStandardItemModel::insertRow(index, fileName);
-}
-
-QString ToneFetcherModel::path(const QModelIndex &index) const
-{
-    QString str =  data(index, Qt::UserRole).toString();
-    return str;
-}
-
-int ToneFetcherModel::insertIndex(int low, int high,  QString value)
-{
-    if (low == high) {
-        return low;   
+        return QStringListModel::data(index, role);
     }
-    int middle = (low + high - 1)/2;
-    QModelIndex lowItemIndex = ((QStandardItemModel *)this)->index(low, 0);
-    QModelIndex highItemIndex = ((QStandardItemModel *)this)->index(high - 1, 0);
-    QModelIndex middleItemIndex = (( QStandardItemModel *)this)->index(middle, 0);
-    QString lowString = data(lowItemIndex).toString();
-    QString highString = data(highItemIndex).toString();
-    QString middleString = data(middleItemIndex).toString();
-    
-    if (value >= highString) {
-        return high;
-    }
-    if (value < lowString) {
-        return low;
-    }
-    high = high - 1;
-    while (low < high) {
-        middle = (low + high)/2;
-        middleItemIndex = ((QStandardItemModel *)this)->index(middle, 0);
-        middleString = data(middleItemIndex).toString();
-        if (value >= middleString) {
-            low = middle + 1;
-        } else {
-            high = middle;
-        }        
-    }
-    return low;
 }
 
-void ToneFetcherModel::refresh()
+QString ToneFetcherModel::getPath(const QModelIndex &index) const
+{    
+    return  QStringListModel::data(index, Qt::DisplayRole).toString();
+}
+
+void ToneFetcherModel::sort()
 {
-    emit layoutChanged();
+    QStringList list = stringList();
+    qStableSort(list.begin(), list.end(), caseSensitiveLessThan);   
+    removeRows(0, rowCount());
+    setStringList(list);
 }
-
-void ToneFetcherModel::toBeFreshed()
+void ToneFetcherModel::layoutToBeChanged()
 {
     emit layoutAboutToBeChanged();
 }
 
-void ToneFetcherModel::clearAll()
+void ToneFetcherModel::layoutHasChanged()
 {
-    mUserDataLst.clear();
-    QStandardItemModel::clear();
+    emit layoutChanged();
+}
+
+bool ToneFetcherModel::caseSensitiveLessThan(const QString &s1, const QString &s2)
+{
+    return QFileInfo(s1).baseName().toLower() < QFileInfo(s2).baseName().toLower();
 }
 //End of File

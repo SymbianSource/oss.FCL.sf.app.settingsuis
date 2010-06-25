@@ -89,6 +89,7 @@ private:
     
     void initProfileItems(int profileId,HbDataFormModelItem *parent);
     HbDataFormModelItem *profileItem(int profileId,int profileItemId);
+    void setMuteIcon(HbDataFormModelItem *silderItem, bool isMute);
 private:
     HbDataFormModel *mModel;
     CpItemDataHelper *mItemDataHelper;

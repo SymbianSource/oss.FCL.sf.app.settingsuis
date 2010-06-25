@@ -24,6 +24,7 @@
 #include <hbglobal.h>
 
 class CpThemeChangerPrivate;
+class CpThemeInfo;
 
 QT_BEGIN_NAMESPACE
 class QAbstractItemModel;
@@ -32,43 +33,25 @@ QT_END_NAMESPACE
 class CpThemeChanger : public QObject
 {
     Q_OBJECT
-
+    
 public:
      explicit CpThemeChanger(QObject* parent=0);
     ~CpThemeChanger();
-
-    enum ThemeListUserRole {
-           PortraitPreviewRole = Qt::UserRole,
-           LandscapePreviewRole
-    };
-      
-    struct ThemeInfo{
-        QString name;
-        HbIcon  icon;
-        HbIcon portraitPreviewIcon;
-        HbIcon landscapePreviewIcon;
-        bool operator < (const struct ThemeInfo &other) const   {			
-            return name.localeAwareCompare(other.name) < 0;
-        }	
-        bool operator == (const struct ThemeInfo &other) const {
-            return name.localeAwareCompare(other.name) == 0;
-        }
-    };
     
-    QAbstractItemModel& model();
-
-    const ThemeInfo& currentTheme() const;
-    int indexOf(const ThemeInfo& theme) const;
-
+    const CpThemeInfo* currentTheme() const;
     bool changeTheme(const QString& newtheme);
+    
+signals:
+    void themeChangeFinished();
+    
+public slots:
+    void changeFinished();
 	
-	bool connectToServer();
-	bool isConnected() const;
-
 private:
-    CpThemeChangerPrivate* d_ptr;
-    Q_DECLARE_PRIVATE(CpThemeChanger)
-    Q_PRIVATE_SLOT(d_func(), void _q_themeDirectoryChanged(const QString&))
+    void setCurrentTheme();
+    
+    CpThemeInfo* mCurrentTheme;
 };
+
 
 #endif /* CPTHEMECHANGER_H */

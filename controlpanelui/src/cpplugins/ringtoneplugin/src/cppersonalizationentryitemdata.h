@@ -38,7 +38,7 @@ public:
         explicit CpPersonalizationEntryItemData(CpItemDataHelper &itemDataHelper,
                 const QString &text = QString(),
                 const QString &description = QString(),
-                const HbIcon &icon = HbIcon(),
+                const QString &icon = QString(),
                 Profile_Tone_Types toneType = TONE_Ring,
                 int profileId = -1,
                 const HbDataFormModelItem *parent = 0);

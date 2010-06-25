@@ -30,11 +30,4 @@ ToneFetcherMainWindow::~ToneFetcherMainWindow()
 {
     delete mToneFetcher;
 }
-
-void ToneFetcherMainWindow::quit()
-{
-    connect(mToneFetcher, SIGNAL(returnValueDelivered()), qApp, SLOT(quit()));
-    mToneFetcher->complete();   
-}
-
 //End of File

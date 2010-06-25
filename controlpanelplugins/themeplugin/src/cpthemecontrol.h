@@ -34,7 +34,7 @@ class HbDialog;
 class CpThemeListView;
 class CpThemePreview;
 class CpBaseSettingView;
-
+class CpThemeListModel;
 
 
 class CpThemeControl : public QObject
@@ -70,7 +70,6 @@ private:
     CpThemePreview* mThemePreview;
     CpThemeChanger* mThemeChanger;
     QAbstractItemModel* mListModel;
-    QSortFilterProxyModel* mSortModel;
     bool mThemeChangeFinished;
     HbDialog* mWaitDialog;
 };

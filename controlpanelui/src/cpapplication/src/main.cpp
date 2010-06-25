@@ -24,7 +24,6 @@
 #include <QLatin1String>
 #include <QDir>
 #include <cplogger.h>
-#include <cpbasepath.h>
 
 int main(int argc, char **argv)
 {
@@ -35,10 +34,15 @@ int main(int argc, char **argv)
     QCoreApplication::setOrganizationDomain("Orbit");
     QCoreApplication::setApplicationName("ControlPanel");
 
+#ifdef ENABLE_CPFW_LOG
     Logger::instance(CPFW_LOGGER_NAME)->configure(
         CP_LOGGER_CONFIG_PATH,QSettings::IniFormat);
+#endif
+    
+#ifdef ENABLE_CPPERF_LOG
     Logger::instance(CPPERF_LOGGER_NAME)->configure(
         CP_LOGGER_CONFIG_PATH,QSettings::IniFormat);
+#endif
 
     CPFW_LOG("Entering ControlPanel.exe...");
     CPPERF_LOG("Entering ControlPanel.exe...");
@@ -48,8 +52,10 @@ int main(int argc, char **argv)
     {
         qApp->installTranslator(&translator);
     }
-    
-    HbStyleLoader::registerFilePath(CP_RESOURCE_PATH + QDir::separator() + WIDGETML_SUB_PATH);
+        
+    HbStyleLoader::registerFilePath(":/widgetml/cpdataformlistentryviewitem.css");
+    HbStyleLoader::registerFilePath(":/widgetml/cpdataformlistentryviewitem_color.css");
+    HbStyleLoader::registerFilePath(":/widgetml/cpdataformlistentryviewitem.widgetml");
 
     CpMainWindow mainWindow;
     

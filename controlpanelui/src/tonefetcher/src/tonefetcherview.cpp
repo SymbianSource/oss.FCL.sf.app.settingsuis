@@ -46,9 +46,9 @@ void ToneFetcherView::initMainWidget()
 }
 
 void ToneFetcherView::quit()
-{
+{    
+    connect(mServiceProvider, SIGNAL(returnValueDelivered()), qApp, SLOT(quit()));
     mServiceProvider->complete();
-    connect(mServiceProvider, SIGNAL(returnValueDelivered()), qApp, SLOT(quit()));    
 }
 
 void ToneFetcherView::initToolBar()
@@ -77,10 +77,12 @@ void ToneFetcherView::on_leftAction_triggered()
 }
 
 void ToneFetcherView::on_rightAction_triggered()
-{
-    QString path(mWidget->getCurrentItemPath());    
-    emit itemSelected(path);
+{       
+    emit itemSelected(mWidget->getCurrentItemPath());
     quit();
+    /*QDir dir("c:\\data\\Sounds\\Simple\\");
+    dir.remove("def.aac");
+    dir.remove("abc.aac");   */ 
 }
 
 void ToneFetcherView::enableToolBar(bool enable)

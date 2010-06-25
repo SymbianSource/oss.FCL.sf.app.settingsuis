@@ -24,6 +24,7 @@
 #define CP_UPGRADABLE_APP_REG_RSC(NAME) data=DATAZ_\PRIVATE\10003A3F\IMPORT\APPS\ ## NAME ## _reg.rsc        Private\10003a3f\import\apps\ ## NAME ## _reg.rsc
 
 file=ABI_DIR\BUILD_DIR\controlpanel.exe         			 SHARED_LIB_DIR\controlpanel.exe 
+data = ZRESOURCE\apps\controlpanel.mif                                   APP_RESOURCE_DIR\controlpanel.mif
 CP_UPGRADABLE_APP_REG_RSC(controlpanel)    
 
 

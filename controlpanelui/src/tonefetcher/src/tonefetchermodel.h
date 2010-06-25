@@ -19,41 +19,31 @@
 #ifndef TONEFETCHERMODEL_H
 #define TONEFETCHERMODEL_H
 
-#include <QStandardItemModel>
+#include <QStringListModel>
 #include <QStringList>
 
 // CLASS DECLARATION
 /**
  *  This class is used for storing tone list items.
- *  inherited from QStandardItemModel so that many existing functions could be used.
+ *  inherited from QStringListModel so that many existing functions could be used.
  *
  */
-class ToneFetcherModel : public QStandardItemModel
+class ToneFetcherModel : public QStringListModel
 {
 public:
     explicit ToneFetcherModel( QObject *parent );
     virtual ~ToneFetcherModel();
-    //from QAbstractItemModel
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    void insertInOrder(QStandardItem *fileName, QStandardItem *filePath, int role = Qt::DisplayRole);    
-    QString path(const QModelIndex &index) const;
-    void refresh();
-    void toBeFreshed();
-    void clearAll();
-private:
-    /*
-     * binary search (ascendant) for the correct index to insert.
-     * @param low the start of search
-     * @param high the end of search.
-     * @return the correct index
-     */
-    int insertIndex(int low, int high, QString variant);
-    
-    /*
-     * save the absolute path of the tone.
-     */
-    QStringList mUserDataLst;   
-    
+    //from QStringListModel
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;        
+    QString getPath(const QModelIndex &index) const;
+    //sort the list
+    void sort();
+    //sort method
+    bool static caseSensitiveLessThan(const QString &s1, const QString &s2);
+    //emit the signal of layoutToBeChanged();
+    void layoutToBeChanged();
+    //emit the signal of layoutChanged();
+    void layoutHasChanged();
 };
 
-#endif /* TONEFETCHERMODEL_H_ */
+#endif /* TONEFETCHERMODEL_H */

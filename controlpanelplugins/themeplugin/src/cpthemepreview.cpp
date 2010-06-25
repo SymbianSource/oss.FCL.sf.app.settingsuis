@@ -29,6 +29,7 @@
 #include <HbParameterLengthLimiter>
 
 #include "cpthemepreview.h"
+#include "cpthemeinfo.h"
 
 /*!
     \class CpThemePreview
@@ -40,7 +41,7 @@
 /*!
     constructor.
 */
-CpThemePreview::CpThemePreview(const CpThemeChanger::ThemeInfo& theme, QGraphicsItem *parent) :
+CpThemePreview::CpThemePreview(const CpThemeInfo& theme, QGraphicsItem *parent) :
      HbView(parent), 
      mTheme(theme),
      mSoftKeyBackAction(0),
@@ -52,22 +53,23 @@ CpThemePreview::CpThemePreview(const CpThemeChanger::ThemeInfo& theme, QGraphics
 
     
     //setup the heading.
-    QString themeHeading = HbParameterLengthLimiter("txt_cp_title_preview_1").arg(mTheme.name);   
+    QString themeHeading = HbParameterLengthLimiter("txt_cp_title_preview_1").arg(mTheme.name());   
     HbLabel* label = new HbLabel(themeHeading, this);
    
     layout->addItem(label);
     
     layout->setAlignment(layout->itemAt(0), Qt::AlignTop);
+    layout->itemAt(0)->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed,QSizePolicy::DefaultType);
     
     //Create the toolbar and "Select" and "Cancel" actions.
     HbToolBar* mToolBar = new HbToolBar(this);
 
-    HbAction* selectAction = new HbAction(tr("Select"));
+    HbAction* selectAction = new HbAction(hbTrId("txt_common_button_select"));
     
     //Add Action to the toolbar and show toolbar
     mToolBar->addAction( selectAction );
 
-    HbAction* cancelAction = new HbAction(tr("Cancel"));
+    HbAction* cancelAction = new HbAction(hbTrId("txt_common_button_cancel"));
     mToolBar->addAction( cancelAction );
 
     QObject::connect( selectAction, SIGNAL(triggered()), 
@@ -81,12 +83,14 @@ CpThemePreview::CpThemePreview(const CpThemeChanger::ThemeInfo& theme, QGraphics
        
    
     if(mainWindow()->orientation() == Qt::Horizontal) {
-        mPreviewIcon = new HbIconItem(mTheme.landscapePreviewIcon, this);
+        mPreviewIcon = new HbIconItem(mTheme.landscapePreviewIcon(), this);
     }
     else {
-        mPreviewIcon = new HbIconItem(mTheme.portraitPreviewIcon, this);
+        mPreviewIcon = new HbIconItem(mTheme.portraitPreviewIcon(), this);
     }
     layout->addItem(mPreviewIcon);
+    layout->itemAt(1)->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred,QSizePolicy::DefaultType);
+        
  
     setToolBar(mToolBar);
     setLayout(layout);
@@ -110,7 +114,7 @@ CpThemePreview::~CpThemePreview()
 /*!
   sets the theme to \a theme.
 */
-void CpThemePreview::setThemeInfo(const CpThemeChanger::ThemeInfo& theme)
+void CpThemePreview::setThemeInfo(const CpThemeInfo& theme)
 {
     mTheme = theme;
 }
@@ -120,7 +124,7 @@ void CpThemePreview::setThemeInfo(const CpThemeChanger::ThemeInfo& theme)
 */
 const QString& CpThemePreview::themeName() const
 {
-    return mTheme.name;
+    return mTheme.name();
 }
 
 /*!
@@ -128,7 +132,7 @@ const QString& CpThemePreview::themeName() const
 */
 const HbIcon& CpThemePreview::themeIcon() const
 {
-    return mTheme.icon;
+    return mTheme.icon();
 }
 
 /*!
@@ -136,7 +140,7 @@ const HbIcon& CpThemePreview::themeIcon() const
 */
 void CpThemePreview::themeSelected()
 {
-    emit applyTheme(mTheme.name);
+    emit applyTheme(mTheme.name());
 }
 
 /*! 
@@ -152,10 +156,10 @@ void CpThemePreview::previewOrientationChanged(Qt::Orientation orientation)
         previewLayout->removeAt(1);
         
         if(orientation == Qt::Horizontal) {
-            mPreviewIcon->setIcon(mTheme.landscapePreviewIcon);
+            mPreviewIcon->setIcon(mTheme.landscapePreviewIcon());
         }
         else {
-            mPreviewIcon->setIcon(mTheme.portraitPreviewIcon);
+            mPreviewIcon->setIcon(mTheme.portraitPreviewIcon());
         }
         
         previewLayout->addItem(mPreviewIcon);

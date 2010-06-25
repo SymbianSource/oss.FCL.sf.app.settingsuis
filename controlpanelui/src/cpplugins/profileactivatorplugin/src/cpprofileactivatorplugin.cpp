@@ -30,7 +30,9 @@ QList<CpSettingFormItemData*> CpProfileActivatorPlugin::createSettingFormItemDat
 {
     CpSettingFormItemData* itemData = new CpProfileActivatorEntryItem(
                                             itemDataHelper,
-                                            hbTrId("txt_cp_dblist_profile"));
+                                            hbTrId("txt_cp_dblist_profile"),
+                                            " ",
+                                            "qtg_large_profiles");
     return QList<CpSettingFormItemData*>() << itemData;
 }
 

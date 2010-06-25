@@ -15,6 +15,7 @@
  *     The header file for tone fetcher utilities.
  *     
  */
+
 #ifndef TONEFETCHERUTILS_H
 #define TONEFETCHERUTILS_H
 
@@ -23,7 +24,7 @@
 class ToneFetcherUtils
 {
 public:
-     
+    //replace '/' and '\' with QDir::separator()
     static QString normalizeSeperator(const QString &path);
 };
 

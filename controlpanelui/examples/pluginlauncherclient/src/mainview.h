@@ -30,13 +30,19 @@ private:
 	void init();
 private slots:
     void launchInProcessProfileView();
+    
     void launchQtHighwayProfileView();   
+    
     void handleReturnValue(const QVariant &returnValue);
     void handleError(int errorCode,const QString &errorMessage);
+    
+    void closeSettingView();
+    
 private:
     Q_DISABLE_COPY(MainView)
 private:
     XQApplicationManager mAppMgr;
+    XQAiwRequest *mRequest;
 };
 
 #endif

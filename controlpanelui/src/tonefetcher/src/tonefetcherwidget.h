@@ -48,20 +48,23 @@ signals:
     void itemClicked(const QString &item);
     void triggerToolBar(bool enable);
     
+    
+private:
+    void init();
+    void addFilesFromRom();
+    void initRomSoundList();
+    void addFilesFromMDE(const QStringList &uriList);
+    
 private slots:
     void on_list_activated(const QModelIndex &index);    
     void mdeSessionOpened();
     void mdeSessionError(int error);
-    void queryComplete(const QStringList &nameList, const QStringList &uriList);
+    void queryComplete(const QStringList &uriList);
     void queryError(int error );
-    void previewEvent(ToneFetcherEngine::TPreviewEvent event, int errorId);
+    void previewEvent(int event);
     void onObjectChanged();
     void refreshFinish();
     void refreshStart();
-    
-private:
-    void init();
-    void addRomFiles();
     
 private:
     HbLabel *mLabel;
@@ -72,10 +75,8 @@ private:
     ToneFetcherView *mServiceView;
     ToneFetcherEngine *mServiceEngine;
     
-    QFileInfoList mSimpleSoundList;
-    QFileInfoList mDigitalSoundList;    
-    bool mSelected;
+    QFileInfoList mRomSoundList;    
     QModelIndex mOldSeletedItem;
     HbProgressDialog *mWaitNote;
 };
-#endif /* TONEFETCHERWIDGET_H_ */
+#endif /* TONEFETCHERWIDGET_H */

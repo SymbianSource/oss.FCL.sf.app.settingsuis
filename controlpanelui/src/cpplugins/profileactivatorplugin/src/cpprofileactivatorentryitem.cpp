@@ -25,9 +25,9 @@
 CpProfileActivatorEntryItem::CpProfileActivatorEntryItem(CpItemDataHelper &itemDataHelper,
                 const QString &text,
                 const QString &description,
-                const HbIcon &icon,
+                const QString &icon,
                 const HbDataFormModelItem *parent)
-                :CpSettingFormEntryItemData(itemDataHelper,text,description,
+                :CpSettingFormEntryItemData(CpSettingFormEntryItemData::ListEntryItem, itemDataHelper,text,description,
                                             icon,parent),mProfileModel(0),mProfileMonitor(0)
 {
     mProfileMonitor = new CpProfileMonitor();

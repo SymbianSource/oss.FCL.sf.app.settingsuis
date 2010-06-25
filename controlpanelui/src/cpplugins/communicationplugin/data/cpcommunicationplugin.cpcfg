@@ -13,7 +13,10 @@
   <plugin displayname = "Telephony" id = "0X20029F23"  dll = "cptelephonyplugin.dll">
     <desc></desc>
   </plugin>
-    <plugin displayname = "Network settings" id = "0X2002BC8F"  dll = "cpipsettingsplugin.dll">
+  <plugin displayname = "Network settings" id = "0X2002BC8F"  dll = "cpipsettingsplugin.dll">
+    <desc></desc>
+  </plugin>
+  <plugin displayname = "NFC" id = "0X20027040"  dll = "nfccpplugin.dll">
     <desc></desc>
   </plugin>
 </childplugins>
