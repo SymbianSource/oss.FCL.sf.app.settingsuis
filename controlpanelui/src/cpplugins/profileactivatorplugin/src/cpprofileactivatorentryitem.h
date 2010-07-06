@@ -28,7 +28,7 @@ Q_OBJECT
 public:
     explicit CpProfileActivatorEntryItem(CpItemDataHelper &itemDataHelper,
             const QString &text = QString(), const QString &description =
-                    QString(), const HbIcon &icon = HbIcon(),
+                    QString(), const QString &icon = QString(),
             const HbDataFormModelItem *parent = 0);
     virtual ~CpProfileActivatorEntryItem();
 private slots:

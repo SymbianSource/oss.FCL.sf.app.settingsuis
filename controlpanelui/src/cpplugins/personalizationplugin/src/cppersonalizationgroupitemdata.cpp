@@ -56,6 +56,9 @@ void CpPersonalizationGroupItemData::afterLoadingConfigPlugins(CpItemDataHelper 
     CpSettingFormEntryItemData *advanceSettingItem = 
             new CpSettingFormEntryItemDataImpl<CpPersonalizationAdvanceView>(CpSettingFormEntryItemData::ButtonEntryItem,
             		itemDataHelper, hbTrId("txt_cp_button_advanced_settings"));
+    
+    advanceSettingItem->setContentWidgetData("textAlignment", QVariant( Qt::AlignHCenter | Qt::AlignVCenter) );
+    
     appendChild(advanceSettingItem);
     CPFW_LOG("CpPersonalizationGroupItemData::afterLoadingConfigPlugins(), END");
 }

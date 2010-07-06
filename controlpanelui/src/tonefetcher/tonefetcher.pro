@@ -39,7 +39,10 @@ symbian {
             -lDrmHelper \
             -ldrmutility \
             -lapmime \
-            -lecom
+            -lecom \
+            -lcone \
+            -lapgrfx
+
             TARGET.UID3 = 0x2002BCCA
             TARGET.CAPABILITY = ALL -TCB
             BLD_INF_RULES.prj_exports += "./service_conf.xml z:/private/2002BCCA/service_conf.xml"

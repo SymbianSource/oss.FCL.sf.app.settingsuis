@@ -102,7 +102,7 @@ void CpProfileSettingForm::initProfileItems(int profileId,HbDataFormModelItem *p
     //ring tone item
     QFileInfo ringToneFileInfo( profileSettings.mRingTone );
     HbDataFormModelItem *modelItem = new CpPersonalizationEntryItemData( *mItemDataHelper,
-            hbTrId("txt_cp_dblist_ringtone"), ringToneFileInfo.fileName(), mFileIconProvider->icon( ringToneFileInfo ),
+            hbTrId("txt_cp_dblist_ringtone"), ringToneFileInfo.fileName(), "qtg_large_ring_tone",
             CpPersonalizationEntryItemData::TONE_Ring, profileId );
     mModel->appendDataFormItem(modelItem, parent);
     modelItems.insert(ProfileItemRingTone,modelItem);
@@ -110,7 +110,7 @@ void CpProfileSettingForm::initProfileItems(int profileId,HbDataFormModelItem *p
     //message tone item
     QFileInfo messageToneFileInfo( profileSettings.mMessageTone );
     modelItem = new CpPersonalizationEntryItemData( *mItemDataHelper,
-            hbTrId("txt_cp_dblist_message_tone"), messageToneFileInfo.fileName(), mFileIconProvider->icon( messageToneFileInfo ),
+            hbTrId("txt_cp_dblist_message_tone"), messageToneFileInfo.fileName(), "qtg_large_message",
             CpPersonalizationEntryItemData::TONE_Message,
             profileId );
     mModel->appendDataFormItem(modelItem , parent);
@@ -119,7 +119,7 @@ void CpProfileSettingForm::initProfileItems(int profileId,HbDataFormModelItem *p
     //email tone item
     QFileInfo emailToneFileInfo( profileSettings.mEmailTone );
     modelItem = new CpPersonalizationEntryItemData( *mItemDataHelper,
-            hbTrId("txt_cp_dblist_email_tone"),  emailToneFileInfo.fileName(), mFileIconProvider->icon( emailToneFileInfo ),
+            hbTrId("txt_cp_dblist_email_tone"),  emailToneFileInfo.fileName(), "qtg_large_email",
             CpPersonalizationEntryItemData::TONE_Email,
             profileId );
     mModel->appendDataFormItem(modelItem , parent);
@@ -128,7 +128,7 @@ void CpProfileSettingForm::initProfileItems(int profileId,HbDataFormModelItem *p
     //reminder tone item
     QFileInfo reminderToneFileInfo( profileSettings.mReminderTone );
     modelItem = new CpPersonalizationEntryItemData( *mItemDataHelper,
-            hbTrId("txt_cp_dblist_reminder_tone"), reminderToneFileInfo.fileName(), mFileIconProvider->icon( reminderToneFileInfo ),
+            hbTrId("txt_cp_dblist_reminder_tone"), reminderToneFileInfo.fileName(), "qtg_large_calendar",
             CpPersonalizationEntryItemData::TONE_Reminder,
             profileId );
     mModel->appendDataFormItem(modelItem , parent);
@@ -419,18 +419,7 @@ void CpProfileSettingForm::on_general_keysAndScreenToneSlider_ValueChanged( int 
     HbDataFormModelItem *modelItem = profileItem(EProfileWrapperGeneralId,ProfileItemKeyandTouchScreenTones);
     if (modelItem) {
         modelItem->setContentWidgetData( QString("value"), value );
-        QMap< QString, QVariant > elements;
-        if (value != 0) {      
-            elements.insert(QString("DecreaseElement"), QVariant(":/icon/hb_vol_slider_decrement.svg"));
-            elements.insert(QString("IncreaseElement"), QVariant(":/icon/hb_vol_slider_increment.svg"));
-            elements.insert(QString("IconElement"), QVariant(":/icon/hb_vol_slider_unmuted.svg") );            
-        }
-        else {
-            elements.insert(QString("DecreaseElement"), QVariant(":/icon/hb_vol_slider_decrement.svg"));
-            elements.insert(QString("IncreaseElement"), QVariant(":/icon/hb_vol_slider_increment.svg"));
-            elements.insert(QString("IconElement"), QVariant(":/icon/hb_vol_slider_muted.svg") );  
-        }
-        modelItem->setContentWidgetData( QString( "elementIcons" ), elements );            
+        setMuteIcon(modelItem, (value == 0) );            
     }
 }
 
@@ -481,18 +470,7 @@ void CpProfileSettingForm::on_meeting_keysAndScreenToneSlider_ValueChanged( int 
     HbDataFormModelItem *modelItem = profileItem(EProfileWrapperMeetingId,ProfileItemKeyandTouchScreenTones);
     if (modelItem) {
         modelItem->setContentWidgetData( QString("value"), value );
-        QMap< QString, QVariant > elements;
-        if (value != 0) {
-            elements.insert(QString("DecreaseElement"), QVariant(":/icon/hb_vol_slider_decrement.svg"));
-            elements.insert(QString("IncreaseElement"), QVariant(":/icon/hb_vol_slider_increment.svg"));
-            elements.insert(QString("IconElement"), QVariant(":/icon/hb_vol_slider_unmuted.svg") );            
-        }
-        else {
-            elements.insert(QString("DecreaseElement"), QVariant(":/icon/hb_vol_slider_decrement.svg"));
-            elements.insert(QString("IncreaseElement"), QVariant(":/icon/hb_vol_slider_increment.svg"));
-            elements.insert(QString("IconElement"), QVariant(":/icon/hb_vol_slider_muted.svg") );  
-        }
-        modelItem->setContentWidgetData( QString( "elementIcons" ), elements );            
+        setMuteIcon(modelItem, (value == 0) );            
     }
 }
 
@@ -557,7 +535,13 @@ void CpProfileSettingForm::settingValueChanged(const XQSettingsKey &key, const Q
             for (int i = 0; i < sizeof(silenceSensitiveModelItemIds)/sizeof(silenceSensitiveModelItemIds[0]);++i) {           
                 QHash<int,HbDataFormModelItem*>::const_iterator found = it.value().find(silenceSensitiveModelItemIds[i]);
                 if (found != it.value().end()) {
-                    found.value()->setEnabled(!value.toBool());
+                    if (found.key() == CpProfileSettingForm::ProfileItemKeyandTouchScreenTones) {
+                        int currentValue = found.value()->contentWidgetData("value").toInt();
+                        // change the mute icon when the silence mode is changed
+                        bool isMute = value.toBool() || (currentValue == 0);
+                        setMuteIcon(found.value(), isMute); 
+                    } 
+                    found.value()->setEnabled(!value.toBool());                             
                 }
             }   
         }
@@ -569,4 +553,30 @@ HbDataFormModelItem *CpProfileSettingForm::profileItem(int profileId,int profile
     return mProfileModelItems.value(profileId).value(profileItemId);
 }
 
+/*!
+ *  Set the slider icon to mute or unmute
+ *  @param isMute: identified the icon of slider, mute or unmute
+ *  @param profileId: identified which slider should be changed
+ */
+
+void CpProfileSettingForm::setMuteIcon(HbDataFormModelItem *sliderItem, bool isMute)
+{
+    if (sliderItem == 0) {
+        return;
+    }
+    //VolumeSliderItem will be depreacted, so ignore the assert about it
+    if (sliderItem->type() != HbDataFormModelItem::SliderItem) {
+        return;
+    }
+    
+    QMap<QString, QVariant> elements = sliderItem->contentWidgetData("elementIcons").toMap();
+    
+    if (isMute) {        
+        elements.insert(QString("IconElement"), QVariant(":/icon/hb_vol_slider_muted.svg"));
+    }
+    else {
+        elements.insert(QString("IconElement"), QVariant(":/icon/hb_vol_slider_unmuted.svg"));
+    }
+    sliderItem->setContentWidgetData( QString( "elementIcons" ), elements ); 
+}
 //End of File

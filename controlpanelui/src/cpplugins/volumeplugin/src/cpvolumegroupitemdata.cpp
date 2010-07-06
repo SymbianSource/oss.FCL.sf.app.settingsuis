@@ -57,7 +57,7 @@ void CpVolumeGroupItemData::initItems(CpItemDataHelper &itemDataHelper)
     this->appendChild(silenceIndicator);
     
     HbDataFormModelItem *masterVolume = new HbDataFormModelItem(HbDataFormModelItem::SliderItem,
-                                            hbTrId("txt_cp_setlabel_volume"));
+                                            hbTrId("txt_cp_setlabel_ringing_volume"));
     mItemList.insert(CpVolumeGroupItemData::EVolumeMasterVolumeItem, masterVolume);
     QList<QVariant> elements;
     elements << QVariant(HbSlider::IncreaseElement) << QVariant(HbSlider::TrackElement)
@@ -76,11 +76,11 @@ void CpVolumeGroupItemData::initItems(CpItemDataHelper &itemDataHelper)
     masterVolume->setContentWidgetData("majorTickInterval",1);
     masterVolume->setContentWidgetData("tickPosition",Hb::SliderTicksBelow);
 
-    QStringList tickLabels;
+    /*QStringList tickLabels;
     tickLabels<<hbTrId("txt_cp_setlabel_volume_val_soft")
               <<hbTrId("txt_cp_setlabel_volume_val_med")
               <<hbTrId("txt_cp_setlabel_volume_val_loud");
-    masterVolume->setContentWidgetData("majorTickLabels",tickLabels);
+    masterVolume->setContentWidgetData("majorTickLabels",tickLabels);*/
     
     masterVolume->setContentWidgetData("iconCheckable",false);
     this->appendChild(masterVolume);

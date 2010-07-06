@@ -15,32 +15,24 @@
  *   
  */
 
-#ifndef CPTHEMECLIENT_P_H
-#define CPTHEMECLIENT_P_H
+#ifndef CPTHEMEUTIL_H_
+#define CPTHEMEUTIL_H_
 
-#include <qglobal.h>
+#include <QList>
 
-class CpThemeClientPrivate;
+class QStringList;
+class CpThemeInfo;
 
-class CpThemeClient
-{
-    CpThemeClientPrivate* d_ptr;
-    Q_DECLARE_PRIVATE_D(d_ptr, CpThemeClient)
+class CpThemeUtil {
 
 public:
-    bool connectToServer();
-
-    bool changeTheme(const QString& newtheme);
-
-    bool isConnected();
-
-public:
-    static CpThemeClient *global();
-    static void releaseInstance();
-    ~CpThemeClient();
-
-private:
-    CpThemeClient();
+    static QStringList themePathList();
+    static QList<CpThemeInfo> buildThemeList();
+    static CpThemeInfo* buildThemeInfo(const QString& themePath, const QString& themeName);
+    static QString themePath(const QString& themeName);
+    static CpThemeInfo* defaultTheme();
 };
 
-#endif /* CPTHEMECLIENT_P_H */
+#endif /* CPTHEMEUTIL_H_ */
+
+

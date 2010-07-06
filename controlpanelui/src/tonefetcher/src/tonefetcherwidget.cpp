@@ -46,26 +46,21 @@ ToneFetcherWidget::ToneFetcherWidget( ToneFetcherView *serviceView  )
       mServiceEngine(0),
       mWaitNote(0)
       
-{
-    mSelected = false;
+{    
     init();
     connect(mServiceEngine, SIGNAL(mdeSessionOpened()), 
             this, SLOT(mdeSessionOpened()));
     connect(mServiceEngine, SIGNAL(mdeSessionError(int)),
             this, SLOT(mdeSessionError(int)));
-    connect(mServiceEngine, SIGNAL(queryComplete(QStringList, QStringList)), 
-            this, SLOT(queryComplete(QStringList, QStringList)));
+    connect(mServiceEngine, SIGNAL(queryComplete(QStringList)), 
+            this, SLOT(queryComplete(QStringList)));
     connect(mServiceEngine, SIGNAL(queryError(int)), 
             this, SLOT(queryError(int)));
     connect(mServiceEngine, 
-           SIGNAL(notifyPreviewEvent(ToneServiceEngine::TPreviewEvent, int)), 
-           this, SLOT(previewEvent(ToneServiceEngine::TPreviewEvent, int)));
+           SIGNAL(notifyPreviewEvent(int)), 
+           this, SLOT(previewEvent(int)));
     connect( mServiceEngine, SIGNAL(notifyObjectChanged()),
             this, SLOT(onObjectChanged()));
-    connect( mServiceEngine, SIGNAL(notifyRefreshStart()),
-                this, SLOT(refreshStart()));
-    connect( mServiceEngine, SIGNAL(notifyRefreshFinish()),
-                this, SLOT(refreshFinish()));
 }
 
 ToneFetcherWidget::~ToneFetcherWidget()
@@ -78,38 +73,28 @@ ToneFetcherWidget::~ToneFetcherWidget()
 
 void ToneFetcherWidget::on_list_activated(const QModelIndex &index)
 {  
-    QModelIndexList modelIndexList = mListView->selectionModel()->selectedIndexes();
-    
     //stop previewing when clicking another item.
-    if (mServiceEngine->IsPlaying()) {
-        mServiceEngine->stop();
+    if (mServiceEngine->isPlaying()) {
+        mServiceEngine->stopPlaying();
     }
     /*
      * when one item is selected, reselecting it will deselect it. selecting another 
      * will also deselect it, while the other is selected.
      */
-    if (mSelected){
-        if(mOldSeletedItem != index) {
-            mListView->selectionModel()->select(index, QItemSelectionModel::Select);
-            mOldSeletedItem = index;
-            emit triggerToolBar(true);
-        } else {
-            mListView->selectionModel()->select(index, QItemSelectionModel::Deselect);
-            mSelected = false;
-            emit triggerToolBar(false);
-        }        
-        return;
+    QItemSelectionModel *selectionModel = mListView->selectionModel();        
+    if (mOldSeletedItem == index) {
+        selectionModel->select(index,QItemSelectionModel::Toggle);
     }
-    if (modelIndexList.count() > 0) {
-        for (QModelIndexList::const_iterator it = modelIndexList.begin(); it != modelIndexList.end(); ++it) {
-            if ((*it) == index) {
-                mSelected = true;
-                mOldSeletedItem = index;
-                emit triggerToolBar(true);
-            }            
-        }
-        
-    }   
+    
+    QModelIndexList modelIndexList = selectionModel->selectedIndexes();
+    if (modelIndexList.isEmpty()) {
+        mOldSeletedItem = QModelIndex();
+    }
+    else {
+        mOldSeletedItem = modelIndexList.front();
+    }
+    emit triggerToolBar(selectionModel->hasSelection());
+
     
 }
 
@@ -129,8 +114,9 @@ void ToneFetcherWidget::init()
     mListView->setSelectionMode(HbAbstractItemView::SingleSelection);
      
     mServiceEngine = new ToneFetcherEngine(this);     
-    mToneModel = new ToneFetcherModel(this);
-    addRomFiles();
+    mToneModel = new ToneFetcherModel(this);    
+    
+    initRomSoundList();    
     
     connect(mListView, SIGNAL(activated(QModelIndex)),
         this, SLOT(on_list_activated(QModelIndex )));
@@ -144,23 +130,19 @@ void ToneFetcherWidget::init()
 
 void ToneFetcherWidget::mdeSessionOpened()
 {
-    mServiceEngine->getTone();
+    mServiceEngine->getTones();
 }
 
-void ToneFetcherWidget::queryComplete(const QStringList &nameList, const QStringList &uriList)
+void ToneFetcherWidget::queryComplete(const QStringList &uriList)
 {
-    QStandardItem *fileName = 0;
-    QStandardItem *filePath = 0; 
-    for (int i = 0; i < nameList.size(); ++i) { 
-        QString tr1 = nameList.at(i);
-        tr1 = uriList.at(i);
-        fileName = new QStandardItem(nameList.at(i));
-        filePath = new QStandardItem(uriList.at(i));
-        mToneModel->insertInOrder(fileName, filePath);       
-    }   
-    mLabel->setPlainText(QString::number(mSimpleSoundList.size() + mDigitalSoundList.size() + nameList.size()) + " tones");
-    mListView->setModel(mToneModel);
-    mToneModel->refresh();
+    addFilesFromMDE(uriList);
+    addFilesFromRom();
+    mToneModel->sort();
+    mToneModel->layoutHasChanged();
+    if (!mListView->model()) {    
+        mListView->setModel(mToneModel);
+    }
+    refreshFinish();
 }
 
 void ToneFetcherWidget::queryError(int error)
@@ -178,27 +160,27 @@ QString ToneFetcherWidget::getCurrentItemPath()
 {
     QModelIndexList modelIndexList = mListView->selectionModel()->selectedIndexes();
     if (modelIndexList.count() > 0) {
-        QModelIndex index = modelIndexList.at(0);
-        return mToneModel->data(index, Qt::UserRole).toString();
+        QModelIndex index = modelIndexList.front();
+        QString path = mToneModel->getPath(index);
+        return path;
     }
     return QString();
 }
 
 void ToneFetcherWidget::playOrPause() 
 {
-    if(mServiceEngine->IsPlaying()) {
-        mServiceEngine->stop();
+    if(mServiceEngine->isPlaying()) {
+        mServiceEngine->stopPlaying();
     } else {    
-    mServiceEngine->preview(getCurrentItemPath());
+        mServiceEngine->play(getCurrentItemPath());
     }
     
 }
 
-void ToneFetcherWidget::previewEvent(ToneFetcherEngine::TPreviewEvent event, int errorId) 
+void ToneFetcherWidget::previewEvent(int event) 
 {
-    Q_UNUSED(errorId);
-    if (event == ToneFetcherEngine::EAudioPreviewComplete) {
-        //reserved
+    if (event == 0) {
+        //preview successful, reserved
     } else {
         HbMessageBox::information(QString(hbTrId("Preview Error")));
     }
@@ -206,41 +188,33 @@ void ToneFetcherWidget::previewEvent(ToneFetcherEngine::TPreviewEvent event, int
 
 void ToneFetcherWidget::onObjectChanged()
 {
-    if (mServiceEngine->IsPlaying()) {
-        mServiceEngine->stop();      
+    refreshStart();
+    if (mServiceEngine->isPlaying()) {
+        mServiceEngine->stopPlaying();      
     }
-    emit triggerToolBar(false);
-    mToneModel->toBeFreshed();
-    mToneModel->clearAll();
-    mDigitalSoundList.clear();
-    mSimpleSoundList.clear();
-    addRomFiles();
-    mServiceEngine->getTone();    
+    mToneModel->layoutToBeChanged();
+    emit triggerToolBar(false);    
+    mToneModel->removeRows(0, mToneModel->rowCount());           
+    mServiceEngine->getTones();    
 }
 
-void ToneFetcherWidget::addRomFiles() 
-{
-    QStandardItem *fileName = 0;
-    QStandardItem *filePath = 0;
-    QDir digitalSoundPath(XQUtils::romRootPath() + XQUtils::digitalSoundsPath());
-    mDigitalSoundList = digitalSoundPath.entryInfoList();  
-           
-    QDir simpleSoundPath(XQUtils::romRootPath() + XQUtils::simpleSoundsPath());
-    mSimpleSoundList = simpleSoundPath.entryInfoList();
+void ToneFetcherWidget::addFilesFromRom() 
+{     
+    int currentCount = mToneModel->rowCount();
+    mToneModel->insertRows(currentCount, mRomSoundList.size());
+    for (int i = 0; i < mRomSoundList.size(); ++i) {
+        mToneModel->setData(mToneModel->index(i + currentCount), 
+            QFileInfo(mRomSoundList.at(i)).absoluteFilePath());
+    }  
+}
 
-    for (int i = 0; i < mDigitalSoundList.size(); ++i) {
-        QFileInfo fileInfo = mDigitalSoundList.at(i);        
-        fileName = new QStandardItem(fileInfo.fileName());
-        filePath = new QStandardItem(fileInfo.absoluteFilePath());
-        mToneModel->insertInOrder(fileName, filePath);
-    }
-      
-    for (int i = 0; i < mSimpleSoundList.size(); ++i) {
-        QFileInfo fileInfo = mSimpleSoundList.at(i);       
-        fileName = new QStandardItem(fileInfo.fileName());
-        filePath = new QStandardItem(fileInfo.absoluteFilePath());
-        mToneModel->insertInOrder(fileName, filePath);  
-    }
+void ToneFetcherWidget::addFilesFromMDE(const QStringList &uriList)
+{
+    int currentCount = mToneModel->rowCount();
+    mToneModel->insertRows(currentCount, uriList.size());
+    for (int i = 0; i < uriList.size(); ++i) {
+        mToneModel->setData(mToneModel->index(i + currentCount), QFileInfo(uriList.at(i)).absoluteFilePath());
+    }   
 }
 
 void ToneFetcherWidget::refreshFinish()
@@ -255,5 +229,12 @@ void ToneFetcherWidget::refreshStart()
     if (mWaitNote) {
         mWaitNote->open();
     }
+}
+
+void ToneFetcherWidget::initRomSoundList()
+{
+    QDir digitalSoundPath(XQUtils::romRootPath() + XQUtils::digitalSoundsPath());
+    QDir simpleSoundPath(XQUtils::romRootPath() + XQUtils::simpleSoundsPath());
+    mRomSoundList = digitalSoundPath.entryInfoList() + simpleSoundPath.entryInfoList();
 }
 //End of File

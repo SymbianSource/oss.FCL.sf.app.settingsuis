@@ -35,7 +35,7 @@ QList<CpSettingFormItemData*> CpPersonalizationPlugin::createSettingFormItemData
     CpPersonalizationGroupItemData *personalItemData = 
             new CpPersonalizationGroupItemData(
             HbDataFormModelItem::GroupItem,
-            tr("Personalization"),
+            hbTrId("txt_cp_subhead_personalization"),
             QString("cppersonalizationplugin.cpcfg") );
 
     return QList<CpSettingFormItemData*>() << personalItemData;

@@ -19,14 +19,15 @@
 #include <QDir>
 #include <hbmainwindow.h>
 #include <hbstyleloader.h>
-#include <cpbasepath.h>
 #include "mainview.h"
 
 int main(int argc, char **argv)
 {
     HbApplication app(argc, argv);
     
-    HbStyleLoader::registerFilePath(CP_RESOURCE_PATH + QDir::separator() + WIDGETML_SUB_PATH);
+    HbStyleLoader::registerFilePath(":/widgetml/cpdataformlistentryviewitem.css");
+    HbStyleLoader::registerFilePath(":/widgetml/cpdataformlistentryviewitem_color.css");
+    HbStyleLoader::registerFilePath(":/widgetml/cpdataformlistentryviewitem.widgetml");
     
     HbMainWindow mainWindow;
     MainView *mainView = new MainView();

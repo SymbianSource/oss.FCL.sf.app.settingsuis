@@ -201,6 +201,7 @@ void CpProfileModelPrivate::profileSettings(int profileId,
     profileSettings.mEmailTone = stringFromDescriptor(extTones.EmailAlertTone());
     profileSettings.mReminderTone = stringFromDescriptor(extTones.ReminderTone());
     profileSettings.mNotificationTone = toneSettings.iWarningAndGameTones;
+    // only use Keypad Volume as a base value for display in key & touch screen setting option
     profileSettings.mKeyTouchScreenTone = toneSettings.iKeypadVolume;
     
     profileSettings.mRingAlertVibra = vibraSettings.RingAlertVibra();
@@ -211,6 +212,11 @@ void CpProfileModelPrivate::profileSettings(int profileId,
     profileSettings.mKeyTouchScreenVibra = feedbackSettings.TactileFeedback();
 						
 }
+/*!
+     set profile settings
+     \param profileId identify the profile
+     \param profileSettings value of profile options
+ */
 int CpProfileModelPrivate::setProfileSettings(int profileId, CpProfileSettings& profileSettings)
 {
     MProfileExtended2 *profileExtend = mProfileList.value(profileId);
@@ -224,7 +230,7 @@ int CpProfileModelPrivate::setProfileSettings(int profileId, CpProfileSettings& 
             profileExtend->ProfileSetExtraSettings();
     MProfileSetFeedbackSettings &setFeedbackSettings =
             extraSettings.ProfileSetFeedbackSettings();
-    // ignore here, wait for the exception deal framework of qt-symbian
+    
     TRAP_IGNORE(
             setTones.SetRingingTone1L(*descriptorFromString(
                     profileSettings.mRingTone));
@@ -237,8 +243,12 @@ int CpProfileModelPrivate::setProfileSettings(int profileId, CpProfileSettings& 
             )
     toneSettings.iWarningAndGameTones
             = profileSettings.mNotificationTone;
+    // Change the keypad volume and touch screen tone together
     toneSettings.iKeypadVolume
-            = static_cast<TProfileKeypadVolume> (profileSettings.mKeyTouchScreenTone);
+            = static_cast<TProfileKeypadVolume> (profileSettings.mKeyTouchScreenTone);    
+    setFeedbackSettings.SetAudioFeedback(
+            static_cast<TProfileAudioFeedback> (profileSettings.mKeyTouchScreenTone));
+   
     setVibraSettings.SetRingAlertVibra(profileSettings.mRingAlertVibra);
     setVibraSettings.SetMessageAlertVibra(profileSettings.mMessageVibra);
     setVibraSettings.SetEmailAlertVibra(profileSettings.mEmailVibra);
@@ -429,7 +439,10 @@ void CpProfileModelPrivate::setNotificationTone(int profileId, bool isActive)
             mEngine->CommitChangeL(*profileExtend);
             ) 
 }
-
+/*!
+     return key & touch screen tone's value
+     \sa setKeyTouchScreenTone
+ */
 int CpProfileModelPrivate::keyTouchScreenTone(int profileId) const
 {
     MProfileExtended2 *profileExtend = mProfileList.value(profileId);
@@ -440,7 +453,12 @@ int CpProfileModelPrivate::keyTouchScreenTone(int profileId) const
     int keyTouchScreenTone = toneSettings.iKeypadVolume;
     return keyTouchScreenTone;        
 }
-
+/*!
+     set key & touch screen tone
+     \param profileId identify the profile
+     \param level 0-5
+     \sa keyTouchScreenTone
+ */
 void CpProfileModelPrivate::setKeyTouchScreenTone(int profileId, int level)
 {
     MProfileExtended2 *profileExtend = mProfileList.value(profileId);                    
@@ -449,8 +467,16 @@ void CpProfileModelPrivate::setKeyTouchScreenTone(int profileId, int level)
     TProfileToneSettings &toneSettings =
             setTones.SetToneSettings();
 
+    MProfileSetExtraSettings &extraSettings =
+                profileExtend->ProfileSetExtraSettings();
+    MProfileSetFeedbackSettings &setFeedbackSettings =
+                extraSettings.ProfileSetFeedbackSettings();
+
     toneSettings.iKeypadVolume
             = static_cast<TProfileKeypadVolume> (level);
+    
+    setFeedbackSettings.SetAudioFeedback(
+            static_cast<TProfileAudioFeedback> (level));
     TRAP_IGNORE (
             mEngine->CommitChangeL(*profileExtend);
     )    

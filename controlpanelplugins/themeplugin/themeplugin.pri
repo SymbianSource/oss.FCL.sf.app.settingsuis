@@ -9,18 +9,15 @@
 # Contributors:
 # Description: cpthemeplugin source files
 # Input
-HEADERS += src/cpthemeclient_p_p.h \
-    src/cpthemepreview.h \
+HEADERS += src/cpthemepreview.h \
     src/cpthemecontrol.h \
     src/cpthemeplugin.h \
     src/cpthemelistview.h \
     src/cpthemelistmodel.h \
     src/cpthemechanger.h \
-    src/cpthemeclient_p.h \
-    src/cpthemecommon_p.h \
-    src/cpthemechanger_p.h \
-    src/cpthemepluginentryitemdata.h
-
+    src/cpthemepluginentryitemdata.h \
+    src/cpthemeutil.h \
+    src/cpthemeinfo.h
 SOURCES += src/cpthemepreview.cpp \
     src/cpthemecontrol.cpp \
     src/cpthemeplugin.cpp \
@@ -28,14 +25,5 @@ SOURCES += src/cpthemepreview.cpp \
     src/cpthemelistmodel.cpp \
     src/cpthemepluginentryitemdata.cpp \
     src/cpthemechanger.cpp \
-    src/cpthemechanger_p.cpp \
-    src/cpthemeclient_p.cpp
-    	
-win32|mac { 
-    SOURCES += src/cpthemeclientqt_p.cpp
-}
-
-symbian { 
-    HEADERS += src/cpthemesymbiancommon_p.h
-    SOURCES += src/cpthemeclientsymbian_p.cpp
-}
+    src/cpthemeutil.cpp \
+    src/cpthemeinfo.cpp

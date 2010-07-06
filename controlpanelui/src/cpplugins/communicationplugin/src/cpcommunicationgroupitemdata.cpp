@@ -17,7 +17,7 @@
 #include "cpcommunicationgroupitemdata.h"
 #include <QStringList>
 #include <QtAlgorithms>
-#include <settingsinternalcrkeys.h>
+#include <CoreApplicationUIsSDKCRKeys.h>
 #include <xqsettingsmanager.h>
 #include <cpitemdatahelper.h>
 
@@ -48,8 +48,7 @@ CpCommunicationGroupItemData::~CpCommunicationGroupItemData()
 
 void CpCommunicationGroupItemData::beforeLoadingConfigPlugins(CpItemDataHelper &itemDataHelper)
 {
-    mAirplaneModeItem = new HbDataFormModelItem(HbDataFormModelItem::ToggleValueItem,
-                                              hbTrId("txt_cp_setlabel_offline_airplane_mode"));
+    mAirplaneModeItem = new HbDataFormModelItem(HbDataFormModelItem::ToggleValueItem);
     mAirplaneModeItem->setDescription(hbTrId("txt_cp_info_in_offline_mode_all_wireless_communica"));
     
     itemDataHelper.addConnection(mAirplaneModeItem,
@@ -57,7 +56,7 @@ void CpCommunicationGroupItemData::beforeLoadingConfigPlugins(CpItemDataHelper &
             this,
             SLOT(toggleAirplaneMode()));
     
-    XQCentralRepositorySettingsKey key(KCRUidCommunicationSettings.iUid,KSettingsAirplaneMode);
+    XQCentralRepositorySettingsKey key(KCRUidCoreApplicationUIs.iUid,KCoreAppUIsNetworkConnectionAllowed);
     QVariant airplaneMode = mSettingManager->readItemValue(key,XQSettingsManager::TypeInt);
     settingValueChanged(key,airplaneMode);
     
@@ -71,7 +70,7 @@ void CpCommunicationGroupItemData::beforeLoadingConfigPlugins(CpItemDataHelper &
 
 void CpCommunicationGroupItemData::toggleAirplaneMode()
 {
-    XQCentralRepositorySettingsKey key(KCRUidCommunicationSettings.iUid,KSettingsAirplaneMode);
+    XQCentralRepositorySettingsKey key(KCRUidCoreApplicationUIs.iUid,KCoreAppUIsNetworkConnectionAllowed);
     QVariant airplaneMode = mSettingManager->readItemValue(key,XQSettingsManager::TypeInt);
         
     airplaneMode.setValue( static_cast<int> (!airplaneMode.toBool()) );
@@ -82,12 +81,12 @@ void CpCommunicationGroupItemData::toggleAirplaneMode()
 void CpCommunicationGroupItemData::settingValueChanged(const XQSettingsKey &key, const QVariant &value)
 {
     if (mAirplaneModeItem 
-        && key.uid() == KCRUidCommunicationSettings.iUid 
-        && key.key() == KSettingsAirplaneMode 
+        && key.uid() == KCRUidCoreApplicationUIs.iUid 
+        && key.key() == KCoreAppUIsNetworkConnectionAllowed 
         && value.isValid()) {
         QString text = hbTrId("txt_cp_setlabel_offline_mode_val_on");
         QString additionalText = hbTrId("txt_cp_setlabel_offline_mode_val_off");
-        if (!value.toBool()) {
+        if (ECoreAppUIsNetworkConnectionAllowed == value.toInt()) {
             ::qSwap (text, additionalText);
         }
         mAirplaneModeItem->setContentWidgetData("text",text);

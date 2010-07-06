@@ -28,11 +28,12 @@ class CpLauncherService : public XQServiceProvider
 public:
     explicit CpLauncherService(HbMainWindow *mainWindow = 0);
     virtual ~CpLauncherService();
-    void complete();
+    bool complete();
 public slots:
     bool launchSettingView(const QString &pluginFile,const QVariant &hint);
 private slots:
     void setReturnValue(const QVariant &returnValue);
+    void handleClientDisconnected();
 private:
     HbMainWindow *mMainWindow;
     int mAsyncRequestIndex;

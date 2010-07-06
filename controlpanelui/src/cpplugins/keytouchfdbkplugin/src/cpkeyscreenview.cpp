@@ -60,9 +60,9 @@ CpKeyScreenView::CpKeyScreenView(QGraphicsItem *parent) :
 
         makeBrightnessItem(*model);
 
-        if ( mModel->isCallibrationSupported() ) {
+       /* if ( mModel->isCallibrationSupported() ) {
             makeCallibrationItem(*model);
-        }
+        }*/
 
         form->setModel(model);
     }

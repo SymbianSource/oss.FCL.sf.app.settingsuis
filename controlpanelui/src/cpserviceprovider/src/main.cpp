@@ -19,7 +19,6 @@
 #include <QDir>
 #include <QTranslator>
 #include <QLocale>
-#include <cpbasepath.h>
 #include "cpservicemainwindow.h"
 #include "cpsplogger.h"
 
@@ -37,7 +36,9 @@ int main(int argc, char **argv)
         qApp->installTranslator(&translator);
     }
     
-    HbStyleLoader::registerFilePath(CP_RESOURCE_PATH + QDir::separator() + WIDGETML_SUB_PATH);
+    HbStyleLoader::registerFilePath(":/widgetml/cpdataformlistentryviewitem.css");
+    HbStyleLoader::registerFilePath(":/widgetml/cpdataformlistentryviewitem_color.css");
+    HbStyleLoader::registerFilePath(":/widgetml/cpdataformlistentryviewitem.widgetml");
     
     CpServiceMainWindow wnd;
     wnd.show();

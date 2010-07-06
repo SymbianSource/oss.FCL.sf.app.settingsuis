@@ -36,7 +36,7 @@ signals:
    void selError(  int errorCode, const QString& errorMessage );
 
 private slots:
-    void onTypeSelected( HbListWidgetItem *item );
+    void itemActivated( const QModelIndex &index );
     void handleOk(const QVariant &result);
     void handleError(int errorCode, const QString& errorMessage);
 

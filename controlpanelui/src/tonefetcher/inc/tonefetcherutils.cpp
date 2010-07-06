@@ -15,6 +15,7 @@
  *     The source file for tone fetcher utilities.
  *     
  */
+
 #include "tonefetcherutils.h"
 #include <QDir>
 #include <QChar>

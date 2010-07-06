@@ -27,9 +27,12 @@ CpRingTonePlugin::~CpRingTonePlugin()
 
 QList<CpSettingFormItemData*> CpRingTonePlugin::createSettingFormItemData(CpItemDataHelper &itemDataHelper) const
 {
-    CpPersonalizationEntryItemData *itemData = new CpPersonalizationEntryItemData(itemDataHelper,
-																		tr("Ring tone"),
-																		tr("Default ring tone"));
+    CpPersonalizationEntryItemData *itemData 
+        = new CpPersonalizationEntryItemData(
+                itemDataHelper,
+                hbTrId("txt_cp_dblist_ringtone"),
+				QString(""),
+				"qtg_large_ring_tone");
     return QList<CpSettingFormItemData*>() << itemData;
 }
 

@@ -19,9 +19,9 @@
 #include <QDir>
 #include <QFileInfo>
 #include <hbinstance.h>
-#include <cpbasepath.h>
 #include <cppluginloader.h>
 #include <cpplugininterface.h>
+#include <cpbasepath.h>
 #include <cplogger.h>
 #include <cpevent.h>
 #include <cptaskexecutor.h>
@@ -214,11 +214,7 @@ bool CpCategoryModelUtility::setEntryItemContentIfEmpty(CpSettingFormItemData *i
     }
     if (entryItemData->iconName().isEmpty()) {
         entryItemData->setIconName(
-                  CP_RESOURCE_PATH
-                  + QDir::separator() 
-                  + ICON_SUB_PATH 
-                  + QDir::separator() 
-                  + QLatin1String("qgn_prop_set_default_sub.svg") );
+                QLatin1String(":/icon/qgn_prop_set_default_sub.svg") );
     }
     
     return true;

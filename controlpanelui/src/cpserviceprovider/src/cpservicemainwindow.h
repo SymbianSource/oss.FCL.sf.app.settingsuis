@@ -31,12 +31,21 @@ public:
     explicit CpServiceMainWindow(QWidget *parent = 0);
     virtual ~CpServiceMainWindow();
     
+    /*
+     * set the setting view as current view
+     */
     void setSettingView(CpBaseSettingView *settingView);
+    
+    /*
+     * close current setting view
+     */
+    void closeSettingView();
     
 public slots:
     void quit();
 private:
     CpLauncherService *mLauncherService;
+    HbView *mPreviousView;
     QPointer<CpBaseSettingView> mSettingViewPointer;
 };
 
