@@ -50,7 +50,7 @@ void CpCommunicationGroupItemData::beforeLoadingConfigPlugins(CpItemDataHelper &
 {
     mAirplaneModeItem = new HbDataFormModelItem(HbDataFormModelItem::ToggleValueItem);
     mAirplaneModeItem->setDescription(hbTrId("txt_cp_info_in_offline_mode_all_wireless_communica"));
-    
+    mAirplaneModeItem->setContentWidgetData("objectName", "airplaneModeToggle");
     itemDataHelper.addConnection(mAirplaneModeItem,
             SIGNAL(clicked()),
             this,

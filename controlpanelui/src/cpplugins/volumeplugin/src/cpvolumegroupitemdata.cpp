@@ -54,6 +54,7 @@ void CpVolumeGroupItemData::initItems(CpItemDataHelper &itemDataHelper)
     HbDataFormModelItem *silenceIndicator = new HbDataFormModelItem(static_cast<HbDataFormModelItem::DataItemType>(SilenceIndicatorItem));
     mItemList.insert(CpVolumeGroupItemData::EVolumeSilenceItem, silenceIndicator);
     silenceIndicator->setContentWidgetData("text",hbTrId("txt_cp_button_silence"));
+    silenceIndicator->setContentWidgetData("objectName", "silenceIndicatorButton");
     this->appendChild(silenceIndicator);
     
     HbDataFormModelItem *masterVolume = new HbDataFormModelItem(HbDataFormModelItem::SliderItem,
@@ -64,6 +65,7 @@ void CpVolumeGroupItemData::initItems(CpItemDataHelper &itemDataHelper)
             << QVariant(HbSlider::DecreaseElement) << QVariant(HbSlider::IconElement)
             << QVariant(HbSlider::TextElement);
     masterVolume->setContentWidgetData("sliderElements",elements);
+    masterVolume->setContentWidgetData("objectName","masterVolumeSlider");
     
     QMap<QString, QVariant> iconMaps;
     iconMaps.insert(QString("DecreaseElement"), QVariant(":/icon/hb_vol_slider_decrement.svg"));
@@ -88,6 +90,7 @@ void CpVolumeGroupItemData::initItems(CpItemDataHelper &itemDataHelper)
     HbDataFormModelItem *masterVibra = new HbDataFormModelItem(HbDataFormModelItem::CheckBoxItem);
     mItemList.insert(CpVolumeGroupItemData::EVolumeMasterVibraItem, masterVibra);
     masterVibra->setContentWidgetData("text",hbTrId("txt_cp_list_vibrate"));
+    masterVibra->setContentWidgetData("objectName","masterVibraCheckBox");
     
     this->appendChild(masterVibra);
     

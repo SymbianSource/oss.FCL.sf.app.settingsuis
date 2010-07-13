@@ -27,6 +27,7 @@
 #include <hbiconitem.h>
 #include <hbmainwindow.h>
 #include <HbParameterLengthLimiter>
+#include <HbDataForm>
 
 #include "cpthemepreview.h"
 #include "cpthemeinfo.h"
@@ -38,6 +39,7 @@
            the theme change or press Cancel and go back to theme list view.
 */
 
+
 /*!
     constructor.
 */
@@ -47,20 +49,48 @@ CpThemePreview::CpThemePreview(const CpThemeInfo& theme, QGraphicsItem *parent) 
      mSoftKeyBackAction(0),
      mPreviewIcon(0)
 {
-    
-    //Create the layout and add heading and and preview icon to the layout.
-    QGraphicsLinearLayout* layout = new QGraphicsLinearLayout(Qt::Vertical);
+    QGraphicsLinearLayout* containerLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    QGraphicsLinearLayout* bottomLayout = new QGraphicsLinearLayout(Qt::Vertical);
+        
+    //Preview icon margins.
+    qreal leftMargin = 0.0;
+    qreal rightMargin = 0.0;
+    qreal topMargin = 0.0;
+    qreal bottomMargin = 0.0;
+        
+    style()->parameter(QString("hb-param-margin-gene-left"), leftMargin);
+    style()->parameter("hb-param-margin-gene-right", rightMargin);
+    style()->parameter("hb-param-margin-gene-top", topMargin);
+    style()->parameter("hb-param-margin-gene-bottom", bottomMargin);
 
-    
-    //setup the heading.
+    containerLayout->setContentsMargins(0,0,0,0);
+    bottomLayout->setContentsMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+       
+    //Using an empty dataform as heading because the heading should
+    //look like an HbDataForm headiing.
+    HbDataForm* heading = new HbDataForm(this);
     QString themeHeading = HbParameterLengthLimiter("txt_cp_title_preview_1").arg(mTheme.name());   
-    HbLabel* label = new HbLabel(themeHeading, this);
-   
-    layout->addItem(label);
+    heading->setHeading(themeHeading);
+       
+    containerLayout->addItem(heading);
+    //Fixed vertical policy so that the heading doesn't expand.
+    heading->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed,QSizePolicy::DefaultType);
     
-    layout->setAlignment(layout->itemAt(0), Qt::AlignTop);
-    layout->itemAt(0)->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed,QSizePolicy::DefaultType);
+    if(mainWindow()->orientation() == Qt::Horizontal) {
+        mPreviewIcon = new HbIconItem(mTheme.landscapePreviewIcon(), this);
+    }
+    else {
+        mPreviewIcon = new HbIconItem(mTheme.portraitPreviewIcon(), this);
+    }
     
+    //set to ignore aspect ratio so the layout would rezise the icon correctly.
+    mPreviewIcon->setAspectRatioMode(Qt::IgnoreAspectRatio);
+    
+    bottomLayout->addItem(mPreviewIcon);
+    containerLayout->addItem(bottomLayout);
+
+    setLayout(containerLayout);
+        
     //Create the toolbar and "Select" and "Cancel" actions.
     HbToolBar* mToolBar = new HbToolBar(this);
 
@@ -77,24 +107,11 @@ CpThemePreview::CpThemePreview(const CpThemeInfo& theme, QGraphicsItem *parent) 
 
     QObject::connect( cancelAction, SIGNAL(triggered()), 
                       this, SIGNAL(aboutToClose()));
-    
     QObject::connect( mainWindow(), SIGNAL(orientationChanged(Qt::Orientation)),
                       this, SLOT(previewOrientationChanged(Qt::Orientation)));
        
-   
-    if(mainWindow()->orientation() == Qt::Horizontal) {
-        mPreviewIcon = new HbIconItem(mTheme.landscapePreviewIcon(), this);
-    }
-    else {
-        mPreviewIcon = new HbIconItem(mTheme.portraitPreviewIcon(), this);
-    }
-    layout->addItem(mPreviewIcon);
-    layout->itemAt(1)->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred,QSizePolicy::DefaultType);
         
- 
     setToolBar(mToolBar);
-    setLayout(layout);
-
     //Setup the Back button action and set softkey. Back button 
     //takes the user to the theme list view.
     mSoftKeyBackAction = new HbAction(Hb::BackNaviAction, this);
@@ -102,6 +119,7 @@ CpThemePreview::CpThemePreview(const CpThemeInfo& theme, QGraphicsItem *parent) 
             this, SIGNAL(aboutToClose()) );
 
     setNavigationAction(mSoftKeyBackAction);
+    
 }
 
 /*!
@@ -122,7 +140,7 @@ void CpThemePreview::setThemeInfo(const CpThemeInfo& theme)
 /*!
     returns the themeName.
 */
-const QString& CpThemePreview::themeName() const
+const QString CpThemePreview::themeName() const
 {
     return mTheme.name();
 }
@@ -130,7 +148,7 @@ const QString& CpThemePreview::themeName() const
 /*!
     returns the repersentative themeIcon of the current theme.
 */
-const HbIcon& CpThemePreview::themeIcon() const
+const HbIcon CpThemePreview::themeIcon() const
 {
     return mTheme.icon();
 }
@@ -150,10 +168,16 @@ void CpThemePreview::themeSelected()
 void CpThemePreview::previewOrientationChanged(Qt::Orientation orientation)
 {
    
-    QGraphicsLinearLayout* previewLayout = dynamic_cast<QGraphicsLinearLayout*>(layout());
+    QGraphicsLinearLayout* containerLayout = dynamic_cast<QGraphicsLinearLayout*>(layout());
+    QGraphicsLinearLayout* previewLayout = 0;
+    if(containerLayout) {
+        //get the layout that preview icon belongs to.
+        previewLayout = dynamic_cast<QGraphicsLinearLayout*>(containerLayout->itemAt(0));
+    }
    
-    if(mPreviewIcon && mPreviewIcon == dynamic_cast<HbIconItem*>(previewLayout->itemAt(1)) ) {
-        previewLayout->removeAt(1);
+    if(previewLayout && mPreviewIcon && mPreviewIcon == dynamic_cast<HbIconItem*>(previewLayout->itemAt(0)) ) {
+        //Remove preview icon.
+        previewLayout->removeAt(0);
         
         if(orientation == Qt::Horizontal) {
             mPreviewIcon->setIcon(mTheme.landscapePreviewIcon());

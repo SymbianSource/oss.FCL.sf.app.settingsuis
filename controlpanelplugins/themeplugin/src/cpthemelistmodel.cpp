@@ -49,7 +49,7 @@ CpThemeListModel::CpThemeListModel(QObject* parent)
     foreach (const QString &path, themesPathList) {
         QDir themeDir;
         themeDir.setPath( path ) ;
-        QStringList list = themeDir.entryList(QDir::AllDirs|QDir::NoDotAndDotDot,QDir::Name);
+        QStringList list = themeDir.entryList(QDir::AllDirs|QDir::NoDotAndDotDot, QDir::Name);
         if(list.contains("themes", Qt::CaseSensitive )) {
             mFileWatcher->addPath(themeDir.path() + "/themes/");
         }

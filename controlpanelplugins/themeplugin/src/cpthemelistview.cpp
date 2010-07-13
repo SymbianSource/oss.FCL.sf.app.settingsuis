@@ -20,9 +20,9 @@
 #include <QModelIndex>
 
 #include <hbview.h>
-#include <hblabel.h>
 #include <hblistview.h>
 #include <hblistviewitem.h>
+#include <hbdataform.h>
 
 #include "cpthemelistview.h"
 
@@ -32,8 +32,7 @@
     corresponding icons.
 
     Note: This class is a subclass of CpBaseSettingView for compatibility with Control Panel
-          framework.  However, it does not use HbDataForm as its widget and as its parent does, so
-          it uses SetWidget to set the listview to its widget instead of an HbDataForm.
+          framework.  
  */
 
 /*!
@@ -42,24 +41,35 @@
 CpThemeListView::CpThemeListView(QGraphicsItem *parent) : CpBaseSettingView(0, parent),
     mThemeList(new HbListView(this))
 {
-
+   
+    
     //Create a layout with a heading "Select theme" at top and the list below it.
     HbWidget* contentWidget = new HbWidget(this);
     QGraphicsLinearLayout* layout = new QGraphicsLinearLayout(Qt::Vertical);
+    layout->setContentsMargins(0,0,0,0);
     
     //setup the heading.
-    HbLabel* label = new HbLabel(hbTrId("txt_cp_title_select_theme"), contentWidget);//txt_cp_title_select_theme
-    layout->addItem(label);
-
+    //Using an empty dataform as heading because the heading should
+    //look like an HbDataForm headiing.
+    HbDataForm *form = new HbDataForm(contentWidget);
+    form->setHeading(hbTrId("txt_cp_title_select_theme"));
+        
+    layout->addItem(form);
+    //Fixed vertical policy so that the heading doesn't expand.
+    form->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed, QSizePolicy::DefaultType);
+      
     connect(mThemeList, SIGNAL(activated(const QModelIndex&)),
             this, SIGNAL(newThemeSelected(const QModelIndex&)));
     
+    //set list item icons to be large.
     HbListViewItem* listViewItem = mThemeList->listItemPrototype();
     listViewItem->setGraphicsSize(HbListViewItem::LargeIcon);
    
     //add the list to layout.
     layout->addItem(mThemeList);
-
+    layout->addStretch();
+    
+    
     contentWidget->setLayout(layout);
    
     setWidget(contentWidget);

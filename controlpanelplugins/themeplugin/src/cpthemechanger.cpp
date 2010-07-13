@@ -39,7 +39,9 @@ CpThemeChanger::CpThemeChanger(QObject* p) :
     QObject(p),
     mCurrentTheme(0)
 {
-    connect(hbInstance->theme(),SIGNAL(changeFinished()), this, SLOT(changeFinished()));
+    if(hbInstance->theme()) {
+        connect(hbInstance->theme(),SIGNAL(changeFinished()), this, SLOT(changeFinished()));
+    }
        
     setCurrentTheme();
 }
@@ -73,8 +75,7 @@ void CpThemeChanger::setCurrentTheme()
        
     if(mCurrentTheme && mCurrentTheme->name() == themeName) {
         return;
-    }
-    else {
+    } else {
         //buildThemeInfo creates new theme info.
         CpThemeInfo* tmpTheme = CpThemeUtil::buildThemeInfo(HbThemeServices::themePath(), themeName);
          
@@ -124,9 +125,7 @@ CpThemeChanger::~CpThemeChanger()
  */
 void CpThemeChanger::changeFinished()
 {
-  
     setCurrentTheme();
-    
     emit themeChangeFinished();
 }
 

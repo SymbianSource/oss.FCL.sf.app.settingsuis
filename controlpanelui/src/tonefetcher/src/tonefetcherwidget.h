@@ -39,7 +39,7 @@ class ToneFetcherWidget : public HbWidget
     Q_OBJECT
     
 public:
-    explicit ToneFetcherWidget(ToneFetcherView *serviceView);
+    explicit ToneFetcherWidget(HbWidget *parent, ToneFetcherView *serviceView);
     ~ToneFetcherWidget();
     QString getCurrentItemPath();
     void playOrPause();

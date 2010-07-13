@@ -50,7 +50,7 @@ QList<CpSettingFormItemData*> CpThemePlugin::createSettingFormItemData(CpItemDat
         itemDataHelper,
         tr("Theme"),
         tr("Theme Name"),
-        HbIcon(":/image/qgn_menu_note.svg"));
+        HbIcon());
         return QList<CpSettingFormItemData*>() << entryItem;
 }
 

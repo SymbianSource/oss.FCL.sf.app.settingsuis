@@ -38,7 +38,7 @@ ToneFetcherView::~ToneFetcherView()
 
 void ToneFetcherView::initMainWidget()
 {
-    mWidget = new ToneFetcherWidget(this);
+    mWidget = new ToneFetcherWidget(this, this);
     Q_ASSERT(mWidget);
     setWidget(mWidget);
     //mWidget->setCurrentToolBarType( ToneServiceWidget::GeneralTone );

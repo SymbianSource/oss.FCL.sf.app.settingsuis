@@ -137,7 +137,8 @@ void CpProfileSettingForm::initProfileItems(int profileId,HbDataFormModelItem *p
     //notification tones item
     modelItem= mModel->appendDataFormItem(HbDataFormModelItem::CheckBoxItem,QString(),parent);
     modelItem->setContentWidgetData("text", hbTrId("txt_cp_list_notification_tones"));
-    modelItem->setContentWidgetData( "checkState", profileSettings.mNotificationTone ? 2 : 0 );
+    modelItem->setContentWidgetData("checkState", profileSettings.mNotificationTone ? 2 : 0);
+    modelItem->setContentWidgetData("objectName", "notificationTonesCheckBox" + QString::number(profileId));
     if (profileId == EProfileWrapperGeneralId) {
         addConnection( modelItem, SIGNAL( stateChanged( int )), this, SLOT( on_general_notificationTones_stateChanged( int )));
     }
@@ -156,7 +157,7 @@ void CpProfileSettingForm::initProfileItems(int profileId,HbDataFormModelItem *p
             << QVariant(HbSlider::DecreaseElement) << QVariant(HbSlider::IconElement)
             << QVariant(HbSlider::TextElement);
     modelItem->setContentWidgetData("sliderElements",sliderElements);
-    
+    modelItem->setContentWidgetData("objectName", "keyTonesSlider" + QString::number(profileId));
     
     
     //TODO: profileModel need provide Max and Min value( 0-5 ), current max value from profileModel is 3
@@ -192,7 +193,7 @@ void CpProfileSettingForm::initProfileItems(int profileId,HbDataFormModelItem *p
     sliderElements << QVariant(HbSlider::IncreaseElement) << QVariant(HbSlider::TrackElement)
                 << QVariant(HbSlider::DecreaseElement);
     modelItem->setContentWidgetData("sliderElements",sliderElements);
-        
+    modelItem->setContentWidgetData("objectName", "vibrationSlider" + QString::number(profileId));
     modelItem->setContentWidgetData( QString( "minimum" ), 0 );
     modelItem->setContentWidgetData( QString( "maximum" ), 5 );
     modelItem->setContentWidgetData( QString("value"), profileSettings.mKeyTouchScreenVibra );

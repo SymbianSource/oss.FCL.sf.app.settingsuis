@@ -36,8 +36,8 @@
 #include <hbmessagebox.h>
 #include <hbprogressdialog.h>
 
-ToneFetcherWidget::ToneFetcherWidget( ToneFetcherView *serviceView  ) 
-    : HbWidget(this),
+ToneFetcherWidget::ToneFetcherWidget(HbWidget *parent, ToneFetcherView *serviceView)
+    : HbWidget(parent),
       mLabel(0),
       mListView(0),
       mLayout(0),

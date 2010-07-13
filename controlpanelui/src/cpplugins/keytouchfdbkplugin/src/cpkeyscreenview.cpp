@@ -100,6 +100,7 @@ void CpKeyScreenView::makeScreenItem(HbDataFormModel& model)
     QStringList items = mScreenLockValues.values();
     mScreenComboButton->setContentWidgetData( QString("items"), items );
     mScreenComboButton->setContentWidgetData( QString("currentIndex"), selectedIndex);
+    mScreenComboButton->setContentWidgetData("objectName", "screenComboButton");
 }
 
 void CpKeyScreenView::makeRotateItem(HbDataFormModel& model)
@@ -117,6 +118,7 @@ void CpKeyScreenView::makeRotateItem(HbDataFormModel& model)
         state = Qt::Unchecked;
     }
     mRotateCheckbox->setContentWidgetData( QString("checkState"), state );
+    mRotateCheckbox->setContentWidgetData("objectName", "rotateCheckbox");
 }
 
 void CpKeyScreenView::makeBrightnessItem(HbDataFormModel& model)
@@ -136,6 +138,7 @@ void CpKeyScreenView::makeBrightnessItem(HbDataFormModel& model)
     iconElements.insert(QString("IncreaseElement") , QVariant(":/icon/hb_vol_slider_increment.svg"));
     iconElements.insert(QString("DecreaseElement"), QVariant(":/icon/hb_vol_slider_decrement.svg") );
     mBrightSliderItem->setContentWidgetData( QString( "elementIcons" ), iconElements );
+    mRotateCheckbox->setContentWidgetData("objectName", "brightSliderItem");
 }
 
 void CpKeyScreenView::makeCallibrationItem(HbDataFormModel& model)

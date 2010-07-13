@@ -41,8 +41,8 @@ public:
     explicit CpThemePreview(const CpThemeInfo &theme, QGraphicsItem *parent = 0);
     ~CpThemePreview();
     void setThemeInfo(const CpThemeInfo& theme);
-    const QString& themeName() const;
-    const HbIcon& themeIcon() const;
+    const QString themeName() const;
+    const HbIcon themeIcon() const;
 	
 signals:
     void applyTheme(const QString&);

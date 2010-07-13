@@ -41,7 +41,7 @@ CpRingToneView::CpRingToneView( QGraphicsItem *parent ):
     HbStyleLoader::registerFilePath(":/widgetml/cpdataformlistentryviewitem.widgetml");
     
     HbDataForm *form = qobject_cast<HbDataForm*> ( widget() );
-    form->setHeading("txt_cp_subhead_select_tone_type");   
+    form->setHeading(hbTrId("txt_cp_subhead_select_tone_type"));   
     
     HbDataFormModel *model = new HbDataFormModel();  
     QList< QPair<QString,QString> > tonesTypeList;

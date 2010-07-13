@@ -50,6 +50,8 @@
 #include <hbdialog.h>
 #include <hblabel.h>
 
+//time out time before showing a processing dialog.
+static const int KThemeChangeTimeOutMilliSeconds = 1000;  
 
 /*!
 	Helper function to fetch the main window.
@@ -241,6 +243,7 @@ void CpThemeControl::newThemeSelected(const QModelIndex& index)
     
    //Set up the theme preview and set it to
     //the current view of main window.
+
     HbMainWindow*  mWindow = ::mainWindow();
    
     if(!mThemePreview){
@@ -273,7 +276,7 @@ void CpThemeControl::themeApplied(const QString& theme)
         //Start a timer. If theme change takes more than 1 seconds,
         //we will show a dialog (mWaitDialog) until theme change
         //is done (themeChangeFinished is called).
-        QTimer::singleShot(1000, this, SLOT(themeWaitTimeout()));
+        QTimer::singleShot(KThemeChangeTimeOutMilliSeconds, this, SLOT(themeWaitTimeout()));
         
         mThemeChangeFinished = false;
     } else {
@@ -292,9 +295,11 @@ void CpThemeControl::previewClosed()
     //The theme preview closed, go back
     //to theme list view.
     HbMainWindow*  mainWindow = ::mainWindow();
-	mainWindow->removeView(mThemePreview);
-    mThemePreview->deleteLater();
-    mThemePreview = 0;
+    if(mThemePreview){
+        mainWindow->removeView(mThemePreview);
+        mThemePreview->deleteLater();
+        mThemePreview = 0;
+    }
   
     //reset the current index to active theme, so that the selection remains on current
     //theme even though another list item is selected.
@@ -344,16 +349,15 @@ void CpThemeControl::themeWaitTimeout()
 {
     //If after this timeOut, theme change is still in progress,
     //show a processing dialog.
-    if(!mThemeChangeFinished)
-    {
+    if(!mThemeChangeFinished){
         if(!mWaitDialog) {
             mWaitDialog = new HbDialog();
             mWaitDialog->setDismissPolicy(HbPopup::NoDismiss);
             mWaitDialog->setModal(false);
             mWaitDialog->setTimeout(HbPopup::NoTimeout);
-            //TODO: need localized text for Hb Dialog
             // Create and set HbLabel as content widget.
-            HbLabel *label = new HbLabel("Processing ...");
+            QString processingText = hbTrId("txt_common_info_processing") + QString("...");
+            HbLabel *label = new HbLabel(processingText);
             label->setAlignment(Qt::AlignCenter);
             mWaitDialog->setContentWidget(label);
         }
