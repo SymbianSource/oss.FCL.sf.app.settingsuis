@@ -33,6 +33,10 @@ public:
     explicit ToneFetcherView(ToneFetcher *service);
     ~ToneFetcherView();
     void quit();
+
+signals:
+        void itemSelected(const QString &path);
+        
 private:
     void initMainWidget();
     void initToolBar();
@@ -46,9 +50,6 @@ private slots:
     void on_rightAction_triggered();
     void enableToolBar(bool enable);
     
-signals:
-    void itemSelected(const QString &path);    
-    
 private:
     ToneFetcherWidget *mWidget;
     ToneFetcher *mServiceProvider; //not own
@@ -56,4 +57,4 @@ private:
     HbAction *mToolBarRightAction;
     };
 
-#endif /* TONEFETCHERVIEW_H_ */
+#endif /* TONEFETCHERVIEW_H */

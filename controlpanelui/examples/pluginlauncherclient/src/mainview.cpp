@@ -24,16 +24,17 @@
 #include <hbmessagebox.h>
 #include <xqaiwrequest.h>
 #include <XQServiceRequest.h>
+#include <QTimer>
 
 MainView::MainView(QGraphicsItem *parent/* = 0*/)
-: HbView(parent)
+: HbView(parent),mRequest(0)
 {
 	init();
 }
 
 MainView::~MainView()
 {
-
+    delete mRequest;
 }
 
 void MainView::init()
@@ -60,16 +61,21 @@ void MainView::launchInProcessProfileView()
 
 void MainView::launchQtHighwayProfileView()
 {
-    XQAiwRequest *request = mAppMgr.create("com.nokia.symbian.ICpPluginLauncher", "launchSettingView(QString,QVariant)", true);
+    if (mRequest) {
+        delete mRequest;
+        mRequest = 0;
+    }
+    
+    mRequest = mAppMgr.create("com.nokia.symbian.ICpPluginLauncher", "launchSettingView(QString,QVariant)", true);
 
-    if (!request)
+    if (!mRequest)
     {
         return;
     }
     else
     {
-        connect(request, SIGNAL(requestOk(QVariant)), SLOT(handleReturnValue(QVariant)));
-        connect(request, SIGNAL(requestError(int,QString)), SLOT(handleError(int,QString)));
+        connect(mRequest, SIGNAL(requestOk(QVariant)), SLOT(handleReturnValue(QVariant)));
+        connect(mRequest, SIGNAL(requestError(int,QString)), SLOT(handleError(int,QString)));
     }
 
 
@@ -77,15 +83,18 @@ void MainView::launchQtHighwayProfileView()
     QList<QVariant> args;
     args << QVariant( "cppersonalizationplugin.dll" );
     args << QVariant ( "profile_view" );
-    request->setArguments(args);
+    mRequest->setArguments(args);
 
+    mRequest->setSynchronous(false);
+    
+    QTimer::singleShot(20* 1000, this, SLOT(closeSettingView()));
+    
     // Make the request
-    if (!request->send())
+    if (!mRequest->send())
     {
         //report error     
     }
     
-    delete request;
 }
 
 void MainView::handleReturnValue(const QVariant &returnValue)
@@ -96,6 +105,14 @@ void MainView::handleReturnValue(const QVariant &returnValue)
 void MainView::handleError(int errorCode,const QString &errorMessage)
 {
     HbMessageBox::information( QString("handle error:") + errorMessage);
+}
+
+void MainView::closeSettingView()
+{   
+    if (mRequest) {
+        delete mRequest;
+        mRequest = 0;
+    }
 }
 
 //End of File

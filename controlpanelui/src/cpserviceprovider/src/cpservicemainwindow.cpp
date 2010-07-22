@@ -22,7 +22,7 @@
 #include "cpsplogger.h"
 
 CpServiceMainWindow::CpServiceMainWindow(QWidget *parent /* = 0*/)
-: HbMainWindow(parent), mLauncherService(0)
+: HbMainWindow(parent), mLauncherService(0), mPreviousView(0)
 {
     CPSP_LOG("CpServiceMainWindow Constructing...");
     mLauncherService = new CpLauncherService(this);
@@ -37,6 +37,8 @@ void CpServiceMainWindow::setSettingView(CpBaseSettingView *settingView)
 {
     mSettingViewPointer = settingView;
     
+    mPreviousView = currentView();
+    
     connect(settingView, SIGNAL(aboutToClose()), this, SLOT(quit()));    
     addView(settingView);
     setCurrentView(settingView);
@@ -45,6 +47,8 @@ void CpServiceMainWindow::setSettingView(CpBaseSettingView *settingView)
 void CpServiceMainWindow::quit()
 {
     CPSP_LOG("CpServiceMainWindow::quit()");
+    
+    closeSettingView();
     
     connect(mLauncherService, SIGNAL(returnValueDelivered()), qApp, SLOT(quit()));
     mLauncherService->complete();
@@ -57,6 +61,16 @@ void CpServiceMainWindow::quit()
         mSettingViewPointer->deleteLater();
     }  
     */
+}
+
+void CpServiceMainWindow::closeSettingView()
+{
+    if (mSettingViewPointer) {
+        removeView(mSettingViewPointer);
+        mSettingViewPointer->deleteLater();
+    }
+    
+    setCurrentView(mPreviousView);
 }
 
 //End of File

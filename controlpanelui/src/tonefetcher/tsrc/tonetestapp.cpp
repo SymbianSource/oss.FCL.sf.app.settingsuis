@@ -136,7 +136,7 @@ void ToneTestApp::fetchTone()
     
     if (!mReq)
    {
-        mReq = mAppMgr.create("com.nokia.symbian.IToneFetch", "fetch(QString)", true);
+        mReq = mAppMgr.create("com.nokia.symbian.IToneFetch", "fetch()", true);
      //   XQServiceRequest snd("com.nokia.services.toneserviceprovider.tone", "queryTone()", true);
        // QVariant retValue;
                 

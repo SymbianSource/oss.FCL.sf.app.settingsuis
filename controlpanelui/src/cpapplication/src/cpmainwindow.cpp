@@ -19,7 +19,6 @@
 #include "cpmainview.h"
 #include <cpplugininterface.h>
 #include <cpcategorysettingformitemdata.h>
-#include <cpbasepath.h>
 #include <hbapplication.h>
 #include <cpevent.h>
 

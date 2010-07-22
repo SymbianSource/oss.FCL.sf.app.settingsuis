@@ -19,8 +19,12 @@
 
 #include <cpcategorysettingformitemdata.h>
 class CpItemDataHelper;
+class XQSettingsManager;
+class XQSettingsKey;
+
 class CpCommunicationGroupItemData: public CpCategorySettingFormItemData
 {
+    Q_OBJECT
 public:
     explicit CpCommunicationGroupItemData(const QString &configFile = QString(),
         const HbDataFormModelItem *parent = 0);
@@ -31,7 +35,13 @@ public:
         const HbDataFormModelItem *parent = 0);
 
     ~CpCommunicationGroupItemData();
+private slots:
+    void toggleAirplaneMode();
+    void settingValueChanged(const XQSettingsKey &key, const QVariant &value);
 private:
     virtual void beforeLoadingConfigPlugins(CpItemDataHelper &itemDataHelper);
+private:
+     HbDataFormModelItem *mAirplaneModeItem;  
+     XQSettingsManager *mSettingManager;
 };
 #endif /* CPCOMMUNICATIONGROUPITEMDATA_H */

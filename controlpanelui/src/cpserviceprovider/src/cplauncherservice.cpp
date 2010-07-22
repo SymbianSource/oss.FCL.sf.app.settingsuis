@@ -31,6 +31,7 @@ CpLauncherService::CpLauncherService(HbMainWindow *mainWindow /* = 0*/)
 {
     CPSP_LOG("CpLauncherService Constructing...");
     publishAll();
+    connect(this,SIGNAL(clientDisconnected()),this,SLOT(handleClientDisconnected()));
 }
 
 CpLauncherService::~CpLauncherService()
@@ -38,11 +39,13 @@ CpLauncherService::~CpLauncherService()
     CPSP_LOG("CpLauncherService Destructing...");
 }
 
-void CpLauncherService::complete()
+bool CpLauncherService::complete()
 {
     CPSP_LOG( QString("CpLauncherService::complete() mAsyncRequestIndex = %1, mReturnValue = %2").arg(
             mAsyncRequestIndex).arg(mReturnValue.toBool()) );
-    completeRequest(mAsyncRequestIndex, mReturnValue);
+    bool ret = completeRequest(mAsyncRequestIndex, mReturnValue);
+    mAsyncRequestIndex = -1;
+    return ret;
 }
 
 void CpLauncherService::setReturnValue(const QVariant &returnValue)
@@ -84,6 +87,11 @@ bool CpLauncherService::launchSettingView(const QString &pluginFile,const QVaria
     CPSP_LOG("Leaving CpLauncherService::launchSettingView");
     
     return succeed;
+}
+
+void CpLauncherService::handleClientDisconnected()
+{
+    qApp->quit();
 }
 
 //End of File

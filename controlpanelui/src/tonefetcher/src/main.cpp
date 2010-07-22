@@ -19,10 +19,17 @@
 #include "tonefetcher.h"
 #include "tonefetchermainwindow.h"
 #include <hbapplication.h>
+#include <tonefetcherlogger.h>
 
 int main(int argc, char *argv[])
 {
     HbApplication a(argc, argv);
+    
+    
+    Logger::instance(TONEFETCHER_LOGGER_NAME)->configure(
+            TF_LOGGER_CONFIG_PATH,QSettings::IniFormat);
+
+    TF_LOG("Entering tonefetcher.exe...");
     ToneFetcherMainWindow w;   
     w.show();
     return a.exec();

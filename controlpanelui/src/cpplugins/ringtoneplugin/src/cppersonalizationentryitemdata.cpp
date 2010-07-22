@@ -31,11 +31,11 @@ const QString g_strNoTone("Z:\\resource\\No_Sound.wav");
 CpPersonalizationEntryItemData::CpPersonalizationEntryItemData(CpItemDataHelper &itemDataHelper,
                 const QString &text,
                 const QString &description,
-                const HbIcon &icon,
+                const QString &icon,
                 Profile_Tone_Types toneType,
                 int profileId,
                 const HbDataFormModelItem *parent)
-                :CpSettingFormEntryItemData( itemDataHelper,text,description,icon,parent),
+                :CpSettingFormEntryItemData(CpSettingFormEntryItemData::ListEntryItem, itemDataHelper,text,description,icon,parent),
                 mProfileModel(0),
                 m_profileID(profileId),
                 mToneType(toneType),

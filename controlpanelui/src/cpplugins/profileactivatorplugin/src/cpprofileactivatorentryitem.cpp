@@ -20,23 +20,31 @@
 #include <cpitemdatahelper.h>
 #include <cpprofilemodel.h>
 #include <QScopedPointer>
+#include "cpprofilemonitor.h"
+
 CpProfileActivatorEntryItem::CpProfileActivatorEntryItem(CpItemDataHelper &itemDataHelper,
                 const QString &text,
                 const QString &description,
-                const HbIcon &icon,
+                const QString &icon,
                 const HbDataFormModelItem *parent)
-                :CpSettingFormEntryItemData(itemDataHelper,text,description,
-                                            icon,parent)
+                :CpSettingFormEntryItemData(CpSettingFormEntryItemData::ListEntryItem, itemDataHelper,text,description,
+                                            icon,parent),mProfileModel(0),mProfileMonitor(0)
 {
+    mProfileMonitor = new CpProfileMonitor();
     mProfileModel = new CpProfileModel();
+    
     int currentId = mProfileModel->activeProfileId();
     QString currentName = mProfileModel->profileName(currentId);
     this->setDescription(currentName);
+    connect(mProfileMonitor, SIGNAL(profileActivated(int)), this, SLOT(onProfileChanged(int)));        
 }
+
 CpProfileActivatorEntryItem::~CpProfileActivatorEntryItem()
 {
     delete mProfileModel;
+    delete mProfileMonitor;
 }
+
 void CpProfileActivatorEntryItem::onLaunchView()
 {
     CpProfileActivatorDialog *dialog = 
@@ -45,6 +53,12 @@ void CpProfileActivatorEntryItem::onLaunchView()
    // dialog->open(this, SLOT(ultimateDialogSlot(HbAction*)));
     dialog->show();
     
+}
+
+void CpProfileActivatorEntryItem::onProfileChanged(int activeProfileId)
+{
+    QString profileName = mProfileModel->profileName(activeProfileId);
+    this->setDescription(profileName);    
 }
 /*void CpPersonalizationEntryItemData::handleOk(const QVariant &result)
 {

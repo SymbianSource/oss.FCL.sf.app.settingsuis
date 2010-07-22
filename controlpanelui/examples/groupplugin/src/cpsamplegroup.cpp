@@ -42,11 +42,11 @@ CpSampleGroup::~CpSampleGroup()
 void CpSampleGroup::sliderValueChanged(int value)
 {
     //TODO: store your changes
-    HbMessageBox::launchInformationMessageBox(QString("slider value changed to:%1").arg(value));
+   // HbMessageBox::message(QString("slider value changed to:%1").arg(value));
 }
 void CpSampleGroup::checkBoxStateChanged(int state)
 {
     //TODO: store your changes
     QString str = (state ? "checked" : "un-checked");
-    HbMessageBox::launchInformationMessageBox(str);
+   // HbMessageBox::message(str);
 }

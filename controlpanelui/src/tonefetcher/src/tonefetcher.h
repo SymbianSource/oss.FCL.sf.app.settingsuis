@@ -39,9 +39,15 @@ public:
     bool isActive();
         
 public slots:
-    void fetch(QString);
+    /*
+     * tone fetcher service's operation
+     */
+    void fetch();
     
 private slots:
+    /*
+     * set the selected tone's path to be the return value
+     */
     void setSelectedPath(const QString &tonePath);
 
 private:

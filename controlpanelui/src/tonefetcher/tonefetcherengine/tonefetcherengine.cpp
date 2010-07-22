@@ -16,27 +16,29 @@
  *     
  */
 #include "tonefetcherengine.h"
-#include "toneselectionengine_p.h"
-#include "tonepreviewprivate.h"
+#ifdef Q_OS_SYMBIAN
+#include "tonefetcherengine_symbian.h"
+#else
+#include "tonefetcherengine_stub.h"
+#endif
 
 ToneFetcherEngine::ToneFetcherEngine(QObject* parent) : QObject(parent)
 {
-    d = new ToneSelectionEnginePrivate(this);
+    d = new ToneFetcherEnginePrivate();
     Q_ASSERT(d);
-    mAudioPlayer = new TonePreviewPrivate( this );
-    Q_ASSERT(mAudioPlayer);
+    
     connect(d, SIGNAL(mdeSessionOpened()), 
             this, SIGNAL(mdeSessionOpened()));
     connect(d, SIGNAL(mdeSessionError(int)),
             this, SIGNAL(mdeSessionError(int)));
-    connect(d, SIGNAL(queryComplete(QStringList, QStringList)),
-            this, SIGNAL(queryComplete(QStringList, QStringList)));
+    connect(d, SIGNAL(queryComplete(QStringList)),
+            this, SIGNAL(queryComplete(QStringList)));
     connect(d, SIGNAL(queryError(int)),
             this, SIGNAL(queryError(int)));
     connect(d, SIGNAL(notifyObjectChanged()),
-            this, SIGNAL(notifyObjectChanged()));
-    connect(mAudioPlayer, SIGNAL(notifyPreviewEvent(ToneServiceEngine::TPreviewEvent, int)),
-            this, SIGNAL(notifyPreviewEvent(ToneServiceEngine::TPreviewEvent, int)));
+            this, SIGNAL(notifyObjectChanged()));    
+    connect(d, SIGNAL(notifyPreviewEvent(int)),
+            this, SIGNAL(notifyPreviewEvent(int)));
 }
 
 ToneFetcherEngine::~ToneFetcherEngine()
@@ -44,19 +46,24 @@ ToneFetcherEngine::~ToneFetcherEngine()
     delete d;
 }
 
-void ToneFetcherEngine::getTone()
+void ToneFetcherEngine::getTones()
 {
-    d->QueryTones();
+    d->getTones();
 }
 
-void ToneFetcherEngine::preview(const QString &file )
-{
-    mAudioPlayer->SetAttr(file);
-    mAudioPlayer->Play();
+void ToneFetcherEngine::play(const QString &file)
+{    
+    d->play(file);
 }
 
-bool ToneFetcherEngine::IsPlaying()
+bool ToneFetcherEngine::isPlaying()
 {
-    mAudioPlayer->IsPlaying();
+    return d->isPlaying();
 }
+
+void ToneFetcherEngine::stopPlaying()
+{
+    d->stopPlaying();
+}
+
 //End of File

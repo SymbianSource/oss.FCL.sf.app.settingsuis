@@ -32,8 +32,6 @@ CpMainView::CpMainView(HbMainWindow *mainWindow/*= 0*/)
 { 
     //delay loading
     connect(mMainWindow,SIGNAL(viewReady()),this,SLOT(initializeMainModel()));
-    
-	setTitle( QObject::tr("Control Panel") );	//should use qtTrId("txt_cp_title_control_panel")
 }
 
 CpMainView::~CpMainView()

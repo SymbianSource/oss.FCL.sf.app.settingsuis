@@ -12,10 +12,10 @@
  * Contributors:
  * 
  * Description:
- *     The source file for tone previewing.
+ *     The source file for tone playing.
  *     
  */
-#include "tonepreviewprivate.h"
+#include "CTonePlayer.h"
 #include "tonefetcherutils.h"
 #include <AudioPreference.h>             // KAudioPriorityPreview
 #include <c3dringingtoneinterface.h>     // C3DRingingToneInterface
@@ -28,10 +28,10 @@
 #include <MProfile3DToneSettings.h>
 #include <ProfileInternal.hrh>
 #include <ProfileEngineDomainCRKeys.h>   // KProEngDefaultRingingTone
-#include <XQConversions>
-#include <QChar>
+#include "MTonePlayingWatcher.h"
 
-CMFPreviewHandlerBase::CMFPreviewHandlerBase( QObject *parent  ) : QObject( parent )
+
+CMFPreviewHandlerBase::CMFPreviewHandlerBase()
     {
     iMediaType = KErrNotFound;
     iRingingVolume = KErrNotFound;
@@ -66,14 +66,13 @@ CMFPreviewHandlerBase::~CMFPreviewHandlerBase()
     iApaSession.Close();
     }
 
-void CMFPreviewHandlerBase::SetAttr(const QString &file )
+void CMFPreviewHandlerBase::SetAttrL( const TDesC& aFileName )
     {
-    if ( !file.isNull() )
-        {
-        QString path = ToneFetcherUtils::normalizeSeperator(file);
+    if ( aFileName.Length() )
+        {        
         delete iFullName;
         iFullName = 0;
-        iFullName = XQConversions::qStringToS60Desc( path );         
+        iFullName = aFileName.AllocL();      
         }
     }
 
@@ -230,16 +229,35 @@ void CMFPreviewHandlerBase::DisableBackLight()
     
     }
 
+CTonePlayer* CTonePlayer::NewL( MTonePlayingWatcher *aWatcher )
+    {
+    CTonePlayer* self = CTonePlayer::NewLC( aWatcher );
+    CleanupStack::Pop();
+    return self;
+    }
 
+CTonePlayer* CTonePlayer::NewLC( MTonePlayingWatcher *aWatcher )
+    {
+    CTonePlayer* self = new ( ELeave ) CTonePlayer( aWatcher );
+    CleanupStack::PushL( self );
+    self->ConstructL();
+    return self;
+    }
 
-TonePreviewPrivate::TonePreviewPrivate( QObject *parent ) : CMFPreviewHandlerBase( parent )
+void CTonePlayer::ConstructL()
     {
     iAudioPlayerStatus = EPlayerNotCreated;
     CMFPreviewHandlerBase::ConstructL();
     iTonePlayerStatus = EPlayerNotCreated;
+    CCoeEnv* coeEnv = CCoeEnv::Static();
+    coeEnv->AddForegroundObserverL( *this );
     }
 
-TonePreviewPrivate::~TonePreviewPrivate()
+CTonePlayer::CTonePlayer( MTonePlayingWatcher *aWatcher ) : iTonePlayWatcher( aWatcher )
+    {    
+    }
+
+CTonePlayer::~CTonePlayer()
     {
     Cancel();
     
@@ -248,7 +266,7 @@ TonePreviewPrivate::~TonePreviewPrivate()
     delete i3dRingingTonePlugin;
     }
 
-TBool TonePreviewPrivate::IsPlaying()
+TBool CTonePlayer::IsPlaying()
     {
     if ( iAudioPlayerStatus != EPlayerNotCreated )
         {
@@ -263,13 +281,8 @@ TBool TonePreviewPrivate::IsPlaying()
     return EFalse;
     }
 
-void TonePreviewPrivate::Play()
-    {
-    if( IsPlaying() )
-        {
-        Stop();
-        return;
-        }
+void CTonePlayer::PlayL()
+    {    
     //sequence for playing a beep once sound
     _LIT8( KFileListBeepSequence, "\x00\x11\x06\x0A\x08\x73\x0A\x40\x28\x0A\xF7\
     \x05\xFC\x40\x64\x0A\x08\x40\x32\x0A\xF7\x06\x0B" ); 
@@ -345,12 +358,12 @@ void TonePreviewPrivate::Play()
     DisableBackLight();
     }
 
-void TonePreviewPrivate::Stop()
+void CTonePlayer::Stop()
     {
     Cancel();
     }
 
-TInt TonePreviewPrivate::ConvertVolume( TInt aVolume )
+TInt CTonePlayer::ConvertVolume( TInt aVolume )
     {
     TInt result = 0;
     if ( iAudioPlayer )
@@ -372,7 +385,7 @@ TInt TonePreviewPrivate::ConvertVolume( TInt aVolume )
     return result;
     }
 
-void TonePreviewPrivate::SetToneRingingType( TInt aRingingType )
+void CTonePlayer::SetToneRingingType( TInt aRingingType )
     {
     const TInt KToneInterval = 1000000; // 1 second pause between tones
     const TInt KAscendingVolumeInterval = 3000000; // 3 seconds
@@ -380,11 +393,9 @@ void TonePreviewPrivate::SetToneRingingType( TInt aRingingType )
     if ( !iTonePlayer )
         {
         return;
-        }   
-
-
+        }
     TInt ringingVolume = RingingVolume();
-
+    
     switch( aRingingType )
         {
         case ERingingTypeRinging:
@@ -416,7 +427,7 @@ void TonePreviewPrivate::SetToneRingingType( TInt aRingingType )
         }
     }
 
-void TonePreviewPrivate::SetAudioRingingType( TInt aRingingType )
+void CTonePlayer::SetAudioRingingType( TInt aRingingType )
     {
     const TInt KToneInterval = 1000000; // 1 second pause between tones
     const TInt KAscendingVolumeInterval = 3000000; // 3 seconds
@@ -458,7 +469,7 @@ void TonePreviewPrivate::SetAudioRingingType( TInt aRingingType )
         }
     }
 
-void TonePreviewPrivate::Cancel()
+void CTonePlayer::Cancel()
     {
     TBool isPlaying = EFalse;
     
@@ -504,19 +515,19 @@ void TonePreviewPrivate::Cancel()
         }
     }
 
-void TonePreviewPrivate::MatoPlayComplete( TInt aError )
+void CTonePlayer::MatoPlayComplete( TInt aError )
     {
     Cancel();
-    emit notifyPreviewEvent( ToneFetcherEngine::EAudioPreviewComplete, aError );
+    iTonePlayWatcher->HandlePreviewEvent( aError );
     }
 
-void TonePreviewPrivate::MatoPrepareComplete( TInt aError )
+void CTonePlayer::MatoPrepareComplete( TInt aError )
     {
     if ( aError != KErrNone )
         {
         Cancel();
         
-        emit notifyPreviewEvent( ToneFetcherEngine::EPreviewError, aError );        
+        iTonePlayWatcher->HandlePreviewEvent( aError );
         return;
         }
 
@@ -539,13 +550,13 @@ void TonePreviewPrivate::MatoPrepareComplete( TInt aError )
     iTonePlayerStatus = EPlayerPlaying;
     }
 
-void TonePreviewPrivate::MdapcInitComplete( TInt aError, 
+void CTonePlayer::MdapcInitComplete( TInt aError, 
                         const TTimeIntervalMicroSeconds& /* aDuration */ )
     {
     if ( aError != KErrNone )
         {
         Cancel();
-        emit notifyPreviewEvent( ToneFetcherEngine::EPreviewError, aError );
+        iTonePlayWatcher->HandlePreviewEvent( aError );
         return;
         }
         
@@ -596,8 +607,20 @@ void TonePreviewPrivate::MdapcInitComplete( TInt aError,
     iAudioPlayerStatus = EPlayerPlayingWith3DEffect;
     }
 
-void TonePreviewPrivate::MdapcPlayComplete( TInt aError )
+void CTonePlayer::MdapcPlayComplete( TInt aError )
     {  
     Cancel();
-    emit notifyPreviewEvent( ToneFetcherEngine::EAudioPreviewComplete, aError );
+    iTonePlayWatcher->HandlePreviewEvent( aError );
+    }
+
+void CTonePlayer::HandleLosingForeground()
+    {
+    if ( IsPlaying() )
+        {
+        Stop();
+        }
+    }
+void CTonePlayer::HandleGainingForeground()
+    {
+    
     }

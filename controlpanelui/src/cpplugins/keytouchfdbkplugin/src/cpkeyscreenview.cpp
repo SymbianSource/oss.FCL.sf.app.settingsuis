@@ -25,18 +25,27 @@
 #include <hbdataformmodel.h>
 #include <cpsettingformitemdata.h>
 #include <hbmessagebox.h>
+#include <hbslider.h>
 
 
 CpKeyScreenView::CpKeyScreenView(QGraphicsItem *parent) :
     CpBaseSettingView(0,parent),
-    mScreenRadioButton(0),
+    mScreenComboButton(0),
     mRotateCheckbox(0),
 	mBrightSliderItem(0),
 	mCallibItem(0),
 	mModel(0)
-{
+{   
     HbDataForm *form = qobject_cast<HbDataForm*> ( widget() );
     if (form) {
+        // Valid range is:
+        // 15 secs, 30 secs, 45 secs, 1 min, 2 mins
+        mScreenLockValues.insert(KCpKeyscreenLock15s,hbTrId("txt_cp_setlabel_keys_screen_val_15_seconds"));
+        mScreenLockValues.insert(KCpKeyscreenLock30s,hbTrId("txt_cp_setlabel_keys_screen_val_30_seconds"));
+        mScreenLockValues.insert(KCpKeyscreenLock45s,hbTrId("txt_cp_setlabel_keys_screen_val_45_seconds"));
+        mScreenLockValues.insert(KCpKeyscreenLock60s,hbTrId("txt_cp_setlabel_keys_screen_val_1_minute"));
+        mScreenLockValues.insert(KCpKeyscreenLock120s,hbTrId("txt_cp_setlabel_keys_screen_val_2_minutes"));
+        
         form->setHeading(hbTrId("txt_cp_subhead_keys_screen"));
         mModel = new CpKeyScreenModel();
         HbDataFormModel *model = new HbDataFormModel;
@@ -51,9 +60,9 @@ CpKeyScreenView::CpKeyScreenView(QGraphicsItem *parent) :
 
         makeBrightnessItem(*model);
 
-        if ( mModel->isCallibrationSupported() ) {
+       /* if ( mModel->isCallibrationSupported() ) {
             makeCallibrationItem(*model);
-        }
+        }*/
 
         form->setModel(model);
     }
@@ -61,30 +70,36 @@ CpKeyScreenView::CpKeyScreenView(QGraphicsItem *parent) :
 
 void CpKeyScreenView::makeScreenItem(HbDataFormModel& model)
 {
-    mScreenRadioButton = new CpSettingFormItemData(HbDataFormModelItem::RadioButtonListItem,
-            hbTrId("txt_cp_setlabel_keys_screen_locked_after"));
-    qobject_cast<HbDataForm*> ( widget() )->addConnection(mScreenRadioButton,SIGNAL(itemSelected(int)),this,SLOT(screenValueChanged(int)));
-    model.appendDataFormItem(mScreenRadioButton, model.invisibleRootItem());
+    mScreenComboButton = new CpSettingFormItemData(HbDataFormModelItem::ComboBoxItem,
+            hbTrId("txt_cp_setlabel_keys_screen_locked_after"));    
+    
+    qobject_cast<HbDataForm*> ( widget() )->addConnection(
+            mScreenComboButton,SIGNAL(currentIndexChanged(QString)),
+            this,SLOT(screenValueChanged(QString)));
+    
+    model.appendDataFormItem(mScreenComboButton, model.invisibleRootItem());
 
-    // Valid range is:
-    // 15 secs, 30 secs, 45 secs, 1 min, 2 mins
-    QStringList sList;
-    sList<< hbTrId("txt_cp_setlabel_keys_screen_val_15_seconds")<< hbTrId("txt_cp_setlabel_keys_screen_val_30_seconds")
-         << hbTrId("txt_cp_setlabel_keys_screen_val_45_seconds")<< hbTrId("txt_cp_setlabel_keys_screen_val_1_minute")
-         << hbTrId("txt_cp_setlabel_keys_screen_val_2_minutes");
     int period = mModel->keyguard();
-    int selectedIndex = period/KCpKeyscreenTimeCoeff - 1;
-    if ( KCpKeyscreenLock120s == period ){ // 2 minutes
-        selectedIndex = EKeyScreenLockItem5;
+    
+    int selectedIndex(-1);    
+    
+    QMap<int,QString>::iterator it = mScreenLockValues.find(period);
+    if (it == mScreenLockValues.end()) {
+        mModel->setKeyguard(KCpKeyscreenLockDefault30s); // Set keyguard and backlight period to default
+        selectedIndex = 1;
     }
-    if ( (KCpKeyscreenLock15s != period) && (KCpKeyscreenLock30s != period) && 
-            (KCpKeyscreenLock45s != period) && (KCpKeyscreenLock60s != period) && 
-            (KCpKeyscreenLock120s != period) ){
-        mModel->setKeyguard(KCpKeyscreenLockDefault30s);  // Set keyguard and backlight period to default
-        selectedIndex = EKeyScreenLockItem2;
+    else {
+        for (it = mScreenLockValues.begin();it != mScreenLockValues.end();++it) {
+            selectedIndex++;
+            if (it.key() == period) {
+                break;
+            }
+        }
     }
-    mScreenRadioButton->setContentWidgetData( QString("items"), sList );
-    mScreenRadioButton->setContentWidgetData( QString("selected"), selectedIndex);
+    
+    QStringList items = mScreenLockValues.values();
+    mScreenComboButton->setContentWidgetData( QString("items"), items );
+    mScreenComboButton->setContentWidgetData( QString("currentIndex"), selectedIndex);
 }
 
 void CpKeyScreenView::makeRotateItem(HbDataFormModel& model)
@@ -110,9 +125,17 @@ void CpKeyScreenView::makeBrightnessItem(HbDataFormModel& model)
     qobject_cast<HbDataForm*> ( widget() )->addConnection(mBrightSliderItem,SIGNAL(valueChanged(int)),this,SLOT(brightValueChanged(int)));
     model.appendDataFormItem(mBrightSliderItem, model.invisibleRootItem());
 
+    QList<QVariant> sliderElements;
+    sliderElements << QVariant(HbSlider::IncreaseElement) << QVariant(HbSlider::TrackElement)
+                   << QVariant(HbSlider::DecreaseElement);
+    mBrightSliderItem->setContentWidgetData("sliderElements",sliderElements);
     mBrightSliderItem->setContentWidgetData( QString("value"), mModel->brightness() );
     mBrightSliderItem->setContentWidgetData( QString("minimum"), 1 );
     mBrightSliderItem->setContentWidgetData( QString("maximum"), 5 );
+    QMap< QString, QVariant > iconElements;
+    iconElements.insert(QString("IncreaseElement") , QVariant(":/icon/hb_vol_slider_increment.svg"));
+    iconElements.insert(QString("DecreaseElement"), QVariant(":/icon/hb_vol_slider_decrement.svg") );
+    mBrightSliderItem->setContentWidgetData( QString( "elementIcons" ), iconElements );
 }
 
 void CpKeyScreenView::makeCallibrationItem(HbDataFormModel& model)
@@ -130,13 +153,15 @@ CpKeyScreenView::~CpKeyScreenView()
 	mModel = 0;
 }
 
-void CpKeyScreenView::screenValueChanged(int index)
-{
-    int period = (index + 1) * KCpKeyscreenTimeCoeff;
-    if (EKeyScreenLockItem5 == index){
-        period = KCpKeyscreenLock120s;
+void CpKeyScreenView::screenValueChanged(const QString &value)
+{    
+    for (QMap<int,QString>::iterator it = mScreenLockValues.begin();
+         it != mScreenLockValues.end();++it) {
+        if (it.value() == value) {
+            mModel->setKeyguard(it.key());
+            break;
+        }
     }
-    mModel->setKeyguard(period);
 }
 
 void CpKeyScreenView::rotateValueChanged(int value)

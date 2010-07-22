@@ -24,6 +24,9 @@ class HbRadioButtonList;
 class HbDataFormModelItem;
 class CpProfileActivatorEntryItem;
 class CpSettingFormItemData;
+class QGraphicsLinearLayout;
+class QGraphicsWidget;
+class HbLabel;
 
 class CpProfileActivatorDialog: public HbDialog
 {
@@ -44,5 +47,8 @@ private:
     QPointer<HbAction> mConfirmProfile;
     QPointer<HbAction> mCancelProfile;
     QList<ProfileWrapperProfileId> mProfileIds;
+    QGraphicsLinearLayout *mLayout;
+    QGraphicsWidget *mContentWidget;
+    HbLabel *mTitleLabel;
 };
 #endif

@@ -34,7 +34,7 @@ QList<CpSettingFormItemData*> CpPrivacyPlugin::createSettingFormItemData(CpItemD
     CpCategorySettingFormItemData *itemData = 
             new CpCategorySettingFormItemData(
             HbDataFormModelItem::GroupItem,
-            tr("Security"),
+            hbTrId("txt_cp_subhead_security"),
             QString("cpprivacyplugin.cpcfg") );
     return QList<CpSettingFormItemData*>() << itemData;
 }

@@ -18,7 +18,7 @@
 #include <QString>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsLinearLayout>
-#include <QDebug>
+
 #include <hbaction.h>
 #include <hbtoolbar.h>
 #include <hbicon.h>
@@ -26,8 +26,10 @@
 #include <hblabel.h>
 #include <hbiconitem.h>
 #include <hbmainwindow.h>
+#include <HbParameterLengthLimiter>
 
 #include "cpthemepreview.h"
+#include "cpthemeinfo.h"
 
 /*!
     \class CpThemePreview
@@ -39,7 +41,7 @@
 /*!
     constructor.
 */
-CpThemePreview::CpThemePreview(const CpThemeChanger::ThemeInfo& theme, QGraphicsItem *parent) :
+CpThemePreview::CpThemePreview(const CpThemeInfo& theme, QGraphicsItem *parent) :
      HbView(parent), 
      mTheme(theme),
      mSoftKeyBackAction(0),
@@ -51,26 +53,23 @@ CpThemePreview::CpThemePreview(const CpThemeChanger::ThemeInfo& theme, QGraphics
 
     
     //setup the heading.
-    //TODO: translation of string  hbTrId("txt_cp_title_preview_1")
-    
-    QString themeHeading = tr("Preview: ") + mTheme.name;
+    QString themeHeading = HbParameterLengthLimiter("txt_cp_title_preview_1").arg(mTheme.name());   
     HbLabel* label = new HbLabel(themeHeading, this);
-    label->setFontSpec(HbFontSpec(HbFontSpec::Primary));
    
-    label->setPreferredHeight(5.0);
     layout->addItem(label);
     
     layout->setAlignment(layout->itemAt(0), Qt::AlignTop);
+    layout->itemAt(0)->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed,QSizePolicy::DefaultType);
     
     //Create the toolbar and "Select" and "Cancel" actions.
     HbToolBar* mToolBar = new HbToolBar(this);
 
-    HbAction* selectAction = new HbAction(tr("Select"));
+    HbAction* selectAction = new HbAction(hbTrId("txt_common_button_select"));
     
     //Add Action to the toolbar and show toolbar
     mToolBar->addAction( selectAction );
 
-    HbAction* cancelAction = new HbAction(tr("Cancel"));
+    HbAction* cancelAction = new HbAction(hbTrId("txt_common_button_cancel"));
     mToolBar->addAction( cancelAction );
 
     QObject::connect( selectAction, SIGNAL(triggered()), 
@@ -84,14 +83,15 @@ CpThemePreview::CpThemePreview(const CpThemeChanger::ThemeInfo& theme, QGraphics
        
    
     if(mainWindow()->orientation() == Qt::Horizontal) {
-        mPreviewIcon = new HbIconItem(mTheme.landscapePreviewIcon, this);
+        mPreviewIcon = new HbIconItem(mTheme.landscapePreviewIcon(), this);
     }
     else {
-        mPreviewIcon = new HbIconItem(mTheme.portraitPreviewIcon, this);
+        mPreviewIcon = new HbIconItem(mTheme.portraitPreviewIcon(), this);
     }
     layout->addItem(mPreviewIcon);
-    layout->setAlignment(layout->itemAt(0), Qt::AlignTop);
-    
+    layout->itemAt(1)->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred,QSizePolicy::DefaultType);
+        
+ 
     setToolBar(mToolBar);
     setLayout(layout);
 
@@ -101,7 +101,7 @@ CpThemePreview::CpThemePreview(const CpThemeChanger::ThemeInfo& theme, QGraphics
     QObject::connect(mSoftKeyBackAction, SIGNAL(triggered()), 
             this, SIGNAL(aboutToClose()) );
 
-    this->setNavigationAction(mSoftKeyBackAction);
+    setNavigationAction(mSoftKeyBackAction);
 }
 
 /*!
@@ -114,7 +114,7 @@ CpThemePreview::~CpThemePreview()
 /*!
   sets the theme to \a theme.
 */
-void CpThemePreview::setThemeInfo(const CpThemeChanger::ThemeInfo& theme)
+void CpThemePreview::setThemeInfo(const CpThemeInfo& theme)
 {
     mTheme = theme;
 }
@@ -124,7 +124,7 @@ void CpThemePreview::setThemeInfo(const CpThemeChanger::ThemeInfo& theme)
 */
 const QString& CpThemePreview::themeName() const
 {
-    return mTheme.name;
+    return mTheme.name();
 }
 
 /*!
@@ -132,7 +132,7 @@ const QString& CpThemePreview::themeName() const
 */
 const HbIcon& CpThemePreview::themeIcon() const
 {
-    return mTheme.icon;
+    return mTheme.icon();
 }
 
 /*!
@@ -140,7 +140,7 @@ const HbIcon& CpThemePreview::themeIcon() const
 */
 void CpThemePreview::themeSelected()
 {
-    emit applyTheme(mTheme.name);
+    emit applyTheme(mTheme.name());
 }
 
 /*! 
@@ -152,16 +152,14 @@ void CpThemePreview::previewOrientationChanged(Qt::Orientation orientation)
    
     QGraphicsLinearLayout* previewLayout = dynamic_cast<QGraphicsLinearLayout*>(layout());
    
-    if(mPreviewIcon == dynamic_cast<HbIconItem*>(previewLayout->itemAt(1)) ) {
+    if(mPreviewIcon && mPreviewIcon == dynamic_cast<HbIconItem*>(previewLayout->itemAt(1)) ) {
         previewLayout->removeAt(1);
-        delete mPreviewIcon;
-        mPreviewIcon = 0;
         
         if(orientation == Qt::Horizontal) {
-            mPreviewIcon = new HbIconItem(mTheme.landscapePreviewIcon, this);
+            mPreviewIcon->setIcon(mTheme.landscapePreviewIcon());
         }
         else {
-            mPreviewIcon = new HbIconItem(mTheme.portraitPreviewIcon, this);
+            mPreviewIcon->setIcon(mTheme.portraitPreviewIcon());
         }
         
         previewLayout->addItem(mPreviewIcon);

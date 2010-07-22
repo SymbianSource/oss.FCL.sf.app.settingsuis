@@ -32,12 +32,20 @@ SOURCES += src/tonefetchermainwindow.cpp \
            src/main.cpp 
 
 symbian {
-    HEADERS +=  tonefetcherengine/private/symbian/toneselectionengine_p.h \
-                tonefetcherengine/private/symbian/tonepreviewprivate.h
+    HEADERS +=  tonefetcherengine/private/CTonePlayer.h \
+                tonefetcherengine/private/CToneSelection.h \
+                tonefetcherengine/private/MTonePlayingWatcher.h \
+                tonefetcherengine/private/MToneSelectionWatcher.h \
+                tonefetcherengine/private/tonefetcherengine_symbian.h
+                
 
 
-    SOURCES += tonefetcherengine/private/symbian/toneselectionengine_p.cpp \
-               tonefetcherengine/private/symbian/tonepreviewprivate.cpp
+    SOURCES += tonefetcherengine/private/CTonePlayer.cpp \
+               tonefetcherengine/private/CToneSelection.cpp \
+               tonefetcherengine/private/tonefetcherengine_symbian.cpp
+} else {
+    HEADERS +=  tonefetcherengine/private/tonefetcherengine_stub.h
+    SOURCES += tonefetcherengine/private/tonefetcherengine_stub.cpp
 }
 
 

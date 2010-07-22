@@ -17,17 +17,21 @@
 TEMPLATE = app
 TARGET = ControlPanel
 
+ICON = resources/qtg_large_settings.svg
+
 include ( ../common.pri )
 include ( cpapplication.pri )
 
-
 CONFIG += hb
+
+RESOURCES += cpapplication.qrc
 
 LIBS += -lcpframework -lcpcategorymodel
 
 TRANSLATIONS = control_panel.ts
 
 symbian: { 
+          SKINICON = qtg_large_settings
 	  TARGET.UID3 = 0x20025FD9
 	  TARGET.EPOCHEAPSIZE = 0x020000 0x1000000
 	

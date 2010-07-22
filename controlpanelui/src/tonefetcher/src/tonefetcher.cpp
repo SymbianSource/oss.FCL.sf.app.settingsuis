@@ -22,7 +22,7 @@
 #include "tonefetcherutils.h"
 #include <QChar>
 #include <QDir>
-#include <cplogger.h>
+#include <tonefetcherlogger.h>
 
 ToneFetcher::ToneFetcher(HbMainWindow *mainWindow)
     : XQServiceProvider(QString("tonefetcher.com.nokia.symbian.IToneFetch"), mainWindow),
@@ -39,7 +39,7 @@ ToneFetcher::~ToneFetcher()
 
 }
 
-void ToneFetcher::fetch(QString)
+void ToneFetcher::fetch()
 {
     mAsyncRequestIndex = setCurrentRequestAsync();    
     if (mMainWindow) {
@@ -50,7 +50,7 @@ void ToneFetcher::fetch(QString)
             mMainWindow->addView(toneView);
             mMainWindow->setCurrentView(toneView);            
         } else {
-            CPFW_LOG("ToneFetcher::fetch: ToneFetcherView failed to be created");
+            TF_LOG("ToneFetcher::fetch: ToneFetcherView failed to be created");
         }
     }
 }
@@ -66,8 +66,7 @@ bool ToneFetcher::isActive()
 }
 
 void ToneFetcher::setSelectedPath(const QString & tonePath)
-{
-    QString path(ToneFetcherUtils::normalizeSeperator(tonePath));
-    mReturnValue.setValue(path);
+{    
+    mReturnValue.setValue(ToneFetcherUtils::normalizeSeperator(tonePath));
 }
 //End of File

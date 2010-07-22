@@ -24,15 +24,14 @@
 #define CP_UPGRADABLE_APP_REG_RSC(NAME) data=DATAZ_\PRIVATE\10003A3F\IMPORT\APPS\ ## NAME ## _reg.rsc        Private\10003a3f\import\apps\ ## NAME ## _reg.rsc
 
 file=ABI_DIR\BUILD_DIR\controlpanel.exe         			 SHARED_LIB_DIR\controlpanel.exe 
+data = ZRESOURCE\apps\controlpanel.mif                                   APP_RESOURCE_DIR\controlpanel.mif
 CP_UPGRADABLE_APP_REG_RSC(controlpanel)    
-S60_APP_RESOURCE(controlpanel)   
+
 
 file=ABI_DIR\BUILD_DIR\cpserviceprovider.exe         			 SHARED_LIB_DIR\cpserviceprovider.exe 
 CP_UPGRADABLE_APP_REG_RSC(cpserviceprovider)    
-S60_APP_RESOURCE(cpserviceprovider)  
 
 file=ABI_DIR\BUILD_DIR\cpcategorymodel.dll			  	 SHARED_LIB_DIR\cpcategorymodel.dll
-file=ABI_DIR\BUILD_DIR\seccodeui.dll                 SHARED_LIB_DIR\seccodeui.dll
 file=ABI_DIR\BUILD_DIR\cpprofilewrapper.dll           SHARED_LIB_DIR\cpprofilewrapper.dll
 file=ABI_DIR\BUILD_DIR\cpringtoneview.dll           SHARED_LIB_DIR\cpringtoneview.dll 
 
@@ -43,8 +42,6 @@ file=ABI_DIR\BUILD_DIR\cpdeviceplugin.dll                    SHARED_LIB_DIR\cpde
 file=ABI_DIR\BUILD_DIR\cpprivacyplugin.dll                   SHARED_LIB_DIR\cpprivacyplugin.dll
 file=ABI_DIR\BUILD_DIR\cplookfeelplugin.dll                  SHARED_LIB_DIR\cplookfeelplugin.dll
 file=ABI_DIR\BUILD_DIR\cpkeytouchfdbkplugin.dll              SHARED_LIB_DIR\cpkeytouchfdbkplugin.dll
-file=ABI_DIR\BUILD_DIR\cppincodeplugin.dll                   SHARED_LIB_DIR\cppincodeplugin.dll
-file=ABI_DIR\BUILD_DIR\cpdevicelockplugin.dll                SHARED_LIB_DIR\cpdevicelockplugin.dll
 file=ABI_DIR\BUILD_DIR\cpprofileactivator.dll                SHARED_LIB_DIR\cpprofileactivator.dll   
 file=ABI_DIR\BUILD_DIR\cpvolumeplugin.dll					SHARED_LIB_DIR\cpvolumeplugin.dll
 file=ABI_DIR\BUILD_DIR\cpringtoneplugin.dll					SHARED_LIB_DIR\cpringtoneplugin.dll	   
@@ -63,8 +60,6 @@ data=\epoc32\data\c\resource\qt\plugins\controlpanel\cpdeviceplugin.qtplugin    
 data=\epoc32\data\c\resource\qt\plugins\controlpanel\cpprivacyplugin.qtplugin                     resource\qt\plugins\controlpanel\cpprivacyplugin.qtplugin
 data=\epoc32\data\c\resource\qt\plugins\controlpanel\cplookfeelplugin.qtplugin                    resource\qt\plugins\controlpanel\cplookfeelplugin.qtplugin
 data=\epoc32\data\c\resource\qt\plugins\controlpanel\cpkeytouchfdbkplugin.qtplugin                resource\qt\plugins\controlpanel\cpkeytouchfdbkplugin.qtplugin
-data=\epoc32\data\c\resource\qt\plugins\controlpanel\cppincodeplugin.qtplugin                     resource\qt\plugins\controlpanel\cppincodeplugin.qtplugin
-data=\epoc32\data\c\resource\qt\plugins\controlpanel\cpdevicelockplugin.qtplugin                  resource\qt\plugins\controlpanel\cpdevicelockplugin.qtplugin
 data=\epoc32\data\c\resource\qt\plugins\controlpanel\cpprofileactivator.qtplugin                  resource\qt\plugins\controlpanel\cpprofileactivator.qtplugin
 data=\epoc32\data\c\resource\qt\plugins\controlpanel\cpvolumeplugin.qtplugin                  resource\qt\plugins\controlpanel\cpvolumeplugin.qtplugin
 data=\epoc32\data\c\resource\qt\plugins\controlpanel\cpringtoneplugin.qtplugin                  resource\qt\plugins\controlpanel\cpringtoneplugin.qtplugin

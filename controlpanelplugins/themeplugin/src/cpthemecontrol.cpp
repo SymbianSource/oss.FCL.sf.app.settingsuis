@@ -30,12 +30,12 @@
 
 #include <QString>
 #include <QModelIndex>
-#include <QStandardItemModel>
-#include <QStandardItem>
 #include <QTranslator>
 #include <QSortFilterProxyModel>
-#include <QDebug>
 #include <QThread>
+#include <QTimer>
+#include <QDesktopServices>
+#include <QUrl>
 
 #include <hbmainwindow.h>
 #include <hbinstance.h>
@@ -44,8 +44,12 @@
 #include "cpthemecontrol.h"
 #include "cpthemelistview.h"
 #include "cpthemepreview.h"
+#include "cpthemeinfo.h"
+#include "cpthemelistmodel.h"
 
-static const QString KPlaceholderPreview = ":/image/themePreview.svg";
+#include <hbdialog.h>
+#include <hblabel.h>
+
 
 /*!
 	Helper function to fetch the main window.
@@ -67,11 +71,10 @@ CpThemeControl::CpThemeControl(): mThemeListView(0),
     mThemePreview(0), 
     mThemeChanger(0),
     mListModel(0),
-    mSortModel(0),
-    mIdleTimer(0)
+    mThemeChangeFinished(false),
+    mWaitDialog(0)
 {
     mThemeChanger = new CpThemeChanger();
-   
        
     QTranslator *translator = new QTranslator(this);
     QString lang = QLocale::system().name();
@@ -79,12 +82,9 @@ CpThemeControl::CpThemeControl(): mThemeListView(0),
     translator->load("control_panel_" + lang, path);
     qApp->installTranslator(translator);
     
-    mIdleTimer = new QTimer(this);
-    connect(mIdleTimer, SIGNAL(timeout()), this, SLOT(themeChangeTimeout()));
-    connect(hbInstance->theme(),SIGNAL(changeFinished()), this, SLOT(themeChangeFinished()));
+    connect(mThemeChanger,SIGNAL(themeChangeFinished()), this, SLOT(themeChangeFinished()));
    
 }
-
 
 
 /*!
@@ -100,6 +100,9 @@ CpThemeControl::~CpThemeControl()
 
     delete mThemePreview;
     mThemePreview = 0;
+    
+    delete mWaitDialog;
+    mWaitDialog = 0;
 }
 
 /*!
@@ -111,16 +114,12 @@ void CpThemeControl::createThemeList()
    
     mThemeListView = new CpThemeListView();
     
-    mListModel = &mThemeChanger->model();
+    if(!mListModel) {
+        mListModel = new CpThemeListModel(this);
+    }
     
-    mSortModel = new QSortFilterProxyModel(this);
-    mSortModel->setDynamicSortFilter(true);
-    mSortModel->setSortCaseSensitivity(Qt::CaseInsensitive);
-    mSortModel->sort(0);
-    mSortModel->setSourceModel(mListModel);
-
     // Set the model for theme list.
-    mThemeListView->setModel(mSortModel);
+    mThemeListView->setModel(mListModel);
     mThemeListView->themeList()->setSelectionMode(HbAbstractItemView::SingleSelection);
     
     setActiveThemeIndex();
@@ -142,8 +141,9 @@ void CpThemeControl::createThemeList()
 CpBaseSettingView* CpThemeControl::themeListView()
 {
     //If the view was removed before by control panel app, create it again.
-    if(!mThemeListView)
+    if(!mThemeListView) {
         createThemeList();
+    }
 
     return mThemeListView;
 }
@@ -153,7 +153,11 @@ CpBaseSettingView* CpThemeControl::themeListView()
 */
 QString CpThemeControl::currentThemeName() const
 {
-    return mThemeChanger->currentTheme().name;
+    QString name = "";
+    if(mThemeChanger->currentTheme()) {
+        name = mThemeChanger->currentTheme()->name();
+    }
+    return name;
 }
 
 /*!
@@ -161,7 +165,11 @@ QString CpThemeControl::currentThemeName() const
 */
 HbIcon CpThemeControl::currentThemeIcon() const
 {
-    return mThemeChanger->currentTheme().icon;
+    HbIcon icon;
+    if(mThemeChanger->currentTheme()) {
+        icon = mThemeChanger->currentTheme()->icon();
+    }
+    return icon;
 }
 
 /*!
@@ -172,38 +180,66 @@ void CpThemeControl::newThemeSelected(const QModelIndex& index)
     if(!index.isValid()) {
         return;
     }
-
     
-    CpThemeChanger::ThemeInfo themeInfo;
+    CpThemeInfo themeInfo;
     QVariant data;
 
     //reset the current index to active theme, so that the selection remains on current
     //theme even though another list item is selected.
     setActiveThemeIndex();
     
+    // Figure out whether this is a URI and appropriately delegate
+    data = index.data(CpThemeListModel::ItemTypeRole);
+    if(data.isValid() && data.canConvert<CpThemeInfo::ThemeListItemType>()) {
+
+        CpThemeInfo::ThemeListItemType type = data.value<CpThemeInfo::ThemeListItemType>();
+
+        switch (type) {
+            case CpThemeInfo::ThemeListItemType_URL:
+                //get the URL
+                data = index.data(CpThemeListModel::ItemDataRole);
+                if(data.isValid()) {
+                    QString url = data.toString();
+                    // Launch the URL in the browser and 
+                    // continue to Preview if not successful
+                    if (QDesktopServices::openUrl(QUrl(url, QUrl::TolerantMode))) {
+                        return;
+                    }
+                }
+                break;
+    
+            case CpThemeInfo::ThemeListItemType_APP:
+                break;
+
+            default:
+                // do nothing
+                qt_noop();
+        }
+    }
+    
     //get the theme name.
     data = index.data(Qt::DisplayRole);
     if(data.isValid()) {
-        themeInfo.name = data.toString();
+        themeInfo.setName(data.toString());
     }
+    
     //get theme icon.
     data = index.data(Qt::DecorationRole);
     if(data.isValid()) {
-        themeInfo.icon = data.value<HbIcon>();
+        themeInfo.setIcon(data.value<HbIcon>());
     }
     
-    data = index.data(CpThemeChanger::PortraitPreviewRole);
+    data = index.data(CpThemeListModel::PortraitPreviewRole);
     if(data.isValid()) {
-        themeInfo.portraitPreviewIcon = data.value<HbIcon>();
+        themeInfo.setPortraitPreviewIcon(data.value<HbIcon>());
     }
     
-    data = index.data(CpThemeChanger::LandscapePreviewRole);
+    data = index.data(CpThemeListModel::LandscapePreviewRole);
     if(data.isValid()) {
-        themeInfo.landscapePreviewIcon = data.value<HbIcon>();
+        themeInfo.setLandscapePreviewIcon(data.value<HbIcon>());
     }
-        
-        
-    //Set up the theme preview and set it to
+    
+   //Set up the theme preview and set it to
     //the current view of main window.
     HbMainWindow*  mWindow = ::mainWindow();
    
@@ -219,11 +255,10 @@ void CpThemeControl::newThemeSelected(const QModelIndex& index)
     } else {
         mThemePreview->setThemeInfo(themeInfo);
     }
-    //TODO: use qtTrId(text_id).
-    mThemePreview->setTitle(tr("Control Panel"));
-	  	
+    mThemePreview->setTitle(hbTrId("txt_cp_title_control_panel"));
+
     mWindow->setCurrentView(mThemePreview);
-	
+
 }
 
 /*!
@@ -231,23 +266,24 @@ void CpThemeControl::newThemeSelected(const QModelIndex& index)
 */
 void CpThemeControl::themeApplied(const QString& theme)
 {
-    bool success = false;
-
-    success = mThemeChanger->connectToServer();
+    QThread::currentThread()->setPriority(QThread::HighPriority);  
     
-    if (success) {
-        QThread::currentThread()->setPriority(QThread::HighPriority);  
-        mThemeChanger->changeTheme(theme);
-        emit themeUpdated(mThemeChanger->currentTheme().name, mThemeChanger->currentTheme().icon);
+    if(mThemeChanger->changeTheme(theme)) {
+    
+        //Start a timer. If theme change takes more than 1 seconds,
+        //we will show a dialog (mWaitDialog) until theme change
+        //is done (themeChangeFinished is called).
+        QTimer::singleShot(1000, this, SLOT(themeWaitTimeout()));
+        
+        mThemeChangeFinished = false;
+    } else {
+        //theme change failed, go back to control panel.
+        previewClosed();
+        triggerThemeListClose();
     }
-
-    //Go back to control panel view. Close theme preview.
-    previewClosed();
-    //ask the themelistview to close.  Control Panel will
-    //take care of removing it from window.
-    triggerThemeListClose();
-
+   
 }
+
 /*!
 	Slot called when the theme preview view is closed.
 */
@@ -289,16 +325,54 @@ void CpThemeControl::triggerThemeListClose()
 
 void CpThemeControl::themeChangeTimeout()
 {
-    //qDebug() << "ThemeChangeTimeout " ;
-    mIdleTimer->stop();
-    QThread::currentThread()->setPriority(QThread::NormalPriority);    
-        
+    //Theme change is finished and idle timer has timed out,
+    //so revert back the application priority to normal
+    //and go back to control panel view.
+    if(mWaitDialog && mWaitDialog->isVisible()) {
+        mWaitDialog->hide();
+    }
+    
+    previewClosed();
+    //ask the themelistview to close.  Control Panel will
+    //take care of removing it from window.
+    triggerThemeListClose();
+    
+    QThread::currentThread()->setPriority(QThread::NormalPriority); 
+}
+
+void CpThemeControl::themeWaitTimeout()
+{
+    //If after this timeOut, theme change is still in progress,
+    //show a processing dialog.
+    if(!mThemeChangeFinished)
+    {
+        if(!mWaitDialog) {
+            mWaitDialog = new HbDialog();
+            mWaitDialog->setDismissPolicy(HbPopup::NoDismiss);
+            mWaitDialog->setModal(false);
+            mWaitDialog->setTimeout(HbPopup::NoTimeout);
+            //TODO: need localized text for Hb Dialog
+            // Create and set HbLabel as content widget.
+            HbLabel *label = new HbLabel("Processing ...");
+            label->setAlignment(Qt::AlignCenter);
+            mWaitDialog->setContentWidget(label);
+        }
+       // as we do not need any signals, calling show() instead of open()
+       mWaitDialog->show();
+    }
 }
 
 void CpThemeControl::themeChangeFinished()
 {
-    //qDebug() << "ThemeChangeFinished " ;
-    mIdleTimer->start(0);
+    //Theme change is done. Start an idle timer to let the UI
+    //finish remaining tasks.
+    QTimer::singleShot(0, this, SLOT(themeChangeTimeout()));
+    mThemeChangeFinished = true;
+    
+    if(mThemeChanger->currentTheme()) {
+        emit themeUpdated(mThemeChanger->currentTheme()->name(), mThemeChanger->currentTheme()->icon());
+    }
+    
 }
 
 /*!
@@ -308,11 +382,13 @@ void CpThemeControl::themeChangeFinished()
 void CpThemeControl::setActiveThemeIndex()
 {
     //Get the index of current theme.
-    QModelIndex sourceIndex = mListModel->index(mThemeChanger->indexOf(mThemeChanger->currentTheme()),0);
-    //Map it to the sort model index.
-    QModelIndex sortedIndex = mSortModel->mapFromSource(sourceIndex);
-    //set current index.
-    mThemeListView->themeList()->setCurrentIndex(sortedIndex, QItemSelectionModel::SelectCurrent);
+    CpThemeListModel* themeListModel = dynamic_cast<CpThemeListModel*>(mListModel);
+    const CpThemeInfo* currentTheme = mThemeChanger->currentTheme();
+    if(themeListModel && currentTheme) {
+        QModelIndex sourceIndex = mListModel->index(themeListModel->indexOf(*currentTheme),0);
+        //set current index.
+        mThemeListView->themeList()->setCurrentIndex(sourceIndex, QItemSelectionModel::SelectCurrent);
+    }
 }
     
 

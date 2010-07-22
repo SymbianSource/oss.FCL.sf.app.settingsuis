@@ -19,69 +19,70 @@
 #include <QGraphicsLinearLayout>
 #include <HbLabel>
 #include <QList>
+#include <QPair>
 #include <QModelIndex>
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <xqaiwrequest.h>
 #include <cplogger.h>
+#include <hbstyleloader.h>
+#include <hbdataformmodel.h>
+#include <hbdataformmodelitem.h>
+#include <hbdataform.h>
+#include <cpsettingformentryitemdata.h>
 
 CpRingToneView::CpRingToneView( QGraphicsItem *parent ):
                               CpBaseSettingView(0, parent),
                               mToneTypeList( new HbListWidget(this) ),
                               mReq(0)
 {
-    HbWidget* contentWidget = new HbWidget(this);
-    QGraphicsLinearLayout* layout = new QGraphicsLinearLayout(Qt::Vertical);
-
-    //setup the heading.
-    HbLabel* label = new HbLabel( hbTrId("txt_cp_subhead_select_tone_type"), contentWidget );
-    layout->addItem(label);
-    //handling user click
-    bool bret = connect(mToneTypeList, SIGNAL( activated(HbListWidgetItem *) ),
-            this, SLOT(onTypeSelected(HbListWidgetItem *)));
-    //initialize the list contents
-    QList<QString> tonesTypeList;
-    tonesTypeList <<
-            hbTrId("txt_cp_list_no_tone")<<
-            hbTrId("txt_cp_list_tone")<<
-            hbTrId("txt_cp_list_music")<<
-            hbTrId("txt_cp_list_recording")<<
-            hbTrId("txt_cp_list_get_more_tones");
-    for ( int i = 0; i < tonesTypeList.count(); i++ )
-    {
-        mToneTypeList->addItem(tonesTypeList.at(i));
+    HbStyleLoader::registerFilePath(":/widgetml/cpdataformlistentryviewitem.css");
+    HbStyleLoader::registerFilePath(":/widgetml/cpdataformlistentryviewitem_color.css");
+    HbStyleLoader::registerFilePath(":/widgetml/cpdataformlistentryviewitem.widgetml");
+    
+    HbDataForm *form = qobject_cast<HbDataForm*> ( widget() );
+    form->setHeading("txt_cp_subhead_select_tone_type");   
+    
+    HbDataFormModel *model = new HbDataFormModel();  
+    QList< QPair<QString,QString> > tonesTypeList;
+    tonesTypeList << qMakePair( QString("qtg_large_tone_off"), hbTrId("txt_cp_list_no_tone") )
+                 << qMakePair( QString("qtg_large_tone"), hbTrId("txt_cp_list_tone") )
+                 << qMakePair( QString("qtg_large_music"), hbTrId("txt_cp_list_music") )                 
+                 << qMakePair( QString("qtg_large_ovistore"), hbTrId("txt_cp_list_get_more_tones") );
+       
+    for (int i = 0; i < tonesTypeList.count(); ++i) {
+        HbDataFormModelItem *itemData = new HbDataFormModelItem();
+        itemData->setType ( static_cast<HbDataFormModelItem::DataItemType> (CpSettingFormEntryItemData::ListEntryItem) );
+        itemData->setLabel(tonesTypeList.at(i).second);
+        itemData->setIcon(tonesTypeList.at(i).first);
+        model->appendDataFormItem(itemData, model->invisibleRootItem());
     }
-    //add the list to layout.
-    layout->addItem(mToneTypeList);
-
-    contentWidget->setLayout(layout);
-
-    setWidget(contentWidget);
+    connect(form, SIGNAL(activated(QModelIndex)), this, SLOT(itemActivated(QModelIndex)));
+    form->setModel(model);
 }
 CpRingToneView::~CpRingToneView()
 {
     if(mReq)    delete mReq;
 }
-void CpRingToneView::onTypeSelected(HbListWidgetItem *item)
+void CpRingToneView::itemActivated( const QModelIndex &index )
 {
-    int nRow = mToneTypeList->row( item );
-    switch(nRow)
-    {
+    int nRow = index.row();
+
+    switch(nRow) {
         case 0:         //no tone, set default no sound
                 emit selOK(QString(""));
                 emit aboutToClose();
                 break;
         case 1:         //tone
-        //        launchMediaFetcher( "com.nokia.symbian.IToneFetch", "fetch(QString)" );
+                launchMediaFetcher( "com.nokia.symbian.IToneFetch", "fetch()" );
                 break;
         case 2:         //music
-                launchMediaFetcher("com.nokia.symbian.IMusicFetch", "fetch(void)" );
+                launchMediaFetcher("com.nokia.symbian.IMusicFetch", "fetch()" );
                 break;
-        case 3:         //recording
-        case 4:         //get more tones
-        default:
-                break;
-    }
+        case 3:         //get more tones
+		default:
+		        break;
+	 }
 }
 void CpRingToneView::handleOk(const QVariant &result)
 {
@@ -110,7 +111,7 @@ void CpRingToneView::launchMediaFetcher( const QString &strService, const QStrin
         mReq = 0;
     }
         //launch media fetcher
-    mReq = mAppMgr.create( strService, strItface, true);
+    mReq = mAppMgr.create(strService, strItface, true);
     if (!mReq)
     {
       CPFW_LOG("CpRingToneView::launchMediaFetcher, Mediafetcher start failed");
@@ -121,12 +122,10 @@ void CpRingToneView::launchMediaFetcher( const QString &strService, const QStrin
         connect(mReq, SIGNAL( requestOk( const QVariant&)), SLOT( handleOk(const QVariant&)) );
         connect(mReq, SIGNAL( requestError( int,const QString&)), SLOT(handleError(int,const QString&)) );
     }
-
-    // Set arguments for request (music fetcher application title)
-    //QList<QVariant> args;
-    //args << QVariant( strTitle );
-    //mReq->setArguments(args);
-
+    
+    QList<QVariant> args;
+    args << QVariant(QString("<app_name>"));
+    mReq->setArguments(args);
     // Make the request
     if (!mReq->send())
     {

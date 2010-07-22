@@ -30,8 +30,6 @@ public:
     explicit ToneFetcherMainWindow(QWidget *parent = 0);
     virtual ~ToneFetcherMainWindow();
     
-public slots:
-    void quit();
 private:
     ToneFetcher *mToneFetcher;
 };
