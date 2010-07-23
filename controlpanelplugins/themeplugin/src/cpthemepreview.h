@@ -45,7 +45,7 @@ public:
     const HbIcon themeIcon() const;
 	
 signals:
-    void applyTheme(const QString&);
+    void applyTheme(const CpThemeInfo&);
     void aboutToClose();
 
 public slots:

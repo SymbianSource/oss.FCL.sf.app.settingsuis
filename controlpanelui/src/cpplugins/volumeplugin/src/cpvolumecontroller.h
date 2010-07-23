@@ -34,12 +34,7 @@ public:
 		const QList<HbDataFormModelItem *> &itemList,
 		CpItemDataHelper &itemDataHelper);
 	virtual ~CpVolumeController();
-private:
-    enum VolumeLevel{
-        VolumenLevelSoft = 1,
-        VolumeLevelMed = 2 ,
-        VolumeLevelLoud = 3
-    };
+
 private slots:
     void silenceModeChange(bool isSilence);
     void masterVolumeChange(int value);
@@ -48,9 +43,7 @@ private slots:
     void settingValueChanged(const XQSettingsKey &key, const QVariant &value);
     
 private:
-	void updateUi();
-	int volumeLevelToInt( CpVolumeController::VolumeLevel volumeLevel );
-	CpVolumeController::VolumeLevel intToVolumeLevel( int value );
+	void updateUi();	
 	
 private:
 	CpProfileModel *mProfileModel;

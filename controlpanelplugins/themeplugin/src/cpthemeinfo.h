@@ -26,7 +26,6 @@ class CpThemeInfo {
 
 public:
     
-    Q_ENUMS(ThemeListItemType)
     
     enum ThemeListItemType {
                  ThemeListItemType_default = 0,

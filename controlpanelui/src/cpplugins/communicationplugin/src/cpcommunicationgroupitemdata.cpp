@@ -48,13 +48,16 @@ CpCommunicationGroupItemData::~CpCommunicationGroupItemData()
 
 void CpCommunicationGroupItemData::beforeLoadingConfigPlugins(CpItemDataHelper &itemDataHelper)
 {
-    mAirplaneModeItem = new HbDataFormModelItem(HbDataFormModelItem::ToggleValueItem);
+    mAirplaneModeItem = new HbDataFormModelItem(HbDataFormModelItem::ToggleValueItem);    
+    mAirplaneModeItem->setContentWidgetData("text", hbTrId("txt_cp_button_offline"));
+	mAirplaneModeItem->setContentWidgetData("additionalText", hbTrId("txt_cp_button_offline"));
     mAirplaneModeItem->setDescription(hbTrId("txt_cp_info_in_offline_mode_all_wireless_communica"));
     mAirplaneModeItem->setContentWidgetData("objectName", "airplaneModeToggle");
+    mAirplaneModeItem->setContentWidgetData("checkable", true);
     itemDataHelper.addConnection(mAirplaneModeItem,
-            SIGNAL(clicked()),
+            SIGNAL(toggled(bool)),
             this,
-            SLOT(toggleAirplaneMode()));
+            SLOT(toggleAirplaneMode(bool)));
     
     XQCentralRepositorySettingsKey key(KCRUidCoreApplicationUIs.iUid,KCoreAppUIsNetworkConnectionAllowed);
     QVariant airplaneMode = mSettingManager->readItemValue(key,XQSettingsManager::TypeInt);
@@ -68,14 +71,13 @@ void CpCommunicationGroupItemData::beforeLoadingConfigPlugins(CpItemDataHelper &
     
 }
 
-void CpCommunicationGroupItemData::toggleAirplaneMode()
-{
+void CpCommunicationGroupItemData::toggleAirplaneMode(bool toggled)
+{    
     XQCentralRepositorySettingsKey key(KCRUidCoreApplicationUIs.iUid,KCoreAppUIsNetworkConnectionAllowed);
-    QVariant airplaneMode = mSettingManager->readItemValue(key,XQSettingsManager::TypeInt);
-        
-    airplaneMode.setValue( static_cast<int> (!airplaneMode.toBool()) );
-
-    mSettingManager->writeItemValue(key,airplaneMode);
+    //toggled = true means ECoreAppUIsNetworkConnectionNotAllowed
+    //toggled = false means ECoreAppUIsNetworkConnectionAllowed
+    QVariant airplaneMode(static_cast<int>(!toggled));
+    mSettingManager->writeItemValue(key, airplaneMode);
 }
 
 void CpCommunicationGroupItemData::settingValueChanged(const XQSettingsKey &key, const QVariant &value)
@@ -83,14 +85,11 @@ void CpCommunicationGroupItemData::settingValueChanged(const XQSettingsKey &key,
     if (mAirplaneModeItem 
         && key.uid() == KCRUidCoreApplicationUIs.iUid 
         && key.key() == KCoreAppUIsNetworkConnectionAllowed 
-        && value.isValid()) {
-        QString text = hbTrId("txt_cp_setlabel_offline_mode_val_on");
-        QString additionalText = hbTrId("txt_cp_setlabel_offline_mode_val_off");
-        if (ECoreAppUIsNetworkConnectionAllowed == value.toInt()) {
-            ::qSwap (text, additionalText);
-        }
-        mAirplaneModeItem->setContentWidgetData("text",text);
-        mAirplaneModeItem->setContentWidgetData("additionalText",additionalText);
+        && value.isValid()) {          
+        //value.toBool() returns 
+        //true(1) if value equals ECoreAppUIsNetworkConnectionAllowed, that means offline mode off.
+        //false(0) if value equals ECoreAppUIsNetworkConnectionNotAllowed, that means offline mode on.
+        mAirplaneModeItem->setContentWidgetData("checked", !value.toBool());
     }
 }
 

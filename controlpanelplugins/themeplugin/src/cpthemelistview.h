@@ -32,7 +32,7 @@ class CpThemeListView : public CpBaseSettingView
     Q_OBJECT
 
 public:
-    CpThemeListView(QGraphicsItem *parent = 0);
+    explicit CpThemeListView(QGraphicsItem *parent = 0);
     ~CpThemeListView();
     void setWidget(QGraphicsWidget *widget);
     HbListView* themeList() const;

@@ -39,7 +39,7 @@ public:
     ~CpThemeChanger();
     
     const CpThemeInfo* currentTheme() const;
-    bool changeTheme(const QString& newtheme);
+    bool changeTheme(const CpThemeInfo& newtheme);
     
 signals:
     void themeChangeFinished();

@@ -53,7 +53,7 @@ CpPersonalizationEntryItemData::CpPersonalizationEntryItemData(CpItemDataHelper 
         }
         else
         {
-            setDescription( strRing.section(QDir::separator (),-1) );
+		    setDescription( QFileInfo(strRing).baseName() );
         }
     }
     else
@@ -171,8 +171,10 @@ void CpPersonalizationEntryItemData::storeStringValue( const QString &strValue )
 void CpPersonalizationEntryItemData::handleOk(const QString &strFname)
 {
     if(strFname.length())
-    {
-        setDescription( strFname.section(QDir::separator (),-1) );
+    {   
+        //lower level services(tone fetcher or music fetcher)
+        //will guarantee strFname is a valid absolute file path.
+        setDescription(QFileInfo(strFname).baseName());
     }
     else
     {

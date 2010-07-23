@@ -36,7 +36,7 @@ public:
 
     ~CpCommunicationGroupItemData();
 private slots:
-    void toggleAirplaneMode();
+    void toggleAirplaneMode(bool toggled);
     void settingValueChanged(const XQSettingsKey &key, const QVariant &value);
 private:
     virtual void beforeLoadingConfigPlugins(CpItemDataHelper &itemDataHelper);

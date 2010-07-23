@@ -74,7 +74,7 @@ void CpVolumeGroupItemData::initItems(CpItemDataHelper &itemDataHelper)
     
     masterVolume->setContentWidgetData("elementIcons", iconMaps);
     masterVolume->setContentWidgetData("minimum", 1);
-    masterVolume->setContentWidgetData("maximum", 3);
+    masterVolume->setContentWidgetData("maximum", 10);
     masterVolume->setContentWidgetData("majorTickInterval",1);
     masterVolume->setContentWidgetData("tickPosition",Hb::SliderTicksBelow);
 

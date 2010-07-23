@@ -93,15 +93,15 @@ void CpThemeChanger::setCurrentTheme()
 /*!
  Change a theme. Returns true on success, false otherwise.
  */
-bool CpThemeChanger::changeTheme(const QString& newTheme)
+bool CpThemeChanger::changeTheme(const CpThemeInfo& newTheme)
 {
     bool result = false;
     // Skip doing this if the request is for the current theme
-    if (newTheme.isEmpty() || newTheme == mCurrentTheme->name()) {
+    if (newTheme.name().isEmpty() || (mCurrentTheme && newTheme.name() == mCurrentTheme->name())) {
         return result;
     }
 
-    QString themePath = CpThemeUtil::themePath(newTheme);
+    QString themePath = newTheme.itemData();
     
     if(!themePath.isEmpty()) {
         HbThemeServices::setTheme(themePath);

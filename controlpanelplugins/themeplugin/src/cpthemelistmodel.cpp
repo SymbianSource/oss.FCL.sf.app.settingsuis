@@ -18,6 +18,7 @@
 #include <QDir>
 #include <QStringList>
 #include <QFileSystemWatcher>
+#include <QPair>
 
 #include <HbIcon>
 
@@ -45,18 +46,14 @@ CpThemeListModel::CpThemeListModel(QObject* parent)
     
     //Look into theme paths and add a file watcher for it
     //to get notified when themes are added.
-    QStringList themesPathList = CpThemeUtil::themePathList();
-    foreach (const QString &path, themesPathList) {
-        QDir themeDir;
-        themeDir.setPath( path ) ;
-        QStringList list = themeDir.entryList(QDir::AllDirs|QDir::NoDotAndDotDot, QDir::Name);
-        if(list.contains("themes", Qt::CaseSensitive )) {
-            mFileWatcher->addPath(themeDir.path() + "/themes/");
-        }
+    QStringList themePaths = CpThemeUtil::themeDirectories(mThemeList);
+    if(!themePaths.empty()) {
+        mFileWatcher->addPaths(themePaths);
     }
-    connect(mFileWatcher, SIGNAL(directoryChanged(const QString&)),
+   
+    connect(mFileWatcher, SIGNAL(directoryChanged(QString&)),
            this, SLOT(themeListChanged()));
-       
+    
     // data for the list which appears after the themes:
     CpThemeInfo fetchFromStore;
     fetchFromStore.setName(hbTrId("txt_cp_list_get_more_tones"));

@@ -93,8 +93,8 @@ void CpVolumeController::silenceModeChange(bool isSilence)
 
 void CpVolumeController::masterVolumeChange(int value)
 {
-#ifdef Q_OS_SYMBIAN
-	mProfileModel->setMasterVolume( volumeLevelToInt( (CpVolumeController::VolumeLevel)value ) );
+#ifdef Q_OS_SYMBIAN	
+    mProfileModel->setMasterVolume(value);
 	HbDataFormModelItem *masterVolume = mItemList.at(CpVolumeGroupItemData::EVolumeMasterVolumeItem);
 	masterVolume->setContentWidgetData("value",value);
 #endif
@@ -133,7 +133,7 @@ void CpVolumeController::updateUi()
 	    masterVolume->setContentWidgetData("elementIcons", iconMaps);
 	    masterVolume->setEnabled(!isSilenceMode);
 	    //masterVolume->setContentWidgetData("enabled",!isSilenceMode);
-	    masterVolume->setContentWidgetData("value",intToVolumeLevel(mProfileModel->masterVolume()));
+	    masterVolume->setContentWidgetData("value",mProfileModel->masterVolume());
 	}
 	HbDataFormModelItem *masterVibra = mItemList.at(CpVolumeGroupItemData::EVolumeMasterVibraItem);
 	if (masterVibra) {
@@ -141,30 +141,6 @@ void CpVolumeController::updateUi()
 	} 
 	
 #endif
-}
-
-int CpVolumeController::volumeLevelToInt( CpVolumeController::VolumeLevel volumeLevel )
-{
-    switch( volumeLevel ){
-        case VolumenLevelSoft:
-            return EProfileMasterVolumeSoft;
-        case VolumeLevelMed:
-            return EProfileMasterVolumeMed;
-        case VolumeLevelLoud:
-            return EProfileMasterVolumeLoud;
-        default:
-        		return 1;            	
-    }
-}
-CpVolumeController::VolumeLevel CpVolumeController::intToVolumeLevel( int value )
-{
-    if( value < 4 ) {
-        return VolumenLevelSoft;
-    } else if( value < 8 )
-        return VolumeLevelMed;
-    else{
-        return VolumeLevelLoud;
-    }
 }
 
 void CpVolumeController::settingValueChanged(const XQSettingsKey &key, const QVariant &value)
@@ -194,7 +170,7 @@ void CpVolumeController::settingValueChanged(const XQSettingsKey &key, const QVa
     else if (key.uid() == KCRUidProfileEngine.iUid && key.key() == KProEngMasterVolume) {
         HbDataFormModelItem *masterVolume = mItemList.at(CpVolumeGroupItemData::EVolumeMasterVolumeItem);
         if (masterVolume) {
-            masterVolume->setContentWidgetData("value",intToVolumeLevel(value.toInt()));
+            masterVolume->setContentWidgetData("value",value.toInt());
         }
     }
     else if (key.uid() == KCRUidProfileEngine.iUid && key.key() == KProEngMasterVibra) {

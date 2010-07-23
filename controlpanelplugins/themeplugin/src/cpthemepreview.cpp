@@ -15,6 +15,7 @@
  *   
  */
 
+#include <QObject>
 #include <QString>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsLinearLayout>
@@ -81,10 +82,13 @@ CpThemePreview::CpThemePreview(const CpThemeInfo& theme, QGraphicsItem *parent) 
     }
     else {
         mPreviewIcon = new HbIconItem(mTheme.portraitPreviewIcon(), this);
+        //set to ignore aspect ratio so the layout would rezise the icon correctly.
+        mPreviewIcon->setAspectRatioMode(Qt::IgnoreAspectRatio);
+          
     }
-    
-    //set to ignore aspect ratio so the layout would rezise the icon correctly.
-    mPreviewIcon->setAspectRatioMode(Qt::IgnoreAspectRatio);
+    // set an object name for preview icon to make it testable for automation testing
+    mPreviewIcon->setObjectName(QString("themePreviewIcon"));
+
     
     bottomLayout->addItem(mPreviewIcon);
     containerLayout->addItem(bottomLayout);
@@ -158,7 +162,7 @@ const HbIcon CpThemePreview::themeIcon() const
 */
 void CpThemePreview::themeSelected()
 {
-    emit applyTheme(mTheme.name());
+    emit applyTheme(mTheme);
 }
 
 /*! 
@@ -181,9 +185,12 @@ void CpThemePreview::previewOrientationChanged(Qt::Orientation orientation)
         
         if(orientation == Qt::Horizontal) {
             mPreviewIcon->setIcon(mTheme.landscapePreviewIcon());
+            mPreviewIcon->setAspectRatioMode(Qt::KeepAspectRatio);
+                    
         }
         else {
             mPreviewIcon->setIcon(mTheme.portraitPreviewIcon());
+            mPreviewIcon->setAspectRatioMode(Qt::IgnoreAspectRatio);
         }
         
         previewLayout->addItem(mPreviewIcon);

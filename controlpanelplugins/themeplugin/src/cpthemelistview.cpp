@@ -58,8 +58,8 @@ CpThemeListView::CpThemeListView(QGraphicsItem *parent) : CpBaseSettingView(0, p
     //Fixed vertical policy so that the heading doesn't expand.
     form->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed, QSizePolicy::DefaultType);
       
-    connect(mThemeList, SIGNAL(activated(const QModelIndex&)),
-            this, SIGNAL(newThemeSelected(const QModelIndex&)));
+    connect(mThemeList, SIGNAL(activated(QModelIndex)),
+            this, SIGNAL(newThemeSelected(QModelIndex)));
     
     //set list item icons to be large.
     HbListViewItem* listViewItem = mThemeList->listItemPrototype();

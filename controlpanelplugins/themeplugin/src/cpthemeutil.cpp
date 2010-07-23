@@ -26,6 +26,7 @@
 
 #include <hbicon.h>
 #include <hbinstance.h>
+#include <restricted/hbthemeservices_r.h>
 
 /*!
  * This class provides utility function to get Theme information.  
@@ -36,36 +37,9 @@
 #include <centralrepository.h>
         static const TUid KServerUid3={0x20022E82};
         static const TUint32 KDefaultThemeNameKey = 0x2;
-        static const TUint32 KDefaultThemeRootPathKey = 0x3;
-
+  
 #endif
 
-#if !defined(Q_OS_SYMBIAN)
-    #include <stdio.h>
-    static const char* KThemePathKey = "HB_THEMES_DIR";  //used for getting default theme.
-#endif
-    
-    
-#ifdef Q_OS_WIN
-    static char* _path = NULL;
-    static size_t _size = 0;
-    _dupenv_s(&_path, &_size, KThemePathKey);
-    static QString themeRootPath = QString(_path);
-    static QString themeRootPathPostfix = QString();
-    free(_path);
-#elif defined(Q_OS_SYMBIAN)
-    static QString themeRootPath = "c:\\resource\\hb";
-    static QString themeRootPathPostfix = "resource\\hb";
-#elif defined(Q_OS_MACX)
-    static QString themeRootPath = QDir::homePath() + '/' + "Library" + QString("hb");
-    static QString themeRootPathPostfix = QString();
-#elif defined(Q_OS_UNIX)
-    static QString themeRootPath = QString(getenv(KThemePathKey));
-    static QString themeRootPathPostfix = QString();
-#else
-    static QString themeRootPath = "c:\\resource\\hb";
-    static QString themeRootPathPostfix = QString();
-#endif
 
     //Location of theme preview and background icons.
     static const QString KPreviewThumbnailNVG = "/scalable/qtg_graf_theme_preview_thumbnail.nvg";
@@ -84,46 +58,9 @@
     static const QString KBackgroundPrtPNG    = "/pixmap/qtg_graf_screen_bg_prt.png";                     
     static const QString KBackgroundLscPNG    = "/pixmap/qtg_graf_screen_bg_lsc.png";
     
-/*!
- * Returns a list of paths where themes folder reside.  
- */
-QStringList CpThemeUtil::themePathList()
-{
-    static QStringList themesPathList;
-    
-    if(themesPathList.isEmpty()) {
 
-#if defined(Q_OS_SYMBIAN)
-        QFileInfoList driveInfoList = QDir::drives();
-        foreach (const QFileInfo &driveInfo, driveInfoList) {
-            const QString themePath = driveInfo.absolutePath() + themeRootPathPostfix;
-            if(QDir(themePath).exists())
-                themesPathList << themePath;
-        }
-#else
-        themesPathList << themeRootPath;
-#endif
-    }
-    return themesPathList;
-}
 
-/*!
- * Given the theme name, it returns the absolute path of the theme.
- */
-QString CpThemeUtil::themePath(const QString& themeName)
-{
-    QString themePath = "";
-    QStringList themesPathList = themePathList();
-    foreach (const QString &path, themesPathList) {
-       QString tmpPath = path + "/themes/icons/" + themeName;
-       if(QDir(tmpPath).exists()) {
-           themePath = tmpPath;
-           break;
-       }
-    }
-    return themePath;
-}
-  
+
 /*
  * Builds a CpThemeInfo object given theme path and theme name.  It creates the name and 
  * preview icons for the object.  Creates a new CpThemeInfo objects. Caller takes ownership.
@@ -159,6 +96,7 @@ CpThemeInfo* CpThemeUtil::buildThemeInfo(const QString& themePath, const QString
    
     themeInfo->setName(name);
     themeInfo->setItemType(CpThemeInfo::ThemeListItemType_default);
+    themeInfo->setItemData(themePath);
           
     //Get the icons. Logic is as follow:
     /* 1. If the icon path is in index.theme and the icon exist, use it.
@@ -233,35 +171,25 @@ CpThemeInfo* CpThemeUtil::buildThemeInfo(const QString& themePath, const QString
 }
 
 /*! Creates a list of CpThemeInfo objects representing theme information.
- *  Caller should take ownership of the list.
+ *  
  */
 QList<CpThemeInfo> CpThemeUtil::buildThemeList()
 {
     QList<CpThemeInfo> themeList; 
   
-    QStringList mThemesPathList = themePathList();
-    
-    foreach (const QString &path, mThemesPathList) {
+    QList<QPair<QString, QString> > mThemesPathList = availableThemes();
+    QPair<QString, QString>pair;
+    foreach (pair, mThemesPathList) {
         QDir themeDir;
+        QString name = pair.first;
+        QString path = pair.second;
         themeDir.setPath( path ) ;
-        QStringList iconthemeslist;
-        QStringList list = themeDir.entryList(QDir::AllDirs|QDir::NoDotAndDotDot,QDir::Name);
         CpThemeInfo* themeInfo;
-
-        if(list.contains("themes", Qt::CaseSensitive )) {
-            QDir root(themeDir.path());
-            themeDir.setPath(root.path() + "/themes/icons/") ;
-            iconthemeslist = themeDir.entryList(QDir::AllDirs|QDir::NoDotAndDotDot,QDir::Name);
-            foreach(QString themefolder, iconthemeslist) {
-                QDir iconThemePath(root.path() + "/themes/icons/" + themefolder);
-                if(iconThemePath.exists("index.theme") &&
-                   (iconThemePath.exists("scalable") || iconThemePath.exists("pixmap") )) {
-
-                    themeInfo = buildThemeInfo(iconThemePath.path(), themefolder);
-                    if(themeInfo && !themeInfo->name().isEmpty()) {
-                        themeList.append(*themeInfo);
-                    }
-                } 
+        if(themeDir.exists("index.theme") &&
+          (themeDir.exists("scalable") || themeDir.exists("pixmap") )) {
+            themeInfo = buildThemeInfo(path, name);
+            if(themeInfo && !themeInfo->name().isEmpty()) {
+                themeList.append(*themeInfo);
             }
         }
     }
@@ -275,9 +203,11 @@ QList<CpThemeInfo> CpThemeUtil::buildThemeList()
 CpThemeInfo* CpThemeUtil::defaultTheme()
 {
     //static because default theme doesn't change.
-    static CpThemeInfo *defaultTheme = new CpThemeInfo();
-    QString defaultThemeName;
-    QString defaultThemeRootDir;
+    static CpThemeInfo *defaultTheme = 0;
+    if(!defaultTheme) {
+        defaultTheme = new CpThemeInfo();
+    }
+    QString defaultThemePath;
     if(defaultTheme->name().isEmpty()) {
        
 
@@ -288,24 +218,43 @@ CpThemeInfo* CpThemeUtil::defaultTheme()
             TBuf<256> value;
             if (KErrNone == repository->Get((TUint32)KDefaultThemeNameKey, value)) {
                 QString qvalue((QChar*)value.Ptr(), value.Length());
-                defaultThemeName = qvalue.trimmed();
+                defaultThemePath = qvalue.trimmed();
             }
             value.Zero();
-            if (KErrNone == repository->Get((TUint32)KDefaultThemeRootPathKey, value)) {
-                QString qvalue((QChar*)value.Ptr(), value.Length());
-                defaultThemeRootDir = qvalue.trimmed();
-            }
-            else {
-                defaultThemeRootDir = themePath(defaultThemeName);
-            }
-            value.Zero();
-            delete repository;
+           delete repository;
         }
           
 #endif
-        defaultTheme = buildThemeInfo(defaultThemeRootDir, defaultThemeName);
+        defaultTheme = buildThemeInfo(defaultThemePath);
 
     }
     return defaultTheme;
 }
+
+
+const QStringList CpThemeUtil::themeDirectories(const QList<CpThemeInfo>& themeInfoList)
+{
+    QStringList themeDirs;
+    
+    foreach(const CpThemeInfo& themeInfo, themeInfoList) {
+        QDir themePath(themeInfo.itemData());
+        QString topDir;
+        if(themePath.cdUp()) {
+            topDir = themePath.path();
+            if(!themeDirs.contains(topDir)) {
+                themeDirs.append(topDir);
+            }
+        }
+    }
+    return themeDirs;
+}
+
+const QList< QPair< QString, QString > > CpThemeUtil::availableThemes( )
+{
+    
+    QList<QPair<QString, QString> > result = HbThemeServices::availableThemes();
+    return result;
+    
+}
+
 

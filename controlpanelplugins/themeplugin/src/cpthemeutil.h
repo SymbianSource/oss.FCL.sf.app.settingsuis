@@ -19,6 +19,7 @@
 #define CPTHEMEUTIL_H_
 
 #include <QList>
+#include <QPair>
 
 class QStringList;
 class CpThemeInfo;
@@ -26,11 +27,13 @@ class CpThemeInfo;
 class CpThemeUtil {
 
 public:
-    static QStringList themePathList();
     static QList<CpThemeInfo> buildThemeList();
-    static CpThemeInfo* buildThemeInfo(const QString& themePath, const QString& themeName);
-    static QString themePath(const QString& themeName);
+    static CpThemeInfo* buildThemeInfo(const QString& themePath, const QString& themeName = QString());
     static CpThemeInfo* defaultTheme();
+    static const QList< QPair< QString, QString > > availableThemes(); 
+    static const QStringList themeDirectories(const QList<CpThemeInfo> &themeInfoList);
+
+        
 };
 
 #endif /* CPTHEMEUTIL_H_ */

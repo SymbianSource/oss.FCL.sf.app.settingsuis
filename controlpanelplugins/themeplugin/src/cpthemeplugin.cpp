@@ -48,8 +48,8 @@ QList<CpSettingFormItemData*> CpThemePlugin::createSettingFormItemData(CpItemDat
     //create a cpthemepluginentryitemdata with default values and return it.
     CpSettingFormEntryItemData *entryItem = new CpThemePluginEntryItemData(
         itemDataHelper,
-        tr("Theme"),
-        tr("Theme Name"),
+        hbTrId("txt_cp_dblist_theme"),
+        QString(),
         HbIcon());
         return QList<CpSettingFormItemData*>() << entryItem;
 }

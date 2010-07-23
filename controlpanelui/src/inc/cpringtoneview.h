@@ -44,7 +44,9 @@ private:
     HbListWidget* mToneTypeList;
     XQAiwRequest* mReq;
     XQApplicationManager mAppMgr;
-
+    //used to mark if there is a request being processed
+    bool mProcessing;
+    
 private:
     void launchMediaFetcher( const QString &strService, const QString &strItface );
 };

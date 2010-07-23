@@ -34,7 +34,7 @@
 CpRingToneView::CpRingToneView( QGraphicsItem *parent ):
                               CpBaseSettingView(0, parent),
                               mToneTypeList( new HbListWidget(this) ),
-                              mReq(0)
+                              mReq(0), mProcessing(false)
 {
     HbStyleLoader::registerFilePath(":/widgetml/cpdataformlistentryviewitem.css");
     HbStyleLoader::registerFilePath(":/widgetml/cpdataformlistentryviewitem_color.css");
@@ -62,10 +62,18 @@ CpRingToneView::CpRingToneView( QGraphicsItem *parent ):
 }
 CpRingToneView::~CpRingToneView()
 {
-    if(mReq)    delete mReq;
+    if (mReq) {
+        delete mReq;
+    }    
 }
+
 void CpRingToneView::itemActivated( const QModelIndex &index )
 {
+    //avoid responding to the second or later consecutive click
+	if (mProcessing) {
+		return;
+	}
+	mProcessing = true;
     int nRow = index.row();
 
     switch(nRow) {
@@ -86,7 +94,8 @@ void CpRingToneView::itemActivated( const QModelIndex &index )
 }
 void CpRingToneView::handleOk(const QVariant &result)
 {
-    CPFW_LOG( "CpPersonalizationEntryItemData::handleOk" );
+    mProcessing = false;
+    CPFW_LOG( "CpRingToneView::handleOk" );
     if (!result.canConvert<QString>() || result.toString().length() == 0 )  //error result
     {
         return;
@@ -99,6 +108,7 @@ void CpRingToneView::handleOk(const QVariant &result)
 
 void CpRingToneView::handleError(int errorCode, const QString& errorMessage)
 {
+    mProcessing = false;
     emit(selError( errorCode, errorMessage ));
 }
 
@@ -112,15 +122,16 @@ void CpRingToneView::launchMediaFetcher( const QString &strService, const QStrin
     }
         //launch media fetcher
     mReq = mAppMgr.create(strService, strItface, true);
+    mReq->setSynchronous(false);
     if (!mReq)
     {
       CPFW_LOG("CpRingToneView::launchMediaFetcher, Mediafetcher start failed");
       return;
     }
     else
-    {
-        connect(mReq, SIGNAL( requestOk( const QVariant&)), SLOT( handleOk(const QVariant&)) );
-        connect(mReq, SIGNAL( requestError( int,const QString&)), SLOT(handleError(int,const QString&)) );
+    {   //use QueuedConnection so that requestError will not be emitted when selecting one tone
+        connect(mReq, SIGNAL(requestOk(QVariant)), SLOT( handleOk(QVariant)), Qt::QueuedConnection);
+        connect(mReq, SIGNAL(requestError(int, QString)), SLOT(handleError(int, QString)));
     }
     
     QList<QVariant> args;

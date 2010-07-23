@@ -54,7 +54,7 @@ signals:
 public slots:
     void newThemeSelected(const QModelIndex& index);
     void previewClosed();
-    void themeApplied(const QString& theme);
+    void themeApplied(const CpThemeInfo& theme);
     void themeListClosed();
     void themeChangeTimeout();
     void themeWaitTimeout();

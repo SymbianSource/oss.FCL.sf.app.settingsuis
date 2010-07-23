@@ -128,8 +128,8 @@ void CpThemeControl::createThemeList()
     
     
     //connect to signal for selecting a list item.
-    connect(mThemeListView,SIGNAL(newThemeSelected(const QModelIndex&)),
-            this,SLOT(newThemeSelected(const QModelIndex&)));
+    connect(mThemeListView,SIGNAL(newThemeSelected(QModelIndex)),
+            this,SLOT(newThemeSelected(QModelIndex)));
 
 	//handle signal for list view closing. (e.g Back softkey pressed)
     connect(mThemeListView,SIGNAL(aboutToClose()),
@@ -225,6 +225,11 @@ void CpThemeControl::newThemeSelected(const QModelIndex& index)
         themeInfo.setName(data.toString());
     }
     
+    data = index.data(CpThemeListModel::ItemDataRole);
+    if(data.isValid()) {
+        themeInfo.setItemData(data.toString());
+    }
+    
     //get theme icon.
     data = index.data(Qt::DecorationRole);
     if(data.isValid()) {
@@ -241,6 +246,8 @@ void CpThemeControl::newThemeSelected(const QModelIndex& index)
         themeInfo.setLandscapePreviewIcon(data.value<HbIcon>());
     }
     
+    
+    
    //Set up the theme preview and set it to
     //the current view of main window.
 
@@ -253,8 +260,8 @@ void CpThemeControl::newThemeSelected(const QModelIndex& index)
         connect(mThemePreview,SIGNAL(aboutToClose()),
             this, SLOT(previewClosed()));
 
-        connect(mThemePreview, SIGNAL(applyTheme(const QString&)),
-                this, SLOT(themeApplied(const QString&)));
+        connect(mThemePreview, SIGNAL(applyTheme(CpThemeInfo)),
+                this, SLOT(themeApplied(CpThemeInfo)));
     } else {
         mThemePreview->setThemeInfo(themeInfo);
     }
@@ -267,7 +274,7 @@ void CpThemeControl::newThemeSelected(const QModelIndex& index)
 /*!
 	Slot called when a Select key is pressed in theme preview view.
 */
-void CpThemeControl::themeApplied(const QString& theme)
+void CpThemeControl::themeApplied(const CpThemeInfo& theme)
 {
     QThread::currentThread()->setPriority(QThread::HighPriority);  
     
@@ -392,6 +399,9 @@ void CpThemeControl::setActiveThemeIndex()
         QModelIndex sourceIndex = mListModel->index(themeListModel->indexOf(*currentTheme),0);
         //set current index.
         mThemeListView->themeList()->setCurrentIndex(sourceIndex, QItemSelectionModel::SelectCurrent);
+    }
+    else {
+        mThemeListView->themeList()->setCurrentIndex(QModelIndex(), QItemSelectionModel::Clear);
     }
 }
     
