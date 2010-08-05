@@ -45,6 +45,7 @@ symbian {
 
             TARGET.UID3 = 0x2002BCCA
             TARGET.CAPABILITY = ALL -TCB
+            TARGET.VID = VID_DEFAULT
             BLD_INF_RULES.prj_exports += "./service_conf.xml z:/private/2002BCCA/service_conf.xml"
 }
 symbian {

@@ -51,7 +51,7 @@ CpThemeListModel::CpThemeListModel(QObject* parent)
         mFileWatcher->addPaths(themePaths);
     }
    
-    connect(mFileWatcher, SIGNAL(directoryChanged(QString&)),
+    connect(mFileWatcher, SIGNAL(directoryChanged(QString)),
            this, SLOT(themeListChanged()));
     
     // data for the list which appears after the themes:
@@ -113,13 +113,9 @@ QVariant CpThemeListModel::data(const QModelIndex& index, int role) const
                 case Qt::DisplayRole:
                     retVal = list->at(row).name();
                     break;
-
+#ifdef CP_THEME_PREVIEW_DEFINED
                 case Qt::DecorationRole:
                     retVal = list->at(row).icon();
-                    break;
-
-                case Qt::SizeHintRole:
-                    retVal = list->at(row).icon().size();
                     break;
                     
                 case PortraitPreviewRole:
@@ -129,7 +125,11 @@ QVariant CpThemeListModel::data(const QModelIndex& index, int role) const
                 case LandscapePreviewRole:
                     retVal = list->at(row).landscapePreviewIcon();
                     break;
-                    
+#endif                    
+                case Qt::SizeHintRole:
+                    retVal = list->at(row).icon().size();
+                    break;
+                                
                 case ItemDataRole:
                     retVal = list->at(row).itemData();
                     break;

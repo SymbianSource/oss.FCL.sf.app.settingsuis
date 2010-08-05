@@ -12,7 +12,7 @@
  * Contributors:
  * 
  * Description:
- *     The header file for tone fetcher utilities.
+ *     The header file for tone fetcher logger.
  *     
  */
 
@@ -21,6 +21,12 @@
 
 #include <QLatin1String>
 #include <logger.h>
+
+/*
+ make LOG work
+*/
+
+//#define ENABLE_TONEFETCHER_LOG
 
 #define TONEFETCHER_LOGGER_NAME       QLatin1String("ToneFetcher")
 
@@ -34,6 +40,10 @@
     #endif
 #endif
 
-#define TF_LOG(str)   Logger::instance(TONEFETCHER_LOGGER_NAME)->log(str);
+#ifdef ENABLE_TONEFETCHER_LOG
+    #define TF_LOG(str)   Logger::instance(TONEFETCHER_LOGGER_NAME)->log(str);
+#else
+    #define TF_LOG(str)
+#endif
 
 #endif /* TONEFETCHERLOGGER_H */

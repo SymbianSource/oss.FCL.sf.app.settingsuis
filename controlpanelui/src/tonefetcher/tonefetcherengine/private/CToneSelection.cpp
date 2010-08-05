@@ -28,6 +28,7 @@
 //refresh interval, 2 seconds.
 const TInt KTimerInterval = 2 * 1000 * 1000;
 const TInt KObserverCallStep = 100;
+const TInt KOneKiloByte = 1024;
 // CONSTANTS
 _LIT( KMimeMp3, "mp3" );
 
@@ -172,8 +173,8 @@ void CToneSelection::HandleQueryNewResults( CMdEQuery& /*aQuery*/,
     }
 
 void CToneSelection::HandleObjectNotification( CMdESession& /*aSession*/, 
-                                        TObserverNotificationType aType,
-                                        const RArray<TItemId>& aObjectIdArray )
+                                        TObserverNotificationType /*aType*/,
+                                        const RArray<TItemId>& /*aObjectIdArray*/ )
     {   
     /*if ( aObjectIdArray.Count() > 0 && ( aType == ENotifyAdd || aType == ENotifyModify || aType == ENotifyRemove ) )
         {
@@ -300,7 +301,7 @@ CMdEPropertyDef& CToneSelection::PropertyDefL( TInt aAttr )
     return PropertyDefL( iSession, aAttr );
     }
 
-CMdEPropertyDef& CToneSelection::PropertyDefL( CMdESession* aSession, TInt aAttr )
+CMdEPropertyDef& CToneSelection::PropertyDefL( CMdESession* /*aSession*/, TInt aAttr )
     {
     CMdEObjectDef& objectDef = 
             iDefNS->GetObjectDefL( MdeConstants::Audio::KAudioObject );
@@ -337,6 +338,8 @@ CMdEPropertyDef& CToneSelection::PropertyDefL( CMdESession* aSession, TInt aAttr
         {
         User::Leave( KErrNotSupported );
         }
+	//avoid critical warning
+    return objectDef.GetPropertyDefL( MdeConstants::Audio::KAudioObject );
     }
 
 void CToneSelection::ExcludeMusicPropertiesL( CMdELogicCondition& aCondition )
@@ -357,7 +360,7 @@ void CToneSelection::ExcludeMusicPropertiesL( CMdELogicCondition& aCondition )
     
     CMdELogicCondition& condition = 
                         aCondition.AddLogicConditionL( ELogicConditionOperatorAnd );
-    condition.AddPropertyConditionL( sizeTypeDef, TMdEIntRange(0, iMaxFileSize, EMdERangeTypeBetween) );
+    condition.AddPropertyConditionL( sizeTypeDef, TMdEIntRange(0, iMaxFileSize * KOneKiloByte, EMdERangeTypeNotBetween) );
     condition.AddPropertyConditionL( mimeTypeDef, 
             ETextPropertyConditionCompareContains, KMimeMp3 );
     condition.AddPropertyConditionL( artistTypeDef );

@@ -74,9 +74,6 @@ bool CpProfileNameEditDialog::launchProfileNameEditDialog( QString &profileName 
     
     profileEditNameDialog->setLineEditText( profileName );
     profileEditNameDialog->checkPrimaryAction();
-    
-    HbAction *secondAction = qobject_cast<HbAction *>
-                                 (profileEditNameDialog->actions().at(1));
     profileEditNameDialog->show();
     return false;
 }

@@ -25,6 +25,10 @@ TRANSLATIONS = control_panel.ts
 CONFIG += debug_and_release 
 RESOURCES += themeplugin.qrc
 
+#comment this out if theme plugin should have
+#a preview view.
+DEFINES += CP_THEME_PREVIEW_DEFINED
+
 include (themeplugin.pri)
 include (rom/themeplugin_rom.pri)
 
@@ -59,6 +63,7 @@ win32 {
 
 # Add the output dirs to the link path too
 LIBS += -L$$DESTDIR
+
 
 
 #For some reason the default include path doesn't include MOC_DIR on symbian

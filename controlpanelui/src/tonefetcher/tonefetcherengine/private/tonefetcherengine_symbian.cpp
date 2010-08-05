@@ -25,8 +25,8 @@
 
 ToneFetcherEnginePrivate::ToneFetcherEnginePrivate()
     {
-    TRAPD( err, mToneSelection = CToneSelection::NewL( this ) ); 
-    TRAPD( error, mTonePlayer = CTonePlayer::NewL( this ) );    
+    TRAP_IGNORE( mToneSelection = CToneSelection::NewL( this ) ); 
+    TRAP_IGNORE( mTonePlayer = CTonePlayer::NewL( this ) );    
     }
 
 ToneFetcherEnginePrivate::~ToneFetcherEnginePrivate()

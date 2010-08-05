@@ -110,7 +110,7 @@ public:
             event->mPluginFile     = pluginConfig.mPluginFile;
                         
             //firstly, handle CpPluginInterface
-            if (CpPluginInterface *plugin = CpPluginLoader().loadCpPluginInterface(pluginConfig.mPluginFile)) {
+            if (CpPluginInterface *plugin = CpPluginLoader::loadCpPluginInterface(pluginConfig.mPluginFile)) {
                 CPFW_LOG("Load  root component CpPluginInterface succeed.");
                 event->mPluginInterface = plugin;
             }
@@ -164,7 +164,7 @@ void CpCategoryModelUtility::buildConfigPluginItems(HbDataFormModelItem *parent,
 		QList<CpSettingFormItemData*> itemDataList;
 		
         //firstly, handle CpPluginInterface
-		if (CpPluginInterface *plugin = CpPluginLoader().loadCpPluginInterface(pluginConfig.mPluginFile)) {
+		if (CpPluginInterface *plugin = CpPluginLoader::loadCpPluginInterface(pluginConfig.mPluginFile)) {
             CPFW_LOG("Load  root component CpPluginInterface succeed.");
 			itemDataList = plugin->createSettingFormItemData(itemDataHelper);
 		}

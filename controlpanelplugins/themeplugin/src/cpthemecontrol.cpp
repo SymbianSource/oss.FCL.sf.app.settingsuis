@@ -51,7 +51,7 @@
 #include <hblabel.h>
 
 //time out time before showing a processing dialog.
-static const int KThemeChangeTimeOutMilliSeconds = 1000;  
+static const int KThemeChangeTimeOutMilliSeconds = 2000;  
 
 /*!
 	Helper function to fetch the main window.
@@ -247,6 +247,7 @@ void CpThemeControl::newThemeSelected(const QModelIndex& index)
     }
     
     
+#ifdef CP_THEME_PREVIEW_DEFINED    
     
    //Set up the theme preview and set it to
     //the current view of main window.
@@ -268,6 +269,9 @@ void CpThemeControl::newThemeSelected(const QModelIndex& index)
     mThemePreview->setTitle(hbTrId("txt_cp_title_control_panel"));
 
     mWindow->setCurrentView(mThemePreview);
+#else
+    themeApplied(themeInfo);
+#endif
 
 }
 
@@ -288,8 +292,13 @@ void CpThemeControl::themeApplied(const CpThemeInfo& theme)
         mThemeChangeFinished = false;
     } else {
         //theme change failed, go back to control panel.
+#ifdef CP_THEME_PREVIEW_DEFINED
         previewClosed();
         triggerThemeListClose();
+#else
+        setActiveThemeIndex();
+#endif
+   
     }
    
 }
@@ -343,12 +352,19 @@ void CpThemeControl::themeChangeTimeout()
     if(mWaitDialog && mWaitDialog->isVisible()) {
         mWaitDialog->hide();
     }
-    
-    previewClosed();
-    //ask the themelistview to close.  Control Panel will
-    //take care of removing it from window.
-    triggerThemeListClose();
-    
+   
+#ifdef CP_THEME_PREVIEW_DEFINED
+        previewClosed();
+        //ask the themelistview to close.  Control Panel will
+        //take care of removing it from window.
+        triggerThemeListClose();
+#else
+        setActiveThemeIndex();
+       
+#endif
+       
+
+  
     QThread::currentThread()->setPriority(QThread::NormalPriority); 
 }
 

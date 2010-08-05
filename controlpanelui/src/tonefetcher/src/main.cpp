@@ -25,12 +25,17 @@ int main(int argc, char *argv[])
 {
     HbApplication a(argc, argv);
     
-    
+#ifdef ENABLE_TONEFETCHER_LOG
     Logger::instance(TONEFETCHER_LOGGER_NAME)->configure(
             TF_LOGGER_CONFIG_PATH,QSettings::IniFormat);
-
+#endif
     TF_LOG("Entering tonefetcher.exe...");
     ToneFetcherMainWindow w;   
     w.show();
-    return a.exec();
+    int ret = a.exec();
+    TF_LOG("Leaving tonefetcher.exe...");
+#ifdef ENABLE_TONEFETCHER_LOG
+    Logger::closeAll();
+#endif
+    return ret;
 }
