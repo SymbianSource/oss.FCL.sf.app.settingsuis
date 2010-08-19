@@ -18,7 +18,7 @@
 
 
 // INCLUDE FILES
-#include <Stiftestinterface.h>
+#include <StifTestInterface.h>
 #include "ServicesDbApiTest.h"
 #include <SettingServerClient.h>
 

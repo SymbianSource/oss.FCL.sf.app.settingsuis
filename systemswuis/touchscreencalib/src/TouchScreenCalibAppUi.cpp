@@ -18,7 +18,7 @@
 
 // SYSTEM INCLUDES
 #include <aknnotewrappers.h>
-#include <TouchScreenCalib.rsg>
+#include <touchscreencalib.rsg>
 #include <e32property.h>
 #ifdef RD_STARTUP_ANIMATION_CUSTOMIZATION
 #include "touchscprivatepskeys.h"
