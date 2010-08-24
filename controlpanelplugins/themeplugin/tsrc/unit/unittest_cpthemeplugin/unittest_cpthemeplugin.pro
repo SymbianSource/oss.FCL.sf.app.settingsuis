@@ -35,23 +35,21 @@ symbian::TARGET.UID3=0x2002DD2D
 # Input
 
 HEADERS += ../../../src/cpthemecontrol.h
-HEADERS += ../../../src/cpthemeclient_p.h
-win32::HEADERS += ../../../src/cpplugins/themeplugin/src/cpthemeclientqt_p.h
-symbian::HEADERS += ../../../src/cpthemeclientsymbian_p.h
-HEADERS += ../../../src/cpthemepreview.h
 HEADERS += ../../../src/cpthemechanger.h
-HEADERS += ../../../src/cpthemechanger_p.h
 HEADERS += ../../../src/cpthemelistview.h
 HEADERS += ../../../src/cpthemeplugin.h
 HEADERS += ../../../src/cpthemepluginentryitemdata.h
+HEADERS += ../../../src/cpthemeinfo.h
+HEADERS += ../../../src/cpthemeutil.h
+HEADERS += ../../../src/cpthemelistmodel.h
 SOURCES += unittest_cpthemeplugin.cpp
 SOURCES += ../../../src/cpthemecontrol.cpp
-SOURCES += ../../../src/cpthemeclient_p.cpp
-win32::SOURCES += ../../../src/cpplugins/themeplugin/src/cpthemeclientqt_p.cpp
-symbian::SOURCES += ../../../src/cpthemeclientsymbian_p.cpp
-SOURCES += ../../../src/cpthemepreview.cpp
 SOURCES += ../../../src/cpthemechanger.cpp
-SOURCES += ../../../src/cpthemechanger_p.cpp
 SOURCES += ../../../src/cpthemelistview.cpp
 SOURCES += ../../../src/cpthemeplugin.cpp
 SOURCES += ../../../src/cpthemepluginentryitemdata.cpp
+SOURCES += ../../../src/cpthemeinfo.cpp
+SOURCES += ../../../src/cpthemeutil.cpp
+SOURCES += ../../../src/cpthemelistmodel.cpp
+
+

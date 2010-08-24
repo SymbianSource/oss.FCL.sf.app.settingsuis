@@ -27,7 +27,7 @@ RESOURCES += themeplugin.qrc
 
 #comment this out if theme plugin should have
 #a preview view.
-DEFINES += CP_THEME_PREVIEW_DEFINED
+#DEFINES += CP_THEME_PREVIEW_DEFINED
 
 include (themeplugin.pri)
 include (rom/themeplugin_rom.pri)

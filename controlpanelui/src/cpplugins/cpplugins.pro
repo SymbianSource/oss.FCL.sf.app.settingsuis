@@ -19,11 +19,10 @@ SUBDIRS = communicationplugin \
   			  deviceplugin \
   			  privacyplugin \
   			  personalizationplugin \
-			  	lookfeelplugin \
-					profileactivatorplugin \
-					volumeplugin \
-					ringtoneplugin \
-					keytouchfdbkplugin 
+			  profileactivatorplugin \
+			  volumeplugin \
+			  ringtoneplugin \
+			  keytouchfdbkplugin 
 					#displayplugin \
 					#applicationsettingsplugin \
 					#accountsplugin

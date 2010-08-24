@@ -41,6 +41,7 @@ public:
 	
 signals:
     void newThemeSelected(const QModelIndex& index);
+    void oviClicked();
 
 private:
     HbListView* mThemeList;

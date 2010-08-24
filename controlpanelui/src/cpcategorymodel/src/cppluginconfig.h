@@ -11,7 +11,7 @@
 *
 * Contributors:
 *
-* Description:  
+* Description:  An entry for a controlpanel plugin defined in cpcfg file.
 *
 */
 
@@ -26,9 +26,9 @@ public:
     CpPluginConfig();
     void dump();
 public:
-    int mUid;
+    int mUid; //UID3 for the plugin 
     QString mDisplayName;
-    QString mPluginFile;
+    QString mPluginFile; 
     QString mDescription;
 };
 

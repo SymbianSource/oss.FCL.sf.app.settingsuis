@@ -50,8 +50,11 @@ DEFINES += PROFILEWRAPPER_FREEZE
 
 HEADERS += ../inc/cpprofilemodel.h \
            ../inc/cpprofilewrappermacro.h \
-           src/cpprofilemodel_p.h
-SOURCES += src/cpprofilemodel.cpp
+           ../inc/cpprofilemonitor.h \
+           src/cpprofilemodel_p.h \
+           src/cpprofilemonitor_p.h 
+SOURCES += src/cpprofilemodel.cpp \
+		   src/cpprofilemonitor.cpp
 CONFIG += hb
 win32 {
     INCLUDEPATH += $$PWD/src
@@ -65,12 +68,14 @@ symbian {
 	           $$MOC_DIR
     INCLUDEPATH += $$MW_LAYER_PLATFORM_EXPORT_PATH(cplogger)
 
-    SOURCES += src/cpprofilemodel_p.cpp
+    SOURCES += src/cpprofilemodel_p.cpp \
+			   src/cpprofilemonitor_p.cpp
 
     LIBS += -lprofileeng  \
             -lcentralrepository \
             -lcharconv \
-            -lcpframework  # For cplogger
+            -lcplogger \  # For cplogger
+            -lxqutils
     TARGET.CAPABILITY = All -TCB 
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.UID3 = 0x20025FE6

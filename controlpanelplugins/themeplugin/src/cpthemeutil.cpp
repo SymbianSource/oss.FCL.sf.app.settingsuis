@@ -45,18 +45,11 @@
     static const QString KPreviewThumbnailNVG = "/scalable/qtg_graf_theme_preview_thumbnail.nvg";
     static const QString KPreviewThumbnailSVG = "/scalable/qtg_graf_theme_preview_thumbnail.svg";
     
-    static const QString KPreviewPrtNVG       = "/scalable/qtg_graf_theme_preview_prt.nvg";
-    static const QString KPreviewLscNVG       = "/scalable/qtg_graf_theme_preview_lsc.nvg";
-    static const QString KPreviewPrtSVG       = "/scalable/qtg_graf_theme_preview_prt.svg";
-    static const QString KPreviewLscSVG       = "/scalable/qtg_graf_theme_preview_lsc.svg";
-   
     static const QString KBackgroundPrtNVG    = "/scalable/qtg_graf_screen_bg_prt.nvg";
     static const QString KBackgroundLscNVG    = "/scalable/qtg_graf_screen_bg_lsc.nvg";
     static const QString KBackgroundPrtSVG    = "/scalable/qtg_graf_screen_bg_prt.svg";
     static const QString KBackgroundLscSVG    = "/scalable/qtg_graf_screen_bg_lsc.svg";
     
-    static const QString KBackgroundPrtPNG    = "/pixmap/qtg_graf_screen_bg_prt.png";                     
-    static const QString KBackgroundLscPNG    = "/pixmap/qtg_graf_screen_bg_lsc.png";
     
 
 
@@ -71,8 +64,6 @@ CpThemeInfo* CpThemeUtil::buildThemeInfo(const QString& themePath, const QString
     CpThemeInfo *themeInfo = new CpThemeInfo();
     QString iconPath;
     
-    QString previewPathPrt;
-    QString previewPathLsc;
     QString name = themeName;
     QString hidden = "";
     
@@ -84,8 +75,6 @@ CpThemeInfo* CpThemeUtil::buildThemeInfo(const QString& themePath, const QString
         name = iniSetting.value("Name").toString();
         hidden = iniSetting.value("Hidden").toString();
         iconPath = iniSetting.value("PreviewThumbnailPath").toString();
-        previewPathPrt = iniSetting.value("PreviewIconPath_prt").toString();
-        previewPathLsc = iniSetting.value("PreviewIconPath_lsc").toString();
         iniSetting.endGroup();
        
     }
@@ -105,69 +94,41 @@ CpThemeInfo* CpThemeUtil::buildThemeInfo(const QString& themePath, const QString
      * 3. If no icon exist (background or preview),use default theme icon.
      */
     if(iconPath.isEmpty() || !QFileInfo(themePath + iconPath).exists()){
-    //Set thumbnail
-        if(QFileInfo(themePath + KPreviewThumbnailNVG).exists()){
-            themeInfo->setIcon(HbIcon(themePath + KPreviewThumbnailNVG));
-        }else if(QFileInfo(themePath + KPreviewThumbnailSVG).exists()){
-            themeInfo->setIcon(HbIcon(themePath + KPreviewThumbnailSVG));
-        }else if(QFileInfo(themePath + KBackgroundPrtNVG).exists()){
-            themeInfo->setIcon(HbIcon(themePath + KBackgroundPrtNVG));
-        } else if(QFileInfo(themePath + KBackgroundPrtSVG).exists()){
-            themeInfo->setIcon(HbIcon(themePath + KBackgroundPrtSVG));
-        } else if(QFileInfo(themePath + KBackgroundPrtPNG).exists()){
-            themeInfo->setIcon(HbIcon(themePath + KBackgroundPrtPNG)); 
-        }else{
-            themeInfo->setIcon(HbIcon(defaultTheme()->icon()));
+        //Set thumbnail
+        HbIcon themeIcon = getPreviewIcon(themePath);
+        if(themeIcon.isNull()){
+            QString defaultThemePath = defaultTheme();
+            if(!defaultThemePath.isEmpty()) {
+                themeIcon = getPreviewIcon(defaultThemePath);
+            }
         }
-
+        themeInfo->setIcon(themeIcon);
     } else {
         themeInfo->setIcon(HbIcon(themePath + iconPath));
     }
           
-    //Portrait preview
-          
-    if(previewPathPrt.isEmpty() || !QFileInfo(themePath + previewPathPrt).exists()) {
-          
-        if(QFileInfo(themePath + KPreviewPrtNVG).exists()){
-            themeInfo->setPortraitPreviewIcon(HbIcon(themePath + KPreviewPrtNVG));
-        }else if(QFileInfo(themePath + KPreviewPrtSVG).exists()){
-            themeInfo->setPortraitPreviewIcon(HbIcon(themePath + KPreviewPrtSVG));
-        }else if(QFileInfo(themePath + KBackgroundPrtNVG).exists()){
-            themeInfo->setPortraitPreviewIcon(HbIcon(themePath + KBackgroundPrtNVG));
-        } else if(QFileInfo(themePath + KBackgroundPrtSVG).exists()){
-            themeInfo->setPortraitPreviewIcon(HbIcon(themePath + KBackgroundPrtSVG));
-        } else if(QFileInfo(themePath + KBackgroundPrtPNG).exists()){
-            themeInfo->setPortraitPreviewIcon(HbIcon(themePath + KBackgroundPrtPNG));
-        } else{
-            themeInfo->setPortraitPreviewIcon(HbIcon(defaultTheme()->icon()));
-        }
-    }
-    else {
-        themeInfo->setPortraitPreviewIcon(HbIcon(themePath + previewPathPrt));
-    }
-          
-    //Landscape preview
-          
-    if(previewPathLsc.isEmpty() || !QFileInfo(themePath + previewPathLsc).exists()) {
-        if(QFileInfo(themePath + KPreviewLscNVG).exists()){
-            themeInfo->setLandscapePreviewIcon(HbIcon(themePath + KPreviewLscNVG));
-        }else if(QFileInfo(themePath + KPreviewLscSVG).exists()){
-            themeInfo->setLandscapePreviewIcon(HbIcon(themePath + KPreviewLscSVG));
-        }else if(QFileInfo(themePath + KBackgroundLscNVG).exists()){
-            themeInfo->setLandscapePreviewIcon(HbIcon(themePath + KBackgroundLscNVG));
-        } else if(QFileInfo(themePath + KBackgroundLscSVG).exists()){
-            themeInfo->setLandscapePreviewIcon(HbIcon(themePath + KBackgroundLscSVG));
-        } else if(QFileInfo(themePath + KBackgroundLscPNG).exists()){
-            themeInfo->setLandscapePreviewIcon(HbIcon(themePath + KBackgroundLscPNG));
-        } else{
-            themeInfo->setLandscapePreviewIcon(HbIcon(defaultTheme()->icon()));
-        }
-    }
-    else {
-        themeInfo->setLandscapePreviewIcon(HbIcon(themePath + previewPathLsc));
-    }
     return themeInfo;
 
+}
+
+/*!
+ * given a path to the theme, returns the preview icon or just a Null icon
+ * if it doesn't exist.
+ */
+HbIcon CpThemeUtil::getPreviewIcon(const QString& themePath)
+{
+    HbIcon themeIcon;
+    if(QFileInfo(themePath + KPreviewThumbnailNVG).exists()){
+        themeIcon = HbIcon(themePath + KPreviewThumbnailNVG);
+    }else if(QFileInfo(themePath + KPreviewThumbnailSVG).exists()){
+        themeIcon = HbIcon(themePath + KPreviewThumbnailSVG);
+    }else if(QFileInfo(themePath + KBackgroundPrtNVG).exists()){
+        themeIcon = HbIcon(themePath + KBackgroundPrtNVG);
+    }else if(QFileInfo(themePath + KBackgroundPrtSVG).exists()){
+        themeIcon = HbIcon(themePath + KBackgroundPrtSVG);
+    }
+    return themeIcon;
+    
 }
 
 /*! Creates a list of CpThemeInfo objects representing theme information.
@@ -176,7 +137,7 @@ CpThemeInfo* CpThemeUtil::buildThemeInfo(const QString& themePath, const QString
 QList<CpThemeInfo> CpThemeUtil::buildThemeList()
 {
     QList<CpThemeInfo> themeList; 
-  
+    
     QList<QPair<QString, QString> > mThemesPathList = availableThemes();
     QPair<QString, QString>pair;
     foreach (pair, mThemesPathList) {
@@ -198,17 +159,14 @@ QList<CpThemeInfo> CpThemeUtil::buildThemeList()
 }
 
 /*!
- * Returns the default theme information. 
+ * Returns the default theme path. 
  */
-CpThemeInfo* CpThemeUtil::defaultTheme()
+QString CpThemeUtil::defaultTheme()
 {
     //static because default theme doesn't change.
-    static CpThemeInfo *defaultTheme = 0;
-    if(!defaultTheme) {
-        defaultTheme = new CpThemeInfo();
-    }
-    QString defaultThemePath;
-    if(defaultTheme->name().isEmpty()) {
+    static QString defaultThemePath("");
+    
+    if(defaultThemePath.isEmpty()) {
        
 
 #ifdef Q_OS_SYMBIAN
@@ -225,10 +183,9 @@ CpThemeInfo* CpThemeUtil::defaultTheme()
         }
           
 #endif
-        defaultTheme = buildThemeInfo(defaultThemePath);
-
+        
     }
-    return defaultTheme;
+    return defaultThemePath;
 }
 
 

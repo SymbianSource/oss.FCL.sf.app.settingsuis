@@ -21,7 +21,7 @@ TEMPLATE = lib
 CONFIG += hb
 DEFINES += CPRINGTONEVIEW_LIBRARY
 symbian {
-    LIBS +=  -lcpprofilewrapper -lcpframework -lxqservice -lxqserviceutil
+    LIBS +=  -lcpprofilewrapper -lcplogger -lcpframework -lxqservice -lxqserviceutil
     TARGET.UID3 = 0X2002873A
     TARGET.CAPABILITY = All -TCB
     TARGET.EPOCALLOWDLLDATA = 1

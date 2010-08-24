@@ -11,7 +11,7 @@
 *
 * Contributors:
 *
-* Description:  
+* Description:  Utility class for cpcategorymodel.
 *
 */
 #include "cpcategorymodelutility.h"
@@ -181,11 +181,11 @@ void CpCategoryModelUtility::buildConfigPluginItems(HbDataFormModelItem *parent,
             if (itemData) {
                 //append the new created setting form item to its parent item.
                 parent->insertChild(startPosition++,itemData);
-
-                if (CpCategorySettingFormItemData *categoryItemData 
+				//commented this for only loading group plugin when startup
+                /*if (CpCategorySettingFormItemData *categoryItemData 
                     = qobject_cast<CpCategorySettingFormItemData*>(itemData)) {
                     categoryItemData->initialize(itemDataHelper);
-                }
+                }*/
 
                 //set the text and description from config if it is empty.
                 setEntryItemContentIfEmpty(itemData,pluginConfig.mDisplayName,pluginConfig.mDescription);

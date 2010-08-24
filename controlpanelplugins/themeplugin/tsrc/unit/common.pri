@@ -42,6 +42,7 @@ QMAKE_EXTRA_TARGETS += test autotest
 symbian {
     INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
     INCLUDEPATH += $$MOC_DIR
+    LIBS += -lcentralrepository
     TARGET.CAPABILITY = ALL -TCB
     TARGET.EPOCALLOWDLLDATA = 1
 }

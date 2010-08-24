@@ -44,7 +44,7 @@ public:
 signals:
     void themeChangeFinished();
     
-public slots:
+private slots:
     void changeFinished();
 	
 private:

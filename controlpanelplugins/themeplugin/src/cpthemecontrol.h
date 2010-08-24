@@ -32,7 +32,6 @@ QT_END_NAMESPACE
 
 class HbDialog;
 class CpThemeListView;
-class CpThemePreview;
 class CpBaseSettingView;
 class CpThemeListModel;
 
@@ -51,14 +50,14 @@ public:
 signals:
     void themeUpdated(const QString& themeName, const HbIcon& icon);
 
-public slots:
+private slots:
     void newThemeSelected(const QModelIndex& index);
-    void previewClosed();
-    void themeApplied(const CpThemeInfo& theme);
+    void applyTheme(const CpThemeInfo& theme);
     void themeListClosed();
     void themeChangeTimeout();
     void themeWaitTimeout();
     void themeChangeFinished();
+    void getOviTheme();
 
 private:
     void createThemeList();
@@ -67,7 +66,6 @@ private:
 
 private:
     CpThemeListView* mThemeListView;
-    CpThemePreview* mThemePreview;
     CpThemeChanger* mThemeChanger;
     QAbstractItemModel* mListModel;
     bool mThemeChangeFinished;

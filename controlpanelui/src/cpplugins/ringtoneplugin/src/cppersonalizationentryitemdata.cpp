@@ -47,7 +47,7 @@ CpPersonalizationEntryItemData::CpPersonalizationEntryItemData(CpItemDataHelper 
     if( mProfileModel )
     {
         QString strRing = loadStringValue();
-        if( strRing.contains( "No_Sound.wav", Qt::CaseInsensitive) )
+        if( QFileInfo(strRing) == QFileInfo(g_strNoTone) )
         {
             setDescription( hbTrId("txt_cp_list_no_tone" ) );   //sepcial handling about NoTone
         }
@@ -62,18 +62,43 @@ CpPersonalizationEntryItemData::CpPersonalizationEntryItemData(CpItemDataHelper 
     }
     mSettingManager = new XQSettingsManager();
     XQCentralRepositorySettingsKey key(KCRUidProfileEngine.iUid,KProEngSilenceMode);
-
+    
+    //Monitoring the active ring tone
+    XQCentralRepositorySettingsKey keyForActiveRingTone(KCRUidProfileEngine.iUid,KProEngActiveRingTone);
+    
     QVariant silenceMode = mSettingManager->readItemValue( key,XQSettingsManager::TypeInt );
     setEnabled( !silenceMode.toInt() );
     mSettingManager->startMonitoring( key,XQSettingsManager::TypeInt );
+    mSettingManager->startMonitoring(keyForActiveRingTone, XQSettingsManager::TypeString);
     connect(mSettingManager, SIGNAL(valueChanged (XQSettingsKey, QVariant)),
             this, SLOT(settingValueChanged(XQSettingsKey, QVariant)));
 
 }
 void CpPersonalizationEntryItemData::settingValueChanged( const XQSettingsKey& key, const QVariant& value )
 {
-    Q_UNUSED(key);
-    setEnabled( !value.toInt() );
+    switch (key.key()) {
+        case KProEngActiveRingTone:
+        {
+            QString strRing = loadStringValue();
+            if( QFileInfo(strRing) == QFileInfo(g_strNoTone) )
+            {
+                setDescription( hbTrId("txt_cp_list_no_tone" ) );   //sepcial handling about NoTone
+            }
+            else
+            {
+                setDescription( QFileInfo(strRing).baseName() );
+            }
+            break;
+        }
+        case KProEngSilenceMode:
+        {
+            setEnabled( !value.toInt() );
+            break;
+            
+        }
+        default:
+            break;
+    }    
 }
 
 CpPersonalizationEntryItemData::~CpPersonalizationEntryItemData()
@@ -116,6 +141,7 @@ QString CpPersonalizationEntryItemData::loadStringValue() const
     default:
         if( m_profileID <0 )
         {
+            
             strRing = mProfileModel->ringTone();
         }
         else

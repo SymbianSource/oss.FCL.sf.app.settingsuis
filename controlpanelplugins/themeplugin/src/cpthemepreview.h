@@ -48,10 +48,10 @@ signals:
     void applyTheme(const CpThemeInfo&);
     void aboutToClose();
 
-public slots:
+private slots:
     void themeSelected();
     void previewOrientationChanged(Qt::Orientation orientation);
-
+  
 private:
     CpThemeInfo mTheme;
     HbAction* mSoftKeyBackAction;

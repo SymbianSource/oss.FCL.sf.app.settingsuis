@@ -22,13 +22,16 @@
 #include <hbview.h>
 #include <hblistview.h>
 #include <hblistviewitem.h>
-#include <hbdataform.h>
+#include <hbtoolbar.h>
+#include <hbaction.h>
+#include <hbgroupbox.h>
+
 
 #include "cpthemelistview.h"
 
 /*!
     \class CpThemeListView
-    \brief CpThemeListView displays a heading (Select theme) and a list of themes with
+    \brief CpThemeListView displays a heading (e.g Theme) and a list of themes with
     corresponding icons.
 
     Note: This class is a subclass of CpBaseSettingView for compatibility with Control Panel
@@ -42,21 +45,16 @@ CpThemeListView::CpThemeListView(QGraphicsItem *parent) : CpBaseSettingView(0, p
     mThemeList(new HbListView(this))
 {
    
-    
-    //Create a layout with a heading "Select theme" at top and the list below it.
+    //Create a layout with a heading at top and the list below it.
     HbWidget* contentWidget = new HbWidget(this);
     QGraphicsLinearLayout* layout = new QGraphicsLinearLayout(Qt::Vertical);
     layout->setContentsMargins(0,0,0,0);
     
     //setup the heading.
-    //Using an empty dataform as heading because the heading should
-    //look like an HbDataForm headiing.
-    HbDataForm *form = new HbDataForm(contentWidget);
-    form->setHeading(hbTrId("txt_cp_title_select_theme"));
-        
-    layout->addItem(form);
-    //Fixed vertical policy so that the heading doesn't expand.
-    form->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed, QSizePolicy::DefaultType);
+    HbGroupBox *simpleLabel = new HbGroupBox();
+    simpleLabel->setHeading(hbTrId("txt_cp_title_select_theme"));
+     
+    layout->addItem(simpleLabel);
       
     connect(mThemeList, SIGNAL(activated(QModelIndex)),
             this, SIGNAL(newThemeSelected(QModelIndex)));
@@ -64,15 +62,28 @@ CpThemeListView::CpThemeListView(QGraphicsItem *parent) : CpBaseSettingView(0, p
     //set list item icons to be large.
     HbListViewItem* listViewItem = mThemeList->listItemPrototype();
     listViewItem->setGraphicsSize(HbListViewItem::LargeIcon);
-   
+    //set singleSelection to enable showing an indicator (e.g check mark) next to active theme.
+    mThemeList->setSelectionMode(HbAbstractItemView::SingleSelection);
+  
     //add the list to layout.
     layout->addItem(mThemeList);
-    layout->addStretch();
     
-    
+    //Create the toolbar for Ovi Store.
+    HbToolBar* toolBar = new HbToolBar(this);
+
+    HbAction* oviAction = new HbAction(HbIcon("qtg_large_ovistore"), hbTrId("txt_cp_list_get_more_tones"));
+    QObject::connect( oviAction, SIGNAL(triggered()), 
+                          this, SIGNAL(oviClicked()));
+       
+    //Add Action to the toolbar and show toolbar
+    toolBar->addAction(oviAction);
+       
+    setToolBar(toolBar);
+
     contentWidget->setLayout(layout);
    
     setWidget(contentWidget);
+   
 }
 
 /*!

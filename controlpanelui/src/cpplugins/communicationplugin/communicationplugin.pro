@@ -19,8 +19,6 @@ TARGET = cpcommunicationplugin
 
 CONFIG += hb plugin
 
-
-
 include ( ../cpplugincommon.pri )
 include ( communicationplugin.pri )
 

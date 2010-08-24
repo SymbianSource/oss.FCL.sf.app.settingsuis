@@ -19,6 +19,8 @@ SUBDIRS += unit/unittest_cpthemecontrol
 SUBDIRS += unit/unittest_cpthemelistview
 SUBDIRS += unit/unittest_cpthemeplugin
 SUBDIRS += unit/unittest_cpthemepluginentryitemdata
+SUBDIRS += unit/unittest_cpthemelistmodel
+SUBDIRS += unit/unittest_cpthemeutil
 
 CONFIG += ordered
 test.depends = first

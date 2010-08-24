@@ -15,15 +15,15 @@
  *   
  */
 
-#ifndef CPPROFILEMONITOR_H_
-#define CPPROFILEMONITOR_H_
+#ifndef CPPROFILEMONITOR_H
+#define CPPROFILEMONITOR_H
 
 #include <QObject>
-#include <MProfileChangeObserver.h>
+#include <cpprofilewrappermacro.h>
 
-class CProfileChangeNotifyHandler;
+class CpProfileMonitorPrivate;
 
-class CpProfileMonitor: public QObject,public MProfileChangeObserver
+class PROFILE_WRAPPER_EXPORT CpProfileMonitor: public QObject
 {
     Q_OBJECT
 public:
@@ -31,12 +31,13 @@ public:
     ~CpProfileMonitor();
 signals:
     void profileActivated(int activeProfileId);
+    void activeProfileModified(int activeProfileId);
 private:
-    virtual void HandleActiveProfileEventL(
-                TProfileEvent aProfileEvent, TInt aProfileId );
-
-private:
-    CProfileChangeNotifyHandler* mProfileNotifier;
+    CpProfileMonitorPrivate *const d_ptr;
+   
+private:    
+    Q_DISABLE_COPY(CpProfileMonitor)
+    Q_DECLARE_PRIVATE_D(d_ptr,CpProfileMonitor)
 };
 
-#endif /* CPPROFILEMONITOR_H_ */
+#endif /* CPPROFILEMONITOR_H */

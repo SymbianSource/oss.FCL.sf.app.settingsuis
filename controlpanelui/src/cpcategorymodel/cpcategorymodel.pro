@@ -24,7 +24,7 @@ include ( ./cpcategorymodel.pri )
 CONFIG += Hb xml
 DEFINES += BUILD_CPCATEGORY_GLOBAL
     
-LIBS += -lcpframework
+LIBS += -lcplogger -lcpframework
 
 symbian: { 
     TARGET.UID3 = 0X20028736

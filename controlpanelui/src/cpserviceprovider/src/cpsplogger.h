@@ -21,18 +21,16 @@
 #include <QLatin1String>
 #include <logger.h>
 
-#define CPSP_LOGGER_NAME     QLatin1String("CpServiceProvider")
+#ifdef ENABLE_CPSP_LOG
+    #define CPSP_LOGGER_NAME          QLatin1String("CpServiceProvider")
+    #define CPSP_LOGGER_CONFIG_PATH   QLatin1String(":/logconf/cpserviceproviderlog.conf")
 
-#if defined (Q_OS_SYMBIAN)
-    #define CPSP_LOGGER_CONFIG_PATH QLatin1String("C:/data/.config/cpserviceproviderlog.conf")
-#elif defined (Q_WS_WIN)
-    #ifdef _DEBUG
-        #define CPSP_LOGGER_CONFIG_PATH QLatin1String("C:/controlpanel/debug/bin/cpserviceproviderlog.conf")
-    #else 
-        #define CPSP_LOGGER_CONFIG_PATH QLatin1String("C:/controlpanel/release/bin/cpserviceproviderlog.conf")
-    #endif
+    #define CPSP_LOG(str)             Logger::instance(CPSP_LOGGER_NAME)->log(str);
+    #define CPSP_LOG_FUNC_ENTRY(func) LogFunctionEntryHelper ___cpsp_log_func_entry_helper(CPSP_LOGGER_NAME,func);
+#else
+    #define CPSP_LOG(str)
+    #define CPSP_LOG_FUNC_ENTRY(func)
 #endif
 
-#define CPSP_LOG(str) Logger::instance(CPSP_LOGGER_NAME)->log(str);
 
 #endif

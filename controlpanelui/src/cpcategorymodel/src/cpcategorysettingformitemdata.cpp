@@ -11,13 +11,16 @@
 *
 * Contributors:
 *
-* Description:  
+* Description:  An extension to CpSettingFormItemData, can be filled with model items comes from controlpanel plugins.
 *
 */
 #include "cpcategorysettingformitemdata.h"
 #include <QString>
 #include "cpcategorymodelutility.h"
 
+/*
+ * Private implementation
+ */
 class CpCategorySettingFormItemDataPrivate
 {
 public:
@@ -36,7 +39,9 @@ public:
 	QString mConfigFile;
 };
 
-
+/*
+ * Constructor
+ */
 CpCategorySettingFormItemData::CpCategorySettingFormItemData(
                HbDataFormModelItem::DataItemType type,
 	           const QString &label,
@@ -47,6 +52,9 @@ CpCategorySettingFormItemData::CpCategorySettingFormItemData(
 {
 }
 
+/*
+ * Overloaded constructor
+ */
 CpCategorySettingFormItemData::CpCategorySettingFormItemData(
 			   const QString &configFile /*= QString()*/,
 			   const HbDataFormModelItem *parent /*= 0*/) : 
@@ -55,11 +63,17 @@ CpCategorySettingFormItemData::CpCategorySettingFormItemData(
 {
 }
 
+/*
+ * Desctructor
+ */
 CpCategorySettingFormItemData::~CpCategorySettingFormItemData()
 {
 	delete d;
 }
 
+/*
+ * Initialize
+ */
 void CpCategorySettingFormItemData::initialize(CpItemDataHelper &itemDataHelper)
 {
     //avoid to be called twice
@@ -82,12 +96,17 @@ void CpCategorySettingFormItemData::initialize(CpItemDataHelper &itemDataHelper)
     }
 }
 
-
+/*
+ * Derived class can override this function to do some specific work before loading config plugins
+ */
 void CpCategorySettingFormItemData::beforeLoadingConfigPlugins(CpItemDataHelper &/*itemDataHelper*/)
 {
 }
-
+/*
+ * Derived class can override this function to do some specific work before loading config plugins
+ */
 void CpCategorySettingFormItemData::afterLoadingConfigPlugins(CpItemDataHelper &/*itemDataHelper*/)
 {
 }
 
+//End of File

@@ -17,11 +17,8 @@
 
 /*!
     \class CpThemeControl
-    \brief CpThemeControl creates and controls two views for Theme Changer plugin and handles
+    \brief CpThemeControl creates and controls views for Theme Changer plugin and handles
 	user interaction to preview and change the themes.
-
-	It creates a list view of the themes.  When a list item is selected, it creates a preview
-	of the theme icon using a CpThemePreview class.  
 
 	This class also connects to the theme server using the HbThemeChanger and sets the theme
 	based on user interaction with the views.  
@@ -43,7 +40,6 @@
 
 #include "cpthemecontrol.h"
 #include "cpthemelistview.h"
-#include "cpthemepreview.h"
 #include "cpthemeinfo.h"
 #include "cpthemelistmodel.h"
 
@@ -56,7 +52,6 @@ static const int KThemeChangeTimeOutMilliSeconds = 2000;
 /*!
 	Helper function to fetch the main window.
 */
-
 static HbMainWindow *mainWindow() 
 {
     QList< HbMainWindow* > mainWindows = hbInstance->allMainWindows();
@@ -70,7 +65,6 @@ static HbMainWindow *mainWindow()
 	constructor.
 */
 CpThemeControl::CpThemeControl(): mThemeListView(0), 
-    mThemePreview(0), 
     mThemeChanger(0),
     mListModel(0),
     mThemeChangeFinished(false),
@@ -90,7 +84,7 @@ CpThemeControl::CpThemeControl(): mThemeListView(0),
 
 
 /*!
-	destorys the list view, preview and theme changer objects.
+	destorys the list view and theme changer objects.
 */
 CpThemeControl::~CpThemeControl()
 {
@@ -100,16 +94,12 @@ CpThemeControl::~CpThemeControl()
     delete mThemeChanger;
     mThemeChanger = 0;
 
-    delete mThemePreview;
-    mThemePreview = 0;
-    
     delete mWaitDialog;
     mWaitDialog = 0;
 }
 
 /*!
-	Creates the theme list view.  Gets the themes, creates a model based on
-	theme names, icons, and icon paths and sets the list model.
+	Creates the theme list view.  Gets the themes, creates a model  and sets the list model.
 */
 void CpThemeControl::createThemeList()
 {
@@ -122,14 +112,14 @@ void CpThemeControl::createThemeList()
     
     // Set the model for theme list.
     mThemeListView->setModel(mListModel);
-    mThemeListView->themeList()->setSelectionMode(HbAbstractItemView::SingleSelection);
     
     setActiveThemeIndex();
-    
     
     //connect to signal for selecting a list item.
     connect(mThemeListView,SIGNAL(newThemeSelected(QModelIndex)),
             this,SLOT(newThemeSelected(QModelIndex)));
+    
+    connect(mThemeListView, SIGNAL(oviClicked()), this, SLOT(getOviTheme()));
 
 	//handle signal for list view closing. (e.g Back softkey pressed)
     connect(mThemeListView,SIGNAL(aboutToClose()),
@@ -190,95 +180,35 @@ void CpThemeControl::newThemeSelected(const QModelIndex& index)
     //theme even though another list item is selected.
     setActiveThemeIndex();
     
-    // Figure out whether this is a URI and appropriately delegate
-    data = index.data(CpThemeListModel::ItemTypeRole);
-    if(data.isValid() && data.canConvert<CpThemeInfo::ThemeListItemType>()) {
-
-        CpThemeInfo::ThemeListItemType type = data.value<CpThemeInfo::ThemeListItemType>();
-
-        switch (type) {
-            case CpThemeInfo::ThemeListItemType_URL:
-                //get the URL
-                data = index.data(CpThemeListModel::ItemDataRole);
-                if(data.isValid()) {
-                    QString url = data.toString();
-                    // Launch the URL in the browser and 
-                    // continue to Preview if not successful
-                    if (QDesktopServices::openUrl(QUrl(url, QUrl::TolerantMode))) {
-                        return;
-                    }
-                }
-                break;
-    
-            case CpThemeInfo::ThemeListItemType_APP:
-                break;
-
-            default:
-                // do nothing
-                qt_noop();
-        }
-    }
-    
     //get the theme name.
     data = index.data(Qt::DisplayRole);
     if(data.isValid()) {
         themeInfo.setName(data.toString());
     }
     
+    //get theme path
     data = index.data(CpThemeListModel::ItemDataRole);
     if(data.isValid()) {
         themeInfo.setItemData(data.toString());
     }
     
-    //get theme icon.
-    data = index.data(Qt::DecorationRole);
-    if(data.isValid()) {
-        themeInfo.setIcon(data.value<HbIcon>());
-    }
-    
-    data = index.data(CpThemeListModel::PortraitPreviewRole);
-    if(data.isValid()) {
-        themeInfo.setPortraitPreviewIcon(data.value<HbIcon>());
-    }
-    
-    data = index.data(CpThemeListModel::LandscapePreviewRole);
-    if(data.isValid()) {
-        themeInfo.setLandscapePreviewIcon(data.value<HbIcon>());
-    }
-    
-    
-#ifdef CP_THEME_PREVIEW_DEFINED    
-    
-   //Set up the theme preview and set it to
-    //the current view of main window.
+    applyTheme(themeInfo);
 
-    HbMainWindow*  mWindow = ::mainWindow();
-   
-    if(!mThemePreview){
-        mThemePreview = new CpThemePreview(themeInfo);
-        mWindow->addView(mThemePreview);
-        
-        connect(mThemePreview,SIGNAL(aboutToClose()),
-            this, SLOT(previewClosed()));
+}
 
-        connect(mThemePreview, SIGNAL(applyTheme(CpThemeInfo)),
-                this, SLOT(themeApplied(CpThemeInfo)));
-    } else {
-        mThemePreview->setThemeInfo(themeInfo);
-    }
-    mThemePreview->setTitle(hbTrId("txt_cp_title_control_panel"));
-
-    mWindow->setCurrentView(mThemePreview);
-#else
-    themeApplied(themeInfo);
-#endif
-
+void CpThemeControl::getOviTheme()
+{
+    QString url = QString("http://lr.ovi.mobi/store/themes");
+    // Launch the URL in the browser and 
+    // continue to Preview if not successful
+    QDesktopServices::openUrl(QUrl(url, QUrl::TolerantMode));
+                              
 }
 
 /*!
 	Slot called when a Select key is pressed in theme preview view.
 */
-void CpThemeControl::themeApplied(const CpThemeInfo& theme)
+void CpThemeControl::applyTheme(const CpThemeInfo& theme)
 {
     QThread::currentThread()->setPriority(QThread::HighPriority);  
     
@@ -292,35 +222,9 @@ void CpThemeControl::themeApplied(const CpThemeInfo& theme)
         mThemeChangeFinished = false;
     } else {
         //theme change failed, go back to control panel.
-#ifdef CP_THEME_PREVIEW_DEFINED
-        previewClosed();
-        triggerThemeListClose();
-#else
         setActiveThemeIndex();
-#endif
-   
     }
    
-}
-
-/*!
-	Slot called when the theme preview view is closed.
-*/
-void CpThemeControl::previewClosed()
-{
-    //The theme preview closed, go back
-    //to theme list view.
-    HbMainWindow*  mainWindow = ::mainWindow();
-    if(mThemePreview){
-        mainWindow->removeView(mThemePreview);
-        mThemePreview->deleteLater();
-        mThemePreview = 0;
-    }
-  
-    //reset the current index to active theme, so that the selection remains on current
-    //theme even though another list item is selected.
-    setActiveThemeIndex();
-	mainWindow->setCurrentView(mThemeListView);   
 }
 
 /*!
@@ -331,9 +235,6 @@ void CpThemeControl::previewClosed()
 void CpThemeControl::themeListClosed()
 {
     mThemeListView = 0;
-
-    delete mThemePreview;
-    mThemePreview = 0;
 }
 
 /*!
@@ -352,19 +253,7 @@ void CpThemeControl::themeChangeTimeout()
     if(mWaitDialog && mWaitDialog->isVisible()) {
         mWaitDialog->hide();
     }
-   
-#ifdef CP_THEME_PREVIEW_DEFINED
-        previewClosed();
-        //ask the themelistview to close.  Control Panel will
-        //take care of removing it from window.
-        triggerThemeListClose();
-#else
-        setActiveThemeIndex();
-       
-#endif
-       
-
-  
+    setActiveThemeIndex();
     QThread::currentThread()->setPriority(QThread::NormalPriority); 
 }
 

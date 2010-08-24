@@ -16,23 +16,33 @@
  */
 
 #include "cpprofilemonitor.h"
+#include "cpprofilemonitor_p.h"
 
-#include <CProfileChangeNotifyHandler.h>
-
+/*!
+     \class  CpProfileMonitor
+     \brief This class will observe the profile change or modification, and emit related signals.
+ */
+/*!
+     \fn  void profileActivated(int activeProfileId)
+     This signal will emmit when a new profile activated
+ */
+/*!
+     \fn      void activeProfileModified(int activeProfileId)
+     This signal will emmit when active profile's settings are modified
+ */
+/*!
+  Constructor
+ */
 CpProfileMonitor::CpProfileMonitor(QObject *parent)
-    :QObject(parent),mProfileNotifier(0)
+    :QObject(parent),d_ptr(new CpProfileMonitorPrivate())
 {
-    mProfileNotifier = CProfileChangeNotifyHandler::NewL(this);    
+    d_ptr->initialize(this);
 }
 
+/*!
+   Descontructor
+ */
 CpProfileMonitor::~CpProfileMonitor()
 {    
-    delete mProfileNotifier;        
-}
-
-void CpProfileMonitor::HandleActiveProfileEventL(TProfileEvent aProfileEvent, TInt aProfileId)
-{
-    if (EProfileNewActiveProfile == aProfileEvent) {
-        emit profileActivated(aProfileId);
-    }
+    delete d_ptr;        
 }

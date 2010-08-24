@@ -19,7 +19,7 @@
 #include <cpmainwindow.h>
 #include <cpmainview.h>
 #include <hbstyleloader.h>
-#include <QTranslator>
+#include <hbtranslator.h>
 #include <QLocale>
 #include <QLatin1String>
 #include <QDir>
@@ -35,23 +35,18 @@ int main(int argc, char **argv)
     QCoreApplication::setApplicationName("ControlPanel");
 
 #ifdef ENABLE_CPFW_LOG
-    Logger::instance(CPFW_LOGGER_NAME)->configure(
-        CP_LOGGER_CONFIG_PATH,QSettings::IniFormat);
+    INIT_LOGGER(CPFW_LOGGER_NAME,CP_LOGGER_CONFIG_PATH)
 #endif
     
 #ifdef ENABLE_CPPERF_LOG
-    Logger::instance(CPPERF_LOGGER_NAME)->configure(
-        CP_LOGGER_CONFIG_PATH,QSettings::IniFormat);
+    INIT_LOGGER(CPPERF_LOGGER_NAME,CP_LOGGER_CONFIG_PATH)
 #endif
 
     CPFW_LOG("Entering ControlPanel.exe...");
     CPPERF_LOG("Entering ControlPanel.exe...");
-    
-    QTranslator translator;
-    if (translator.load("control_panel_" + QLocale::system().name(),"Z:/resource/qt/translations"))
-    {
-        qApp->installTranslator(&translator);
-    }
+       
+    HbTranslator translator("control_panel");
+    translator.loadCommon();
         
     HbStyleLoader::registerFilePath(":/widgetml/cpdataformlistentryviewitem.css");
     HbStyleLoader::registerFilePath(":/widgetml/cpdataformlistentryviewitem_color.css");
@@ -69,8 +64,6 @@ int main(int argc, char **argv)
     int ret = app.exec();
     
     CPFW_LOG("Exiting ControlPanel.exe.");
-
-    Logger::closeAll();
 
     return ret;
 }

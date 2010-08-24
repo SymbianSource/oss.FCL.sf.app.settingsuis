@@ -14,8 +14,8 @@
 # Description: cpserviceprovider project - qmake settings
 #
 
-TEMPLATE=app
-TARGET=cpserviceprovider
+TEMPLATE = app
+TARGET = cpserviceprovider
 
 CONFIG += hb service
 symbian:TARGET.UID3 = 0x2002873F
@@ -23,12 +23,11 @@ symbian:TARGET.UID3 = 0x2002873F
 include( ../common.pri )
 include( cpserviceprovider.pri )
 
-LIBS+=-lxqservice -lxqserviceutil -lcpframework
+# DEFINES += ENABLE_CPSP_LOG
+RESOURCES += cpserviceprovider.qrc
+
+LIBS += -lxqservice -lxqserviceutil -lcplogger -lcpframework
 
 SERVICE.FILE = service_conf.xml
 SERVICE.OPTIONS = embeddable
 SERVICE.OPTIONS += hidden
-
-libFiles.sources = xqservice.dll
-libFiles.path = "!:\sys\bin"
-DEPLOYMENT += libFiles

@@ -11,7 +11,7 @@
 *
 * Contributors:
 *
-* Description:  
+* Description:  This class reads cpcfg files.
 *
 */
 

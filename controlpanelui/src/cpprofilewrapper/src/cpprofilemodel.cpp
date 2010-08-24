@@ -19,49 +19,47 @@
 #include "cpprofilemodel_p.h"
 #include <QtCore/QStringList>
 
+/*!
+   Contructor
+ */
 CpProfileModel::CpProfileModel(QObject *parent /*=0*/):QObject(parent),
                                                        d_ptr(new CpProfileModelPrivate())
 {
     d_ptr->initialize(this);    
 }
 
+/*!
+   Destrutor
+ */
 CpProfileModel::~CpProfileModel()
 {
     delete d_ptr;
 }
 
-/*
- * Get the result of the initiation
- */
-int CpProfileModel::initiationFlag()
-{
-    return d_ptr->initiationFlag();
-}
-
-/*
- * Get profile name with its id
+/*!
+   Get profile name with its id
  */
 QString CpProfileModel::profileName(int profileId) const
 {
     return d_ptr->profileName(profileId);
 }
 /*!
- * get profile name list 
+   get profile name list 
  */
 QStringList CpProfileModel::profileNames()const
 {
     return d_ptr->profileNames();
 }
-/*
- * Activate a profile with its id, return the operation code.
+/*!
+   Activate a profile with its id, return the result code.
  */
 int CpProfileModel::activateProfile(int profileId)
 {
     return d_ptr->activateProfile(profileId);
 }
 
-/*
- * Get active profile's id
+/*!
+   Get active profile's id
  */
 int CpProfileModel::activeProfileId() const
 {
@@ -79,14 +77,13 @@ void CpProfileModel::profileSettings(int profileId, CpProfileSettings& profileSe
 /*!
      Set profile settings from center repository keys
  */
-int CpProfileModel::setProfileSettings(int profileId, CpProfileSettings& profileSettings )
+void CpProfileModel::setProfileSettings(int profileId, CpProfileSettings& profileSettings )
 {
     return d_ptr->setProfileSettings(profileId, profileSettings);
 }
 
 /*!
-     Get ring tone of profiles, if the general profile's ring tone is different with 
-     meeting ring tone, it returns the general profile's ring tone
+     Get ring tone of active profile
  */
 QString CpProfileModel::ringTone() const
 {
@@ -102,7 +99,7 @@ void CpProfileModel::setRingTone(const QString& filePath)
 }
 
 /*!
-     Return master volume for device
+     Return ringing volume of device
  */
 int CpProfileModel::masterVolume() const
 {
@@ -110,7 +107,7 @@ int CpProfileModel::masterVolume() const
 }
 
 /*!
-     Set device's master volume
+     Set device's ringing volume
  */
 void CpProfileModel::setMasterVolume(int volume)
 {
@@ -126,9 +123,7 @@ bool CpProfileModel::masterVibra() const
 }
 
 /*!
-     Set the master vibra's status of device, if the master vibra is on,
-     the vibra settings in profiles are valid, if the master is off, the 
-     vibra settings in profiles are invalid.
+     Set the master vibra's status of device
  */
 void CpProfileModel::setMasterVibra(bool isVibra)
 {
@@ -136,8 +131,7 @@ void CpProfileModel::setMasterVibra(bool isVibra)
 }
 
 /*!
-     Return the silence mode of device, silence mode will kill all outgoing 
-     audio.
+     Return the silence mode of device
  */
 bool CpProfileModel::silenceMode() const
 {
@@ -153,346 +147,137 @@ void CpProfileModel::setSilenceMode(bool isSilence)
 }
 
 /*!
-     Return the status of off line mode (air plane mode) of device
+   Get profile's ring tone, if the profile id is invalid, always return an empty string
+   \param profileId profile's id
  */
-bool CpProfileModel::offLineMode() const
-{
-    return d_ptr->offLineMode();
-}
-
-/*!
-     Set off line mode of device
- */
-void CpProfileModel::setOffLineMode(bool isOffLine)
-{
-    d_ptr->setOffLineMode(isOffLine);
-}
-
 QString CpProfileModel::ringTone(int profileId)const
 {
     return d_ptr->ringTone(profileId);
 }
 
+/*!
+   Set ring tone for a profile, if the profile id is invalid, nothing happens
+   \param profileId profile's id
+   \param filePath ring tone's path
+ */
 void CpProfileModel::setRingTone(int profileId, const QString& filePath)
 {
     d_ptr->setRingTone(profileId, filePath);
 }
 
+/*!
+   Get message tone's name, if the profile id is invalid, always return an empty string
+   \param profileId profile's id
+ */
 QString CpProfileModel::messageTone(int profileId) const
 {
     return d_ptr->messageTone(profileId);
 }
 
+/*!
+   Set message tone for a profile, if the profile id is invalid, nothing happens
+   \param profileId profile's id
+   \param filePath message tone's path
+ */
 void CpProfileModel::setMessageTone(int profileId, const QString& filePath)
 {
     d_ptr->setMessageTone(profileId, filePath);
 }
 
+/*!
+   Get email tone's name, if the profile id is invalid, always return an empty string
+   \param profileId profile's id
+ */
 QString CpProfileModel::emailTone(int profileId) const
 {
     return d_ptr->emailTone(profileId);
 }
 
+/*!
+   Set email tone for a profile, if the profile id is invalid, nothing happens
+   \param profileId profile's id
+   \param filePath message tone's path
+ */
 void CpProfileModel::setEmailTone(int profileId, const QString& filePath)
 {
     d_ptr->setEmailTone(profileId,filePath);
 }
 
+/*!
+   Get reminder tone's name, if the profile id is invalid, always return an empty string
+   \param profileId profile's id
+ */
 QString CpProfileModel::reminderTone(int profileId) const
 {
     return d_ptr->reminderTone(profileId);
 }
 
+/*!
+   Set reminder tone for a profile, if the profile id is invalid, nothing happens
+   \param profileId profile's id
+   \param filePath reminder tone's path
+ */
 void CpProfileModel::setReminderTone(int profileId, const QString& filePath)
 {
     d_ptr->setReminderTone(profileId,filePath);
 }
 
+/*!
+   Get notification tone's status, if the profile id is invalid, always return false
+   \param profileId profile's id
+   \return return the status of notification tone, true value stands for the tone being on
+ */
 bool CpProfileModel::notificationTone(int profileId) const
 {
     return d_ptr->notificationTone(profileId);
 }
 
+/*!
+   Set notification tone's status for a profile, if the profile id is invalid, nothing happens
+   \param profileId profile's id
+   \return isActive the status of notification tone
+ */
 void CpProfileModel::setNotificationTone(int profileId, bool isActive)
 {
     d_ptr->setNotificationTone(profileId, isActive);
 }
 
+/*!
+     Get key & touch screen tone's value, if the profile id is invalid, always return 0
+ */
 int CpProfileModel::keyTouchScreenTone(int profileId) const
 {
     return d_ptr->keyTouchScreenTone(profileId);
 }
 
+/*!
+     set key & touch screen tone, if the profile id is invalid, nothing happens
+     \param profileId identify the profile
+     \param level 0-5
+ */
 void CpProfileModel::setKeyTouchScreenTone(int profileId, int level)
 {
     d_ptr->setKeyTouchScreenTone(profileId,level);
 }
 
-bool CpProfileModel::ringAlertVibra(int profileId) const
+/*!
+   Get key & touch screen vibra's value, if the profile id is invalid, always return 0
+   \param profileId identify the profile
+ */
+int CpProfileModel::keyTouchScreenVibra(int profileId) const
 {
-    return d_ptr->ringAlertVibra(profileId);
+    return d_ptr->keyTouchScreenVibra(profileId);
 }
 
-void CpProfileModel::setRingAlertVibra(int profileId, bool isActive)
-{
-    d_ptr->setRingAlertVibra(profileId,isActive);
-}
-
-bool CpProfileModel::messageVibra(int profileId) const
-{
-    return d_ptr->messageVibra(profileId);
-}
-
-void CpProfileModel::setMessageVibra(int profileId, bool isActive)
-{
-    return d_ptr->setMessageVibra(profileId,isActive);
-}
-
-bool CpProfileModel::emailVibra(int profileId) const
-{
-    return d_ptr->emailVibra(profileId);
-}
-
-void CpProfileModel::setEmailVibra(int profileId, bool isActive)
-{
-    d_ptr->setEmailVibra(profileId,isActive);    
-}
-
-bool CpProfileModel::reminderVibra(int profileId) const
-{
-    return d_ptr->reminderVibra(profileId);
-}
-
-void CpProfileModel::setReminderVibra(int profileId, bool isActive)
-{
-    d_ptr->setReminderVibra(profileId,isActive);    
-}
-
-bool CpProfileModel::notificationVibra(int profileId) const
-{
-    return d_ptr->notificationVibra(profileId);
-}
-
-void CpProfileModel::setNotificationVibra(int profileId, bool isActive)
-{
-    d_ptr->setNotificationVibra(profileId,isActive);
-}
-
-int CpProfileModel::keyTouchScreenVibra(int profileId)const
-{
-    return  d_ptr->keyTouchScreenVibra(profileId);
-}
-
+/*!
+   Set key touch screen vibar for a profile, if the profile id is invalid, nothing happens
+   \param profileId identify the profile
+   \param level 0-5
+ */
 void CpProfileModel::setKeyTouchScreenVibra(int profileId, int level)
 {
     d_ptr->setKeyTouchScreenVibra(profileId,level);
 }
-
-///*
-// * Set a profile as current editing profile
-// */
-//int CpProfileModel::setEditingProfile(int profileId)
-//{
-//    return d_ptr->setEditingProfile(profileId);
-//}
-//
-///*
-// * Get path and file name of ring tone file
-// */
-//QString CpProfileModel::ringTone()
-//{
-//    return d_ptr->ringTone();
-//}
-//
-///*
-// * Set path and file to ring tone
-// */
-//int CpProfileModel::setRingTone(const QString& filePath)
-//{
-//    int err = d_ptr->setRingTone(filePath);
-//	return err;
-//}
-//
-///*
-// * Get path and file name of message tone file
-// */
-//QString CpProfileModel::messageTone()
-//{
-//    return d_ptr->messageTone();
-//}
-//
-///*
-// * Set path and file to message tone
-// */
-//int CpProfileModel::setMessageTone(const QString& filePath)
-//{
-//    int err = d_ptr->setMessageTone(filePath);
-//	return err;
-//}
-//
-///*
-// * Get path and file name of email tone file
-// */
-//QString CpProfileModel::emailTone()
-//{
-//    return d_ptr->emailTone();
-//}
-//
-///*
-// * Set path and file to email tone
-// */
-//int CpProfileModel::setEmailTone(const QString& filePath)
-//{
-//    int err = d_ptr->setEmailTone(filePath);
-//	return err;
-//}
-//
-///*
-// * Get path and file name of calendar event tone file
-// */
-//QString CpProfileModel::calendarTone()
-//{
-//    return d_ptr->calendarTone();
-//}
-//
-///*
-// * Set path and file to calendar event tone
-// */
-//void CpProfileModel::setCalendarTone(const QString& filePath)
-//{
-//    d_ptr->setCalendarTone(filePath);
-//}
-//
-///*
-// * Get path and file name of clock alarm tone file
-// */
-//QString CpProfileModel::alarmTone()
-//{
-//    return d_ptr->alarmTone();
-//}
-//
-///*
-// * Set path and file to clock alarm tone
-// */
-//void CpProfileModel::setAlarmTone(const QString& filePath)
-//{
-//    d_ptr->setAlarmTone(filePath);
-//}
-//
-///*
-// * Get the value of master volume
-// */
-//int CpProfileModel::ringVolume()
-//{
-//    return d_ptr->ringVolume();
-//}
-//
-///*
-// * Set master volume, the value should be between 1-10
-// */
-//void CpProfileModel::setRingVolume(int volume)
-//{
-//    d_ptr->setRingVolume(volume);
-//}
-//
-///*
-// * Activate master volume to beep
-// */
-//void CpProfileModel::activateBeep()
-//{
-//    d_ptr->activateBeep();
-//}
-//
-///*
-// * Get beep status in master volume
-// */
-//bool CpProfileModel::isBeep()
-//{
-//    return d_ptr->isBeep();
-//}
-//
-///*
-// * Activate master volume to silent
-// */
-//void CpProfileModel::activateSilent()
-//{
-//    d_ptr->activateSilent();
-//}
-//
-///*
-// * Get silent status in master volume
-// */
-//bool CpProfileModel::isSilent()
-//{
-//    return d_ptr->isSilent();
-//}
-//
-///*
-// * Get master vibra's status
-// */
-//bool CpProfileModel::vibraStatus()
-//{
-//    return d_ptr->vibraStatus();
-//}
-//
-///*
-// * Set master vibra's status
-// */
-//void CpProfileModel::setVibraStatus(bool status)
-//{
-//    d_ptr->setVibraStatus(status);
-//}
-//
-///*
-// * Get keypad' volume
-// */
-//int CpProfileModel::keyVolume()
-//{
-//    return d_ptr->keyVolume();
-//}
-//
-///*
-// * Set keypad's volume, 
-// * the value of the volume should be between 0-3
-// */
-//void CpProfileModel::setKeyVolume(int volume)
-//{
-//    d_ptr->setKeyVolume(volume);
-//}
-//
-///*
-// * Get screen tone's volume
-// */
-//int CpProfileModel::screenVolume()
-//{
-//    return d_ptr->screenVolume();
-//}
-//
-///*
-// * Set screen tone's volume, 
-// * the value of the volume should be between 0-3
-// */
-//void CpProfileModel::setScreenVolume(int volume)
-//{
-//    d_ptr->setScreenVolume(volume);
-//}
-//
-///*
-// * Get screen vibra's level
-// */
-//int CpProfileModel::screenVibra()
-//{
-//    return d_ptr->screenVibra();
-//}
-//
-///*
-// * Set screen vibra's level, 
-// * the value of the level should be between 0-3
-// */
-//void CpProfileModel::setScreenVibra(int volume)
-//{
-//    d_ptr->setScreenVibra(volume);
-//}
 
 // End of file
 

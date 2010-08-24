@@ -11,16 +11,18 @@
 *
 * Contributors:
 *
-* Description:  
+* Description:  An extension to HbDataFormModel, can be filled with model items comes from controlpanel plugins.
 *
 */
 
 #include "cpcategorysettingformmodel.h"
 #include <QString>
-
 #include "cpcategorymodelutility.h"
 #include <cpitemdatahelper.h>
 
+/*
+ * Private implementation
+ */
 class CpCategorySettingFormModelPrivate
 {
 public:
@@ -39,16 +41,25 @@ public:
 	QString mConfigFile;
 };
 
+/*
+ * Constructor
+ */
 CpCategorySettingFormModel::CpCategorySettingFormModel(const QString &configFile) : 
 	d (new CpCategorySettingFormModelPrivate(configFile))
 {
 }
 
+/*
+ * Destructor
+ */
 CpCategorySettingFormModel::~CpCategorySettingFormModel()
 {
 	delete d;
 }
 
+/*
+ * Initialize
+ */
 void CpCategorySettingFormModel::initialize(CpItemDataHelper &itemDataHelper)
 {
     //avoid to be called twice
@@ -70,11 +81,18 @@ void CpCategorySettingFormModel::initialize(CpItemDataHelper &itemDataHelper)
     }
 }
 
-
+/*
+ * Derived class can override this function to do some specific work before loading config plugins
+ */
 void CpCategorySettingFormModel::beforeLoadingConfigPlugins(CpItemDataHelper&/*itemDataHelper*/)
 {
 }
 
+/*
+ * Derived class can override this function to do some specific work after loading config plugins
+ */
 void CpCategorySettingFormModel::afterLoadingConfigPlugins(CpItemDataHelper &/*itemDataHelper*/)
 {
 }
+
+//End of File

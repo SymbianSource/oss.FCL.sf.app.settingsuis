@@ -24,17 +24,20 @@
 CpServiceMainWindow::CpServiceMainWindow(QWidget *parent /* = 0*/)
 : HbMainWindow(parent), mLauncherService(0), mPreviousView(0)
 {
-    CPSP_LOG("CpServiceMainWindow Constructing...");
+    CPSP_LOG_FUNC_ENTRY("CpServiceMainWindow::CpServiceMainWindow")
+        
     mLauncherService = new CpLauncherService(this);
 }
 
 CpServiceMainWindow::~CpServiceMainWindow()
 {
-    CPSP_LOG("CpServiceMainWindow Destructing...");
+    CPSP_LOG_FUNC_ENTRY("CpServiceMainWindow::~CpServiceMainWindow")
 }
 
 void CpServiceMainWindow::setSettingView(CpBaseSettingView *settingView)
 {
+    CPSP_LOG_FUNC_ENTRY("CpServiceMainWindow::setSettingView")
+    
     mSettingViewPointer = settingView;
     
     mPreviousView = currentView();
@@ -46,7 +49,7 @@ void CpServiceMainWindow::setSettingView(CpBaseSettingView *settingView)
 
 void CpServiceMainWindow::quit()
 {
-    CPSP_LOG("CpServiceMainWindow::quit()");
+    CPSP_LOG_FUNC_ENTRY("CpServiceMainWindow::quit");
     
     closeSettingView();
     
@@ -65,6 +68,8 @@ void CpServiceMainWindow::quit()
 
 void CpServiceMainWindow::closeSettingView()
 {
+    CPSP_LOG_FUNC_ENTRY("CpServiceMainWindow::closeSettingView")
+    
     if (mSettingViewPointer) {
         removeView(mSettingViewPointer);
         mSettingViewPointer->deleteLater();

@@ -78,13 +78,6 @@ void CpProfileActivatorDialog::confirmProfileSelection()
     
     // the best choice is no need to convert the index to id
     mProfileModel.activateProfile(mProfileIds.at(currentIndex));
-    // ret should be remove from here
-    // no invalid profile exsit
-    QString profileName = mProfileModel.profileName(mProfileModel.activeProfileId());
-    //change the descripton of entry item
-    if (CpSettingFormEntryItemData *entryItem = qobject_cast<CpSettingFormEntryItemData*>(mProfileActivator)) {
-        entryItem->setDescription(profileName);
-    }
 }
 void CpProfileActivatorDialog::cancelProfileSelection()
 {

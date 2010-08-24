@@ -53,13 +53,7 @@ private slots:
     //general tones
     void on_general_notificationTones_stateChanged(int state);
     void on_general_keysAndScreenToneSlider_ValueChanged( int value );
-    
     //general vibra
-    void on_general_ringVibar_stateChanged( int state );
-    void on_general_messageVibra_stateChanged( int state );
-    void on_general_emailVibra_stateChanged( int state );
-    void on_general_reminderVibra_stateChanged( int state );
-    void on_general_notificationVibra_stateChanged( int state );
     void on_general_screenVibra_ValueChanged( int value );
 
     //meeting tones
@@ -67,11 +61,6 @@ private slots:
     void on_meeting_keysAndScreenToneSlider_ValueChanged( int value );
     
     //meeting vibar
-    void on_meeting_ringVibar_stateChanged( int state );
-    void on_meeting_messageVibra_stateChanged( int state );
-    void on_meeting_emailVibra_stateChanged( int state );
-    void on_meeting_reminderVibra_stateChanged( int state );
-    void on_meeting_notificationVibra_stateChanged( int state );
     void on_meeting_screenVibra_ValueChanged( int value );
     
     void settingValueChanged(const XQSettingsKey &key, const QVariant &value);

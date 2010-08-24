@@ -16,8 +16,7 @@
 */
 #include <hbapplication.h>
 #include <hbstyleloader.h>
-#include <QDir>
-#include <QTranslator>
+#include <hbtranslator.h>
 #include <QLocale>
 #include "cpservicemainwindow.h"
 #include "cpsplogger.h"
@@ -25,29 +24,29 @@
 int main(int argc, char **argv)
 {
     HbApplication app(argc,argv ); 
+ 
+#ifdef ENABLE_CPSP_LOG
+    INIT_LOGGER(CPSP_LOGGER_NAME,CPSP_LOGGER_CONFIG_PATH)
+#endif
     
-    Logger::instance(CPSP_LOGGER_NAME)->configure(
-            CPSP_LOGGER_CONFIG_PATH,QSettings::IniFormat);
     CPSP_LOG("Entering CpServiceProvider.exe...");
     
-    QTranslator translator;
-    if (translator.load("control_panel_" + QLocale::system().name(),"Z:/resource/qt/translations"))
-    {
-        qApp->installTranslator(&translator);
-    }
+    HbTranslator translator("control_panel");
+    translator.loadCommon();
     
     HbStyleLoader::registerFilePath(":/widgetml/cpdataformlistentryviewitem.css");
     HbStyleLoader::registerFilePath(":/widgetml/cpdataformlistentryviewitem_color.css");
     HbStyleLoader::registerFilePath(":/widgetml/cpdataformlistentryviewitem.widgetml");
     
     CpServiceMainWindow wnd;
-    wnd.show();
+    /*
+    DON'T call wnd.show(),
+    it will cause deadlock problem if cpserviceprovider is launched from an indicator plugin.
+    */
     
     int ret = app.exec();
     
     CPSP_LOG("Exiting CpServiceProvider.exe.");
-
-    Logger::closeAll();
     
     return ret;     
 }

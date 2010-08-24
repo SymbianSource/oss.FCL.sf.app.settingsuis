@@ -42,7 +42,7 @@ void TestCpThemePlugin::testCreateSettingFormItemData()
     CpThemePlugin *obj = new CpThemePlugin();
     CpItemDataHelper helper;
 
-    QVERIFY(obj->createSettingFormItemData(helper) != 0);
+    QVERIFY(obj->createSettingFormItemData(helper).at(0) != 0);
 
     delete obj;
 }

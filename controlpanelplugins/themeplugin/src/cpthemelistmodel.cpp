@@ -53,14 +53,7 @@ CpThemeListModel::CpThemeListModel(QObject* parent)
    
     connect(mFileWatcher, SIGNAL(directoryChanged(QString)),
            this, SLOT(themeListChanged()));
-    
-    // data for the list which appears after the themes:
-    CpThemeInfo fetchFromStore;
-    fetchFromStore.setName(hbTrId("txt_cp_list_get_more_tones"));
-    fetchFromStore.setItemType(CpThemeInfo::ThemeListItemType_URL);
-    fetchFromStore.setItemData(QString("http://lr.ovi.mobi/store/themes"));
-    fetchFromStore.setIcon(HbIcon("qtg_large_ovistore"));
-    mBottomThemeList.append(fetchFromStore);
+   
 }
 
 /*
@@ -113,19 +106,7 @@ QVariant CpThemeListModel::data(const QModelIndex& index, int role) const
                 case Qt::DisplayRole:
                     retVal = list->at(row).name();
                     break;
-#ifdef CP_THEME_PREVIEW_DEFINED
-                case Qt::DecorationRole:
-                    retVal = list->at(row).icon();
-                    break;
                     
-                case PortraitPreviewRole:
-          	        retVal = list->at(row).portraitPreviewIcon();
-                    break;
-                    
-                case LandscapePreviewRole:
-                    retVal = list->at(row).landscapePreviewIcon();
-                    break;
-#endif                    
                 case Qt::SizeHintRole:
                     retVal = list->at(row).icon().size();
                     break;

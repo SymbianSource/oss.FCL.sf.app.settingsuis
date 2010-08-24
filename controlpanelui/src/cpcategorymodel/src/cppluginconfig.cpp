@@ -11,7 +11,7 @@
 *
 * Contributors:
 *
-* Description:  
+* Description:  An entry for a plugin defined in cpcfg file.
 *
 */
 

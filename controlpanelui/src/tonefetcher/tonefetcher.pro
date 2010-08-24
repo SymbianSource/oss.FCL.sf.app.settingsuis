@@ -22,6 +22,7 @@ include( common.pri )
 include( tonefetcher.pri )
 LIBS += -lxqservice \
     -lxqserviceutil \
+    -lcplogger \
     -lcpframework \
     -lxqutils
 symbian {

@@ -24,6 +24,7 @@ class HbAbstractViewItem;
 class HbDataFormModelItem;
 class CpItemDataHelper;
 class HbMainWindow;
+class HbActivityManager;
 
 class CpMainView : public CpBaseSettingView
 {
@@ -32,14 +33,23 @@ public:
     explicit CpMainView(HbMainWindow *mainWindow = 0);
     virtual ~CpMainView();
     bool event(QEvent *e);
+public slots:
+    void loadActivity();
+    void saveActivity();
 private slots:
     void initializeMainModel();
+    void onAboutToChangeView(HbView * oldView, HbView *newView);
+    void onDataFormItemActivated(const QModelIndex &index);
 private:
     Q_DISABLE_COPY(CpMainView)
 private:
 	CpMainModel *mMainModel;
     CpItemDataHelper *mItemDataHelper;
     HbMainWindow *mMainWindow;
+    // not own
+    HbActivityManager *mActivityManager;
+    
+    QPixmap mScreenshot;
 };
 
 #endif

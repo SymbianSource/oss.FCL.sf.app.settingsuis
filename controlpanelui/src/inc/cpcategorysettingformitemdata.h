@@ -11,7 +11,7 @@
 *
 * Contributors:
 *
-* Description:  
+* Description:  An extension to CpSettingFormItemData, can be filled with model items comes from controlpanel plugins.
 *
 */
 #ifndef CPCATEGORYSETTINGFORMITEMDATA_H
@@ -44,3 +44,5 @@ private:
 };
 
 #endif
+
+//End of File

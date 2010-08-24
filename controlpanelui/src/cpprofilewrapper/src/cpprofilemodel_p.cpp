@@ -44,80 +44,60 @@
 #include <TProfileToneSettings.h>
 #include <hwrmvibrasdkcrkeys.h>
 #include <centralrepository.h>
-
-
-QString stringFromDescriptor(const TDesC& dsp)
-{
-    return QString::fromUtf16(dsp.Ptr(), dsp.Length());
-}
-
-HBufC* descriptorFromString(const QString& str)
-{
-    TPtrC ptr(reinterpret_cast<const TUint16*>(str.utf16()));
-    return ptr.Alloc();
-}
-
+#include <XQConversions>
+#include <profile.hrh>
+/*
+ * Constructor
+ */
 CpProfileModelPrivate::CpProfileModelPrivate()
     : mEngine(0),
-      mInitErrFlag(0),
-      mOffLineCenRep(0),
+      mProfileNames(0),
       q_ptr(0)
 {
     
 }
 
+/*
+ * Initialize the profile engine and available profile list for profile wrapper. 
+ */
 void CpProfileModelPrivate::initialize(CpProfileModel *parent)
 {
     q_ptr = parent;
     CPFW_LOG("CpProfileModelPrivate::CpProfileModelPrivate(), START.");
-    TRAPD( err,
-            mEngine = CreateProfileEngineExtended2L();
-            mOffLineCenRep = CRepository::NewL( KCRUidCommunicationSettings );
-            
-            /*
-             * Currently, engine part will return all previous version of profile
-             * so some invalid profile will be added in the new list, to avoid this 
-             * use hard code to get the right list of profile. 
-             */
-            /*MProfilesNamesArray* nameList = mEngine->ProfilesNamesArrayLC();
-            int profileCount = nameList->MdcaCount();
-            for (int i = 0; i<profileCount; i++) {
-                MProfileName *profileName = nameList->ProfileName(i);
-                mProfileList.insert(profileName->Id(), mEngine->Profile2L(profileName->Id())); 
-            }
-            CleanupStack::PopAndDestroy(*nameList);*/
-            mProfileList.insert(0, mEngine->Profile2L(0)); // general id 
-            mProfileList.insert(2, mEngine->Profile2L(2));
+    TRAP_IGNORE(
+        mEngine = CreateProfileEngineExtended2L();
+        mProfileNames = mEngine->ProfilesNamesArrayLC();
+        CleanupStack::Pop(); // pop the pointer of mProfileNames
+        /*
+         * Currently, engine part will return all previous version of profile
+         * so some invalid profile will be added in the new list, to avoid this 
+         * use hard code to get the right list of profile. 
+         */
+        /*MProfilesNamesArray* nameList = mEngine->ProfilesNamesArrayLC();
+        int profileCount = nameList->MdcaCount();
+        for (int i = 0; i<profileCount; i++) {
+            MProfileName *profileName = nameList->ProfileName(i);
+            mProfileList.insert(profileName->Id(), mEngine->Profile2L(profileName->Id())); 
+        }
+        CleanupStack::PopAndDestroy(*nameList);*/           
     );
-    
-    // currently, reserve a error code for deal with low memory ... leave
-    // as known, qt in symbian exception safety's development is ongoing. 
-    // we will follow the official way to deal with symbian leave or exception
-    mInitErrFlag = err;
-    CPFW_LOG("CpProfileModelPrivate::CpProfileModelPrivate(), END, err is." + QString(err) );
+    mProfileList.append(static_cast<int>(EProfileWrapperGeneralId)); // general id 
+    mProfileList.append(static_cast<int>(EProfileWrapperMeetingId)); // meeting id     
+    CPFW_LOG("CpProfileModelPrivate::CpProfileModelPrivate(), END");
 }    
 
+/*
+ * Destructor 
+ */
 CpProfileModelPrivate::~CpProfileModelPrivate()
 {
     if (mEngine!=0) {
         mEngine->Release();
     }
-    foreach(MProfileExtended2* profile, mProfileList)
-    {   
-        if (profile!=0 ) {
-        profile->Release();
-        }
+    if (mProfileNames) {
+        delete mProfileNames;
     }
-    mProfileList.clear();
-    delete mOffLineCenRep;
-}
-
-/*
- * Get the result of the initiation
- */
-int CpProfileModelPrivate::initiationFlag()
-{
-    return mInitErrFlag;
+	mProfileList.clear();
 }
 
 /*
@@ -126,49 +106,55 @@ int CpProfileModelPrivate::initiationFlag()
 QString CpProfileModelPrivate::profileName(int profileId) const
 {
     CPFW_LOG("CpProfileModelPrivate::profileName(), START.");
-
-//    MProfileName* name = 0;
-//    TRAPD( err, *name = mEngine->ProfileL(profileId)->ProfileName(); );
-//    
-//    if ( !err && name){
-//        CPFW_LOG("CpProfileModelPrivate::profileName(), have name, END.");
-//        return stringFromDescriptor( name->Name() );
-//    } else {
-//        CPFW_LOG("CpProfileModelPrivate::profileName(), no name, END.");
-//        return "";
-//    }
-    // should return qt localized profile name  
-    // engine return symbian localized name, that is a wrong way to got it
-    // so hard code here, wait for engine's correcting.
-    switch (profileId) {
-    case EProfileWrapperGeneralId:
-        return hbTrId("txt_cp_list_general");
-    case EProfileWrapperMeetingId:
-        return hbTrId("txt_cp_list_meeting");
-    default:
-        return QString("");
+    // Return an empty string if id is not valid.    
+    if (!isValidProfile(profileId)) {
+        return QString();
     }
+    
+    const MProfileName* name = mProfileNames->ProfileName(profileId);
+    QString profileName;
+    if (name != 0) {
+        profileName = XQConversions::s60DescToQString(name->Name());
+    }
+    CPFW_LOG("CpProfileModelPrivate::profileName(), END.");
+    return profileName;    
 }
+
+/*
+ * Get available profiles' name list.
+ */
 QStringList CpProfileModelPrivate::profileNames() const
 {
-    //hard code, until engine part support qt localized name
+    CPFW_LOG("CpProfileModelPrivate::profileNames(), START.");
     QStringList nameList;
-    nameList<<hbTrId("txt_cp_list_general")
-            <<hbTrId("txt_cp_list_meeting");
+
+    foreach(int profileId, mProfileList) {
+        const MProfileName *name = mProfileNames->ProfileName(profileId);
+        if (name != 0) {
+            nameList.append(XQConversions::s60DescToQString(name->Name()));
+        }
+    }
+
+    CPFW_LOG("CpProfileModelPrivate::profileNames(), END.");
     return nameList;
 }
 
 
 /*
- * Activate a profile with its id, return the operation code.
+ * Activate a profile with its id, return the result.
  */
 int CpProfileModelPrivate::activateProfile(int profileId)
 {
     CPFW_LOG("CpProfileModelPrivate::activateProfile(), START.");
-
+    // currently, only two profile remains: general and meeting,
+    // But profile engine also support the old profile like:
+    // silence, out ...
+    // so filter the invalid profile id first.
+    if (!isValidProfile(profileId)) {
+        return KErrNotFound;
+    }
     TRAPD( err, 
         mEngine->SetActiveProfileL( profileId );
-        //UpdateProfileSettingsL( profileId );
     );
     CPFW_LOG("CpProfileModelPrivate::activateProfile(), END.");
     return err;
@@ -182,540 +168,534 @@ int CpProfileModelPrivate::activeProfileId() const
     return mEngine->ActiveProfileId();
 }
 
+/*
+ * Return all profile settings according to profile's id
+ */
 void CpProfileModelPrivate::profileSettings(int profileId,
         CpProfileSettings& profileSettings)
 {
-    MProfileExtended2 *profileExtend = mProfileList.value(profileId);
-    const MProfileTones &setTones = profileExtend->ProfileTones();
-    const TProfileToneSettings &toneSettings = setTones.ToneSettings();
-    const MProfileExtraTones2 &extTones = profileExtend->ProfileExtraTones2();
-    const MProfileVibraSettings &vibraSettings =
-            profileExtend->ProfileVibraSettings();
-    const MProfileExtraSettings &extraSettings =
-            profileExtend->ProfileExtraSettings();
-    const MProfileFeedbackSettings &feedbackSettings =
-            extraSettings.ProfileFeedbackSettings();
-           
-    profileSettings.mRingTone = stringFromDescriptor(setTones.RingingTone1());
-    profileSettings.mMessageTone = stringFromDescriptor(setTones.MessageAlertTone());
-    profileSettings.mEmailTone = stringFromDescriptor(extTones.EmailAlertTone());
-    profileSettings.mReminderTone = stringFromDescriptor(extTones.ReminderTone());
-    profileSettings.mNotificationTone = toneSettings.iWarningAndGameTones;
-    // only use Keypad Volume as a base value for display in key & touch screen setting option
-    profileSettings.mKeyTouchScreenTone = toneSettings.iKeypadVolume;
-    
-    profileSettings.mRingAlertVibra = vibraSettings.RingAlertVibra();
-    profileSettings.mMessageVibra = vibraSettings.MessageAlertVibra();
-    profileSettings.mEmailVibra = vibraSettings.EmailAlertVibra();
-    profileSettings.mReminderAlertVibra = vibraSettings.ReminderAlarmVibra();
-    profileSettings.mNotificationVibra = vibraSettings.InformationVibra();
-    profileSettings.mKeyTouchScreenVibra = feedbackSettings.TactileFeedback();
-						
+    if (!isValidProfile(profileId)) {
+        return;
+    }
+    QT_TRAP_THROWING(
+        MProfileExtended2 *profileExtend = mEngine->Profile2L(profileId);
+        CleanupStack::PushL(profileExtend);
+        
+        const MProfileTones &setTones = profileExtend->ProfileTones();
+        const TProfileToneSettings &toneSettings = setTones.ToneSettings();
+        const MProfileExtraTones2 &extTones = profileExtend->ProfileExtraTones2();
+        const MProfileVibraSettings &vibraSettings =
+                profileExtend->ProfileVibraSettings();
+        const MProfileExtraSettings &extraSettings =
+                profileExtend->ProfileExtraSettings();
+        const MProfileFeedbackSettings &feedbackSettings =
+                extraSettings.ProfileFeedbackSettings();
+               
+        profileSettings.mRingTone = XQConversions::s60DescToQString(setTones.RingingTone1());
+        profileSettings.mMessageTone = XQConversions::s60DescToQString(setTones.MessageAlertTone());
+        profileSettings.mEmailTone = XQConversions::s60DescToQString(extTones.EmailAlertTone());
+        profileSettings.mReminderTone = XQConversions::s60DescToQString(extTones.ReminderTone());
+        profileSettings.mNotificationTone = toneSettings.iWarningAndGameTones;
+        
+        // only use Keypad Volume as a base value for display in key & touch screen setting option
+        profileSettings.mKeyTouchScreenTone = toneSettings.iKeypadVolume;
+        profileSettings.mKeyTouchScreenVibra = feedbackSettings.TactileFeedback();
+        CleanupStack::Pop(); // profileExtend
+        profileExtend->Release();    
+    );
 }
-/*!
-     set profile settings
-     \param profileId identify the profile
-     \param profileSettings value of profile options
+/*
+ *   set profile settings
  */
-int CpProfileModelPrivate::setProfileSettings(int profileId, CpProfileSettings& profileSettings)
+void CpProfileModelPrivate::setProfileSettings(int profileId, CpProfileSettings& profileSettings)
 {
-    MProfileExtended2 *profileExtend = mProfileList.value(profileId);
-    MProfileSetTones &setTones = profileExtend->ProfileSetTones();
-    TProfileToneSettings &toneSettings = setTones.SetToneSettings();
-    MProfileSetExtraTones2 &setExtTones =
-            profileExtend->ProfileSetExtraTones2();
-    MProfileSetVibraSettings &setVibraSettings =
-            profileExtend->ProfileSetVibraSettings();
-    MProfileSetExtraSettings &extraSettings =
-            profileExtend->ProfileSetExtraSettings();
-    MProfileSetFeedbackSettings &setFeedbackSettings =
-            extraSettings.ProfileSetFeedbackSettings();
+    if (!isValidProfile(profileId)) {
+        return;
+    }
     
-    TRAP_IGNORE(
-            setTones.SetRingingTone1L(*descriptorFromString(
-                    profileSettings.mRingTone));
-            setTones.SetMessageAlertToneL(*descriptorFromString(
-                    profileSettings.mMessageTone));
-            setExtTones.SetEmailAlertToneL(*descriptorFromString(
-                    profileSettings.mEmailTone));
-            setExtTones.SetReminderToneL(*descriptorFromString(
-                    profileSettings.mReminderTone));
-            )
-    toneSettings.iWarningAndGameTones
-            = profileSettings.mNotificationTone;
-    // Change the keypad volume and touch screen tone together
-    toneSettings.iKeypadVolume
-            = static_cast<TProfileKeypadVolume> (profileSettings.mKeyTouchScreenTone);    
-    setFeedbackSettings.SetAudioFeedback(
-            static_cast<TProfileAudioFeedback> (profileSettings.mKeyTouchScreenTone));
-   
-    setVibraSettings.SetRingAlertVibra(profileSettings.mRingAlertVibra);
-    setVibraSettings.SetMessageAlertVibra(profileSettings.mMessageVibra);
-    setVibraSettings.SetEmailAlertVibra(profileSettings.mEmailVibra);
-    setVibraSettings.SetReminderAlarmVibra(
-            profileSettings.mReminderAlertVibra);
-    setVibraSettings.SetInformationVibra(
-            profileSettings.mNotificationVibra);
-    setFeedbackSettings.SetTactileFeedback(
-            static_cast<TProfileTactileFeedback> (profileSettings.mKeyTouchScreenVibra));
+    QT_TRAP_THROWING (
+        MProfileExtended2 *profileExtend = mEngine->Profile2L(profileId); 
+        CleanupStack::PushL(profileExtend);
+        
+        MProfileSetTones &setTones = profileExtend->ProfileSetTones();
+        TProfileToneSettings &toneSettings = setTones.SetToneSettings();
+        MProfileSetExtraTones2 &setExtTones =
+                profileExtend->ProfileSetExtraTones2();
+        MProfileSetVibraSettings &setVibraSettings =
+                profileExtend->ProfileSetVibraSettings();
+        MProfileSetExtraSettings &extraSettings =
+                profileExtend->ProfileSetExtraSettings();
+        MProfileSetFeedbackSettings &setFeedbackSettings =
+                extraSettings.ProfileSetFeedbackSettings();
+        
+        
+        setTones.SetRingingTone1L(*XQConversions::qStringToS60Desc(
+                profileSettings.mRingTone));
+        setTones.SetMessageAlertToneL(*XQConversions::qStringToS60Desc(
+                profileSettings.mMessageTone));
+        setExtTones.SetEmailAlertToneL(*XQConversions::qStringToS60Desc(
+                profileSettings.mEmailTone));
+        setExtTones.SetReminderToneL(*XQConversions::qStringToS60Desc(
+                profileSettings.mReminderTone));
 
-    TRAPD(err,
-            mEngine->CommitChangeL(*profileExtend);                
+        toneSettings.iWarningAndGameTones
+                        = profileSettings.mNotificationTone;
+        // Change the keypad volume and touch screen tone together
+        toneSettings.iKeypadVolume
+                        = static_cast<TProfileKeypadVolume> (profileSettings.mKeyTouchScreenTone);    
+        setFeedbackSettings.SetAudioFeedback(
+                        static_cast<TProfileAudioFeedback> (profileSettings.mKeyTouchScreenTone));
+        setFeedbackSettings.SetTactileFeedback(
+                        static_cast<TProfileTactileFeedback> (profileSettings.mKeyTouchScreenVibra));
+        
+        mEngine->CommitChangeL(*profileExtend);
+        CleanupStack::Pop(); // profileExtend
          )
-    return err;
 }
 
+/*
+ * Get the active profile's ring tone name
+ */
 QString CpProfileModelPrivate::ringTone() const
 {
-    MProfileExtended2 *profileExtend = mProfileList.value(EProfileWrapperGeneralId);
-    QString ringTone = stringFromDescriptor(
-    profileExtend->ProfileTones().RingingTone1());
+    // return empty string when active profile id is invalid,
+    // some old application still set the profile which is not available now,
+    // this check can be removed when every application use a correct profile id    
+
+    QString ringTone;
+    if (!isValidProfile(activeProfileId())) {
+        return ringTone;
+    }
+    QT_TRAP_THROWING(
+        MProfileExtended2 *profileExtend = mEngine->Profile2L(activeProfileId());
+        CleanupStack::PushL(profileExtend);
+        const MProfileTones &setTones = profileExtend->ProfileTones();
+        
+        ringTone = XQConversions::s60DescToQString(setTones.RingingTone1());
+        CleanupStack::Pop(); // profileExtend
+        profileExtend->Release();
+        )
+    
     return ringTone;
 }
 
+/*
+ * Set the ring tone for all profiles
+ */
 void CpProfileModelPrivate::setRingTone(const QString& filePath)
-{
-    int ids[] = {EProfileWrapperGeneralId,EProfileWrapperMeetingId};
-    
-    for (TInt i = 0; i < sizeof(ids)/sizeof(ids[0]); ++i) {        
-        MProfileExtended2 *profileExtend = mProfileList.value(ids[i]);
-        
-        MProfileSetTones &setTones = profileExtend->ProfileSetTones();
-        TRAP_IGNORE(
-                setTones.SetRingingTone1L( *descriptorFromString(filePath) );
-                mEngine ->CommitChangeL(*profileExtend);
-                )
-        // ERROR SHOULD BE DEAL HERE OR RETURN A ERROR CODE
+{   
+    for (TInt i = 0; i < mProfileList.count(); ++i) {  
+        QT_TRAP_THROWING(
+            MProfileExtended2 *profileExtend = mEngine->Profile2L(mProfileList.at(i));
+            CleanupStack::PushL(profileExtend);
+            
+            MProfileSetTones &setTones = profileExtend->ProfileSetTones();
+            
+            setTones.SetRingingTone1L( *XQConversions::qStringToS60Desc(filePath) );
+            mEngine ->CommitChangeL(*profileExtend);
+            CleanupStack::Pop(); // profileExtend
+            profileExtend->Release();
+        )
     }     
 }
 
+/*
+ *  Get the ringing volume value 
+ */
 int CpProfileModelPrivate::masterVolume() const
 {
     int masterVolume = 0;
-    TRAP_IGNORE(masterVolume = mEngine->MasterVolumeL();)
+    QT_TRAP_THROWING(masterVolume = mEngine->MasterVolumeL();)
     return masterVolume;
 }
 
+/*
+ * Set the ringing volume
+ */
 void CpProfileModelPrivate::setMasterVolume(int volume)
 {
-    TRAP_IGNORE(mEngine->SetMasterVolumeL( volume );)
+    // the volume range 1-10
+    if (volume >= EProfileRingingVolumeLevel1 && volume <= EProfileRingingVolumeLevel10) {
+        QT_TRAP_THROWING(mEngine->SetMasterVolumeL( volume );)
+    }
 }
-
+/*
+ * Get the master vibra's status   
+ */
 bool CpProfileModelPrivate::masterVibra() const
 {
     bool masterVibra = false;
-    TRAP_IGNORE(masterVibra = mEngine->MasterVibraL();)
+    QT_TRAP_THROWING(masterVibra = mEngine->MasterVibraL();)
     return masterVibra; 
 }
+
+/*
+ * Set master vibra's status
+ */
 void CpProfileModelPrivate::setMasterVibra(bool isVibra)
 {
-    TRAP_IGNORE(mEngine->SetMasterVibraL( isVibra );)    
+    QT_TRAP_THROWING(mEngine->SetMasterVibraL( isVibra );)    
 }
 
+/*
+ * Get the status of silence mode.
+ */
 bool CpProfileModelPrivate::silenceMode() const
 {
     bool isSlience = false;
-    TRAP_IGNORE(isSlience = mEngine->SilenceModeL();)
+    QT_TRAP_THROWING(isSlience = mEngine->SilenceModeL();)
     return isSlience;
 }
+
+/*
+ * Set the status of silence mode
+ */
 void CpProfileModelPrivate::setSilenceMode(bool isSilence)
 {
-    TRAP_IGNORE(mEngine->SetSilenceModeL( isSilence );)    
+    QT_TRAP_THROWING(mEngine->SetSilenceModeL( isSilence );)    
 }
 
-bool CpProfileModelPrivate::offLineMode() const    
-{
-    int offLineMode = 0;
-    // What we should do if we can't set offline mode
-    mOffLineCenRep->Get( KSettingsAirplaneMode, offLineMode );
-    
-    return offLineMode;
-}
-void CpProfileModelPrivate::setOffLineMode(bool isOffLine)
-{
-    mOffLineCenRep->Set(KSettingsAirplaneMode, isOffLine);
-}
-
+/*
+ * Return the ring tone of a profile, if the profile id is invalid, always
+ * return an empty string
+ */
 QString CpProfileModelPrivate::ringTone(int profileId) const
 {
-    MProfileExtended2 *profileExtend =  mProfileList.value(profileId);
-    const MProfileTones &setTones = profileExtend->ProfileTones();
-
-    QString ringTone = stringFromDescriptor(setTones.RingingTone1());
+    QString ringTone;
+    if(!isValidProfile(profileId)) {
+        return ringTone;
+    }
+    QT_TRAP_THROWING(
+        MProfileExtended2 *profileExtend =  mEngine->Profile2L(profileId); 
+        CleanupStack::PushL(profileExtend);
+        
+        const MProfileTones &setTones = profileExtend->ProfileTones();
+        
+        ringTone = XQConversions::s60DescToQString(setTones.RingingTone1());
+        CleanupStack::Pop(); // profileExtend
+        profileExtend->Release();
+    )    
     return ringTone;
 }
 
+/*
+ * Set the ring tone for a profile, if the profile id is invalid, nothing happens
+ */
 void CpProfileModelPrivate::setRingTone(int profileId, const QString& filePath)
 {
-    MProfileExtended2 *profileExtend = mProfileList.value(profileId);
-    MProfileSetTones &setTones = profileExtend->ProfileSetTones();
-    TRAP_IGNORE(
-                    setTones.SetRingingTone1L(*descriptorFromString(filePath));
-                    mEngine->CommitChangeL(*profileExtend);                    
-                )            
-}
-
-QString CpProfileModelPrivate::messageTone(int profileId) const
-{
-    MProfileExtended2 *profileExtend = mProfileList.value(profileId);
-    
-    const MProfileTones &setTones = profileExtend->ProfileTones();
-
-    QString messageTone = stringFromDescriptor(setTones.MessageAlertTone());
-
-    return messageTone;    
-}
-
-void CpProfileModelPrivate::setMessageTone(int profileId, const QString& filePath)
-{
-    MProfileExtended2 *profileExtend = mProfileList.value(profileId);                
-    MProfileSetTones &setTones =
-            profileExtend->ProfileSetTones();
-    TRAP_IGNORE(
-        setTones.SetMessageAlertToneL(*descriptorFromString(filePath));
-        mEngine->CommitChangeL(*profileExtend);
-            )                
-}
-
-QString CpProfileModelPrivate::emailTone(int profileId) const
-{
-    MProfileExtended2 *profileExtend = mProfileList.value(profileId);           
-    const MProfileExtraTones2 &extTones =
-            profileExtend->ProfileExtraTones2();
-
-    QString emailTone = stringFromDescriptor(extTones.EmailAlertTone());    
-    return emailTone;    
-}
-
-void CpProfileModelPrivate::setEmailTone(int profileId, const QString& filePath)
-{
-    MProfileExtended2 *profileExtend = mProfileList.value(profileId);
-    MProfileSetExtraTones2 &setExtTones =
-            profileExtend->ProfileSetExtraTones2();
-    TRAP_IGNORE (
-        setExtTones.SetEmailAlertToneL(*descriptorFromString(filePath));
-        mEngine->CommitChangeL(*profileExtend);
-    )
-}
-
-QString CpProfileModelPrivate::reminderTone(int profileId) const
-{
-    MProfileExtended2 *profileExtend = mProfileList.value(profileId);
-    const MProfileExtraTones2 &extTones = profileExtend->ProfileExtraTones2();
-    
-    QString reminderTone = stringFromDescriptor(extTones.ReminderTone());
-    return reminderTone;        
-}
-
-void CpProfileModelPrivate::setReminderTone(int profileId, const QString& filePath)
-{
-    MProfileExtended2 *profileExtend = mProfileList.value(profileId);
-    MProfileSetExtraTones2 &setExtTones = profileExtend->ProfileSetExtraTones2();
-                
-    TRAP_IGNORE(
-            setExtTones.SetReminderToneL( *descriptorFromString(filePath) );
-            mEngine->CommitChangeL(*profileExtend);
+    if(!isValidProfile(profileId)) {
+        return;
+    }
+    QT_TRAP_THROWING(
+        MProfileExtended2 *profileExtend = mEngine->Profile2L(profileId);
+        CleanupStack::PushL(profileExtend);
+        
+        MProfileSetTones &setTones = profileExtend->ProfileSetTones();
+        
+        setTones.SetRingingTone1L(*XQConversions::qStringToS60Desc(filePath));
+        mEngine->CommitChangeL(*profileExtend);     
+        CleanupStack::Pop(); // profileExtend
+        profileExtend->Release();
     )            
 }
 
+/*
+ * Get the message tone of a profile, if the profile id is invalid, always return 
+ * an empty string 
+ */
+QString CpProfileModelPrivate::messageTone(int profileId) const
+{
+    QString messageTone;
+    if(!isValidProfile(profileId)) {
+        return messageTone;
+    }
+    QT_TRAP_THROWING(
+        MProfileExtended2 *profileExtend = mEngine->Profile2L(profileId); 
+        CleanupStack::PushL(profileExtend);
+        
+        const MProfileTones &setTones = profileExtend->ProfileTones();
+        
+        messageTone = XQConversions::s60DescToQString(setTones.MessageAlertTone());
+        CleanupStack::Pop(); // profileExtend
+        profileExtend->Release();
+    )
+    
+    return messageTone;    
+}
+
+/*
+ * Set the message tone of a profile, if the profile id is invalid, nothing happens
+ */
+void CpProfileModelPrivate::setMessageTone(int profileId, const QString& filePath)
+{
+    if(!isValidProfile(profileId)) {
+        return;
+    }
+    QT_TRAP_THROWING(
+        MProfileExtended2 *profileExtend = mEngine->Profile2L(profileId);
+        CleanupStack::PushL(profileExtend);
+        MProfileSetTones &setTones =
+            profileExtend->ProfileSetTones();
+        setTones.SetMessageAlertToneL(*XQConversions::qStringToS60Desc(filePath));
+        mEngine->CommitChangeL(*profileExtend);
+        CleanupStack::Pop(); // profileExtend
+        profileExtend->Release();
+    )                
+}
+
+/*
+ * Get the email tone of a profile, if profile id is invalid, return an empty string
+ */
+QString CpProfileModelPrivate::emailTone(int profileId) const
+{
+    QString emailTone;
+    
+    if(!isValidProfile(profileId)) {
+        return emailTone;
+    }
+    QT_TRAP_THROWING(
+        MProfileExtended2 *profileExtend = mEngine->Profile2L(profileId);  
+        CleanupStack::PushL(profileExtend);
+        const MProfileExtraTones2 &extTones =
+                profileExtend->ProfileExtraTones2();
+
+        emailTone = XQConversions::s60DescToQString(extTones.EmailAlertTone());
+        CleanupStack::Pop(); // profileExtend
+        profileExtend->Release();
+    )
+    return emailTone;
+}
+
+/*
+ * Set the email tone for a profile, if the profile id is invalid, nothing happens
+ */
+void CpProfileModelPrivate::setEmailTone(int profileId, const QString& filePath)
+{
+    if(!isValidProfile(profileId)) {
+        return ;
+    }
+    QT_TRAP_THROWING(
+        MProfileExtended2 *profileExtend = mEngine->Profile2L(profileId);
+        CleanupStack::PushL(profileExtend);
+        MProfileSetExtraTones2 &setExtTones =
+                profileExtend->ProfileSetExtraTones2();
+        setExtTones.SetEmailAlertToneL(*XQConversions::qStringToS60Desc(filePath));
+        mEngine->CommitChangeL(*profileExtend);
+        CleanupStack::Pop(); // profileExtend
+        profileExtend->Release();
+    )
+}
+
+/*
+ * Get a reminder tone for a profile, if the profile id is invalid,
+ * always return an emtpy string 
+ */
+QString CpProfileModelPrivate::reminderTone(int profileId) const
+{
+    QString reminderTone;
+    if(!isValidProfile(profileId)) {
+        return reminderTone;
+    }
+    QT_TRAP_THROWING(
+        MProfileExtended2 *profileExtend = mEngine->Profile2L(profileId);
+        CleanupStack::PushL(profileExtend);
+        const MProfileExtraTones2 &extTones = profileExtend->ProfileExtraTones2();
+        
+        reminderTone = XQConversions::s60DescToQString(extTones.ReminderTone());
+        CleanupStack::Pop(); // profileExtend
+        profileExtend->Release();
+    )
+    return reminderTone;        
+}
+
+/*
+ * Set a reminder tone for a profile, if the profile id is invalid,
+ * nothing happens
+ */
+void CpProfileModelPrivate::setReminderTone(int profileId, const QString& filePath)
+{
+    if(!isValidProfile(profileId)) {
+        return;
+    }
+    QT_TRAP_THROWING(
+        MProfileExtended2 *profileExtend = mEngine->Profile2L(profileId);
+        CleanupStack::PushL(profileExtend);
+        
+        MProfileSetExtraTones2 &setExtTones = profileExtend->ProfileSetExtraTones2();
+        setExtTones.SetReminderToneL( *XQConversions::qStringToS60Desc(filePath) );
+        mEngine->CommitChangeL(*profileExtend);
+        CleanupStack::Pop(); // profileExtend
+        profileExtend->Release();
+    )            
+}
+
+/*
+ * Get the status of notification tone, if the profile id is invalid,
+ * always return false
+ */
 bool CpProfileModelPrivate::notificationTone(int profileId) const
 {
-    MProfileExtended2 *profileExtend = mProfileList.value(profileId);
-    const MProfileTones &setTones = profileExtend->ProfileTones();
-    const TProfileToneSettings &toneSettings = setTones.ToneSettings();
-
-    bool notificationTone = toneSettings.iWarningAndGameTones;
-    return notificationTone;    
+    bool ret = false;
+    if(!isValidProfile(profileId)) {
+        return false;
+    }
+    QT_TRAP_THROWING(
+        MProfileExtended2 *profileExtend = mEngine->Profile2L(profileId);
+        CleanupStack::PushL(profileExtend);
+        
+        const MProfileTones &setTones = profileExtend->ProfileTones();
+        const TProfileToneSettings &toneSettings = setTones.ToneSettings();
+        ret = toneSettings.iWarningAndGameTones;
+        
+        CleanupStack::Pop(); // profileExtend
+        profileExtend->Release();
+    )
+    return ret;
 }
 
+/*
+ * Set the status of notification tone, if the profile id is
+ * invalid, nothing happens
+ */
 void CpProfileModelPrivate::setNotificationTone(int profileId, bool isActive)
 {
-    MProfileExtended2 *profileExtend = mProfileList.value(profileId);
-    MProfileSetTones &setTones = profileExtend->ProfileSetTones();
-    TProfileToneSettings &toneSettings = setTones.SetToneSettings();
+    if(!isValidProfile(profileId)) {
+        return ;
+    }
+    QT_TRAP_THROWING(
+        MProfileExtended2 *profileExtend = mEngine->Profile2L(profileId);
+        CleanupStack::PushL(profileExtend);
+        MProfileSetTones &setTones = profileExtend->ProfileSetTones();
+        TProfileToneSettings &toneSettings = setTones.SetToneSettings();
 
-    toneSettings.iWarningAndGameTones = isActive;
-    TRAP_IGNORE(
-            mEngine->CommitChangeL(*profileExtend);
-            ) 
+        toneSettings.iWarningAndGameTones = isActive;
+
+        mEngine->CommitChangeL(*profileExtend);
+        CleanupStack::Pop(); // profileExtend
+        profileExtend->Release();
+    )
 }
-/*!
-     return key & touch screen tone's value
-     \sa setKeyTouchScreenTone
+/*
+ * Get key & touch screen tone's value, if the profile id
+ * is invalid, always return 0
  */
 int CpProfileModelPrivate::keyTouchScreenTone(int profileId) const
 {
-    MProfileExtended2 *profileExtend = mProfileList.value(profileId);
+    int level = 0;
+    if(!isValidProfile(profileId)) {
+        return level;
+    }
     
-    const MProfileTones &setTones = profileExtend->ProfileTones();
-    const TProfileToneSettings &toneSettings = setTones.ToneSettings();
+    QT_TRAP_THROWING(
+        MProfileExtended2 *profileExtend = mEngine->Profile2L(profileId);
+        CleanupStack::PushL(profileExtend);
 
-    int keyTouchScreenTone = toneSettings.iKeypadVolume;
-    return keyTouchScreenTone;        
+        const MProfileTones &setTones = profileExtend->ProfileTones();
+        const TProfileToneSettings &toneSettings = setTones.ToneSettings();
+        
+        // Return only keypad volume, but touch tone volume will be synchronized in 
+        // SetKeyTouchScreenTone(), these two settings also have the same default value
+        // in cenrep key
+        level = toneSettings.iKeypadVolume;  
+        CleanupStack::Pop(); // profileExtend
+        profileExtend->Release();
+    )
+    return level;
 }
-/*!
-     set key & touch screen tone
-     \param profileId identify the profile
-     \param level 0-5
-     \sa keyTouchScreenTone
+/*
+ *   set key & touch screen tone, if the profile id
+ *   is invalid, nothing happens
  */
 void CpProfileModelPrivate::setKeyTouchScreenTone(int profileId, int level)
-{
-    MProfileExtended2 *profileExtend = mProfileList.value(profileId);                    
-    MProfileSetTones &setTones =
-            profileExtend->ProfileSetTones();
-    TProfileToneSettings &toneSettings =
-            setTones.SetToneSettings();
+{   
+    if(!isValidProfile(profileId)) {
+        return ;
+    }
+    QT_TRAP_THROWING(
 
-    MProfileSetExtraSettings &extraSettings =
-                profileExtend->ProfileSetExtraSettings();
-    MProfileSetFeedbackSettings &setFeedbackSettings =
-                extraSettings.ProfileSetFeedbackSettings();
-
-    toneSettings.iKeypadVolume
-            = static_cast<TProfileKeypadVolume> (level);
-    
-    setFeedbackSettings.SetAudioFeedback(
-            static_cast<TProfileAudioFeedback> (level));
-    TRAP_IGNORE (
-            mEngine->CommitChangeL(*profileExtend);
+        MProfileExtended2 *profileExtend = mEngine->Profile2L(profileId);
+        CleanupStack::PushL(profileExtend);
+        MProfileSetTones &setTones =
+                profileExtend->ProfileSetTones();
+        TProfileToneSettings &toneSettings =
+                setTones.SetToneSettings();
+        
+        MProfileSetExtraSettings &extraSettings =
+                    profileExtend->ProfileSetExtraSettings();
+        MProfileSetFeedbackSettings &setFeedbackSettings =
+                    extraSettings.ProfileSetFeedbackSettings();
+        
+        // Update the key pad volume and touch tone volume together
+        toneSettings.iKeypadVolume
+                = static_cast<TProfileKeypadVolume> (level);
+        
+        setFeedbackSettings.SetAudioFeedback(
+                static_cast<TProfileAudioFeedback> (level));
+        
+        mEngine->CommitChangeL(*profileExtend);
+        CleanupStack::Pop(); // profileExtend
+        profileExtend->Release();
     )    
 }
 
-bool CpProfileModelPrivate::ringAlertVibra(int profileId) const
-{
-    MProfileExtended2 *profileExtend = 0;
-    TRAPD(err,
-            profileExtend = mEngine->Profile2L(profileId);
-            //CleanupReleasePushL(*profileExtend);
-            )
-    if (err != KErrNone) {
-        return false;
-    } 
-    CleanupReleasePushL(*profileExtend);
-    const MProfileVibraSettings &vibraSettings =
-            profileExtend->ProfileVibraSettings();
-    
-    
-    bool ringAlertVibra = vibraSettings.RingAlertVibra();
-    CleanupStack::PopAndDestroy(profileExtend);
-    return ringAlertVibra;    
-    
-}
-
-void CpProfileModelPrivate::setRingAlertVibra(int profileId, bool isActive)
-{
-    MProfileExtended2 *profileExtend = 0;
-    TRAPD( err,
-            profileExtend = mEngine->Profile2L(profileId);
-            //CleanupReleasePushL(*profileExtend);
-            )
-    if (err==KErrNone) {
-        CleanupReleasePushL(*profileExtend);
-        MProfileSetVibraSettings &setVibraSettings = profileExtend->ProfileSetVibraSettings();
-        
-        setVibraSettings.SetRingAlertVibra(isActive);
-                
-        TRAP_IGNORE( 
-                mEngine->CommitChangeL(*profileExtend);
-                 )
-        CleanupStack::PopAndDestroy(profileExtend);
-    }
-}
-
-bool CpProfileModelPrivate::messageVibra(int profileId) const
-{
-    MProfileExtended2 *profileExtend = 0;
-    TRAPD(err,
-            profileExtend = mEngine->Profile2L(profileId);
-            //CleanupReleasePushL(*profileExtend);
-            )
-    if (err != KErrNone) {
-        return false;
-    } 
-    CleanupReleasePushL(*profileExtend);
-    const MProfileVibraSettings &vibraSettings =
-            profileExtend->ProfileVibraSettings();
-    
-    
-    bool messageVibra = vibraSettings.MessageAlertVibra();
-    CleanupStack::PopAndDestroy(profileExtend);
-    return messageVibra;    
-    
-}
-
-void CpProfileModelPrivate::setMessageVibra(int profileId, bool isActive)
-{
-    MProfileExtended2 *profileExtend = 0;
-    TRAPD( err,
-            profileExtend = mEngine->Profile2L(profileId);
-            //CleanupReleasePushL(*profileExtend);
-            )
-    if (err==KErrNone) {
-        CleanupReleasePushL(*profileExtend);    
-        MProfileSetVibraSettings &setVibraSettings = profileExtend->ProfileSetVibraSettings();
-        
-        setVibraSettings.SetMessageAlertVibra(isActive);
-                
-        TRAP_IGNORE( 
-                mEngine->CommitChangeL(*profileExtend);
-                 )
-        CleanupStack::PopAndDestroy(profileExtend);
-    }
-}
-
-bool CpProfileModelPrivate::emailVibra(int profileId) const
-{
-    MProfileExtended2 *profileExtend = 0;
-    TRAPD(err,
-            profileExtend = mEngine->Profile2L(profileId);
-            //CleanupReleasePushL(*profileExtend);
-            )
-    if (err != KErrNone) {
-        return false;
-    } 
-    CleanupReleasePushL(*profileExtend);
-    const MProfileVibraSettings &vibraSettings =
-            profileExtend->ProfileVibraSettings();
-    
-    
-    bool emailVibra = vibraSettings.EmailAlertVibra();
-    
-    CleanupStack::PopAndDestroy(profileExtend);
-    return emailVibra;    
-    
-}
-
-void CpProfileModelPrivate::setEmailVibra(int profileId, bool isActive)
-{
-    MProfileExtended2 *profileExtend = 0;
-    TRAPD( err,
-            profileExtend = mEngine->Profile2L(profileId);
-            //CleanupReleasePushL(*profileExtend);
-            )
-    if (err==KErrNone) {
-        CleanupReleasePushL(*profileExtend);
-        MProfileSetVibraSettings &setVibraSettings = profileExtend->ProfileSetVibraSettings();
-        
-        setVibraSettings.SetEmailAlertVibra ( isActive );
-        
-        TRAP_IGNORE( 
-                mEngine->CommitChangeL(*profileExtend);
-                 )
-        CleanupStack::PopAndDestroy(profileExtend);
-    }
-}
-
-bool CpProfileModelPrivate::reminderVibra(int profileId) const
-{
-    MProfileExtended2 *profileExtend = 0;
-    TRAPD(err,
-            profileExtend = mEngine->Profile2L(profileId);
-            //CleanupReleasePushL(*profileExtend);
-            )
-    if (err != KErrNone) {
-        return false;
-    }
-    CleanupReleasePushL(*profileExtend);
-    const MProfileVibraSettings &vibraSettings =
-            profileExtend->ProfileVibraSettings();
-    
-    
-    bool reminderAlarmVibra = vibraSettings.ReminderAlarmVibra();
-    
-    CleanupStack::PopAndDestroy(profileExtend);
-    return reminderAlarmVibra;    
-    
-}
-
-void CpProfileModelPrivate::setReminderVibra(int profileId, bool isActive) 
-{
-    MProfileExtended2 *profileExtend = 0;
-    TRAPD( err,
-            profileExtend = mEngine->Profile2L(profileId);
-            //CleanupReleasePushL(*profileExtend);
-            )
-    if (err==KErrNone) {
-        CleanupReleasePushL(*profileExtend);
-        MProfileSetVibraSettings &setVibraSettings = profileExtend->ProfileSetVibraSettings();
-        
-        setVibraSettings.SetReminderAlarmVibra ( isActive );
-        
-        TRAP_IGNORE( 
-                mEngine->CommitChangeL(*profileExtend);
-                 )
-        CleanupStack::PopAndDestroy(profileExtend);
-    }
-}
-
-bool CpProfileModelPrivate::notificationVibra(int profileId) const
-{
-    MProfileExtended2 *profileExtend = 0;
-    TRAPD(err,
-            profileExtend = mEngine->Profile2L(profileId);
-            //CleanupReleasePushL(*profileExtend);
-            )
-    if (err != KErrNone) {
-        return false;
-    }
-    CleanupReleasePushL(*profileExtend);
-    const MProfileVibraSettings &vibraSettings =
-            profileExtend->ProfileVibraSettings();
-    
-    
-    bool notificationVibra = vibraSettings.InformationVibra();
-    
-    CleanupStack::PopAndDestroy(profileExtend);
-    return notificationVibra;    
-    
-}
-
-void CpProfileModelPrivate::setNotificationVibra(int profileId, bool isActive)
-{
-    MProfileExtended2 *profileExtend = 0;
-    TRAPD( err,
-            profileExtend = mEngine->Profile2L(profileId);
-            //CleanupReleasePushL(*profileExtend);
-            )
-    if (err==KErrNone) {
-        CleanupReleasePushL(*profileExtend);
-        MProfileSetVibraSettings &setVibraSettings = profileExtend->ProfileSetVibraSettings();
-        
-        setVibraSettings.SetInformationVibra( isActive );
-        
-        TRAP_IGNORE( 
-                mEngine->CommitChangeL(*profileExtend);
-                 )
-        CleanupStack::PopAndDestroy(profileExtend);
-    }                         
-}
-
+/*
+ * Get key touch screen vibra's value of a profile, return 0 if the
+ * profile id is invalid  
+ */
 int CpProfileModelPrivate::keyTouchScreenVibra(int profileId)const
 {
-    MProfileExtended2 *profileExtend = mProfileList.value(profileId);
+    int level = 0;
+    if(!isValidProfile(profileId)) {
+        return level;
+    }
+    QT_TRAP_THROWING(
+        MProfileExtended2 *profileExtend = mEngine->Profile2L(profileId);
+        CleanupStack::PushL(profileExtend);    
+        const MProfileExtraSettings &extraSettings =
+                    profileExtend->ProfileExtraSettings();
+        const MProfileFeedbackSettings &feedbackSettings =
+                    extraSettings.ProfileFeedbackSettings();
+        level = feedbackSettings.TactileFeedback();
+
+        CleanupStack::Pop(); // profileExtend
+        profileExtend->Release();
+    )
     
-    const MProfileExtraSettings &extraSettings =
-            profileExtend->ProfileExtraSettings();
-    const MProfileFeedbackSettings &feedbackSettings =
-            extraSettings.ProfileFeedbackSettings();
-    
-    int keyTouchScreenVibra = feedbackSettings.TactileFeedback();
-    return keyTouchScreenVibra;        
+    return level;
 }
 
+/*
+ * Set key & touch screen vibra for a profile, 
+ * if the profile id is invalid, nothing happens
+ */
 void CpProfileModelPrivate::setKeyTouchScreenVibra(int profileId, int level)
 {
-    MProfileExtended2 *profileExtend = mProfileList.value(profileId);
-    MProfileSetExtraSettings &extraSettings =
-            profileExtend->ProfileSetExtraSettings();
-    MProfileSetFeedbackSettings &setFeedbackSettings =
-            extraSettings.ProfileSetFeedbackSettings();
-    setFeedbackSettings.SetTactileFeedback(
-            static_cast<TProfileTactileFeedback> (level));
+    if(!isValidProfile(profileId)) {
+        return ;
+    }
+    QT_TRAP_THROWING(
+        MProfileExtended2 *profileExtend = mEngine->Profile2L(profileId);
+        CleanupStack::PushL(profileExtend);    
 
-    TRAP_IGNORE(
-            mEngine->CommitChangeL(*profileExtend);
+        MProfileSetExtraSettings &extraSettings =
+                profileExtend->ProfileSetExtraSettings();
+        MProfileSetFeedbackSettings &setFeedbackSettings =
+                extraSettings.ProfileSetFeedbackSettings();
+        setFeedbackSettings.SetTactileFeedback(
+                static_cast<TProfileTactileFeedback> (level));
+        mEngine->CommitChangeL(*profileExtend);
+        CleanupStack::Pop(); // profileExtend
+        profileExtend->Release();
     )                
+}
+
+/*
+ * Judge the profile is valid or not 
+ */
+
+bool CpProfileModelPrivate::isValidProfile(int profileId) const
+{
+    return mProfileList.contains(profileId);
 }
 
 // End of file

@@ -11,7 +11,7 @@
 *
 * Contributors:
 *
-* Description:  
+* Description:  Placeholder for plugin configured in cpcfg file but the target is missing.
 *
 */
 
@@ -36,5 +36,6 @@ private:
 	virtual CpBaseSettingView *createSettingView() const;
 };
 
-
 #endif //CPPLACEHOLDERITEMDATA_H
+
+//End of File

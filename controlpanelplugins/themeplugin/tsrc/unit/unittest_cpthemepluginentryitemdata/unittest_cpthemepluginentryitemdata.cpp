@@ -35,7 +35,7 @@ void TestCpThemePluginEntryItemData::testConstructor()
     CpItemDataHelper helper;
 
     CpThemePluginEntryItemData *obj = new CpThemePluginEntryItemData(helper);
-
+    
     QVERIFY(obj != NULL);
 
     delete obj;

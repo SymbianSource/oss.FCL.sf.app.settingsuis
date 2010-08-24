@@ -32,7 +32,7 @@ QList<CpSettingFormItemData*> CpKeyScreenPlugin::createSettingFormItemData(CpIte
             CpSettingFormEntryItemData::ListEntryItem,  // item type
 			itemDataHelper,
 			hbTrId("txt_cp_list_keys_screen"),  // text
-			QString(" "),                       // description
+			QString(""),                       // description
 			"qtg_large_key_screen");            // icon name
     return QList<CpSettingFormItemData*>() << itemData;
 }

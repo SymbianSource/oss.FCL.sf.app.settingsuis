@@ -35,15 +35,11 @@ symbian::TARGET.UID3=0x2002DDEF
 # Input
 
 HEADERS += ../../../src/cpthemepreview.h
-HEADERS += ../../../src/cpthemeclient_p.h
-win32::HEADERS += ../../../src/cpplugins/themeplugin/src/cpthemeclientqt_p.h
-symbian::HEADERS += ../../../src/cpthemeclientsymbian_p.h
+HEADERS += ../../../src/cpthemeinfo.h
+HEADERS += ../../../src/cpthemeutil.h
 HEADERS += ../../../src/cpthemechanger.h
-HEADERS += ../../../src/cpthemechanger_p.h
 SOURCES += unittest_cpthemepreview.cpp
 SOURCES += ../../../src/cpthemepreview.cpp
+SOURCES += ../../../src/cpthemeinfo.cpp
+SOURCES += ../../../src/cpthemeutil.cpp
 SOURCES += ../../../src/cpthemechanger.cpp
-SOURCES += ../../../src/cpthemeclient_p.cpp
-win32::SOURCES += ../../../src/cpplugins/themeplugin/src/cpthemeclientqt_p.cpp
-symbian::SOURCES += ../../../src/cpthemeclientsymbian_p.cpp
-SOURCES += ../../../src/cpthemechanger_p.cpp

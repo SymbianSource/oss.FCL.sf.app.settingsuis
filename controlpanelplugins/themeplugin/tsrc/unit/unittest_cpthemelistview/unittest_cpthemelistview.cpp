@@ -62,13 +62,13 @@ void TestCpThemeListView::testThemeList()
     delete listView;
 }
 
-// no getter so this is basically a NULL test.
 void TestCpThemeListView::testSetModel()
 {
     CpThemeListView *listView = new CpThemeListView();
     QStandardItemModel *model = new QStandardItemModel(this);
 
     listView->setModel(model);
+    QVERIFY(listView->themeList()->model() == model);
 
     // model shouldn't be deleted because it is a QObject with a parent.
 

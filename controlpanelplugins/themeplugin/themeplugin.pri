@@ -9,8 +9,7 @@
 # Contributors:
 # Description: cpthemeplugin source files
 # Input
-HEADERS += src/cpthemepreview.h \
-    src/cpthemecontrol.h \
+HEADERS += src/cpthemecontrol.h \
     src/cpthemeplugin.h \
     src/cpthemelistview.h \
     src/cpthemelistmodel.h \
@@ -18,8 +17,7 @@ HEADERS += src/cpthemepreview.h \
     src/cpthemepluginentryitemdata.h \
     src/cpthemeutil.h \
     src/cpthemeinfo.h
-SOURCES += src/cpthemepreview.cpp \
-    src/cpthemecontrol.cpp \
+SOURCES += src/cpthemecontrol.cpp \
     src/cpthemeplugin.cpp \
     src/cpthemelistview.cpp \
     src/cpthemelistmodel.cpp \

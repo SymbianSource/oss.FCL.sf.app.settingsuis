@@ -32,11 +32,9 @@ class CpThemeListModel : public QAbstractListModel
 public:
     
     enum ThemeListUserRole {
-               PortraitPreviewRole = Qt::UserRole,
-               LandscapePreviewRole,
-               ItemTypeRole,
-               ItemDataRole
-        };
+        ItemTypeRole = Qt::UserRole,
+        ItemDataRole
+    };
     
     explicit CpThemeListModel(QObject *parent = 0);
     virtual ~CpThemeListModel();

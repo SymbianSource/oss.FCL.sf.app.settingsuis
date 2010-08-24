@@ -11,7 +11,7 @@
 *
 * Contributors:
 *
-* Description:  
+* Description:  An extension to HbDataFormModel, can be filled with model items comes from controlpanel plugins.
 *
 */
 #ifndef CPCATEGORYSETTINGFORMMODEL_H
@@ -37,5 +37,7 @@ private:
 	CpCategorySettingFormModelPrivate *d;
 };
 
-
 #endif
+
+//End of File
+

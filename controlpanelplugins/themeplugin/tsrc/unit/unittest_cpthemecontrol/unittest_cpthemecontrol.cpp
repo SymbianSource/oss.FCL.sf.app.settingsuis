@@ -16,45 +16,32 @@
 */
 
 #include <QtTest/QtTest>
-#include <QModelIndex>
 #include <QSignalSpy>
+
+#include <hbinstance.h>
+#include <hbtheme.h>
 
 #include "cpthemechanger.h"
 #include "cpthemecontrol.h"
-#include "cpthemechanger.h"
+#include "cpthemeinfo.h"
+#include "cpthemeutil.h"
 
 class TestCpThemeControl : public QObject
 {
     Q_OBJECT
 
 private slots:
-    void init();
 
     void testConstructor();
     void testThemeListView();
     void testCurrentThemeName();
     void testCurrentThemeIcon();
-    void testNewThemeSelected();
-    void testPreviewClosed();
-    void testThemeApplied();
-    void testUpdateThemeList();
-
-    void cleanup();
-
+   
 private:
     CpThemeChanger* mThemeChanger;
 };
 
-// setup and cleanup
-void TestCpThemeControl::init()
-{
-    mThemeChanger = new CpThemeChanger();
-}
 
-void TestCpThemeControl::cleanup()
-{
-    delete mThemeChanger;
-}
 
 // verify that the constructor works and that the
 // defaults are sane.
@@ -64,7 +51,7 @@ void TestCpThemeControl::testConstructor()
 
     QVERIFY(control !=0 );
     QVERIFY(!control->currentThemeName().isEmpty());
-    QVERIFY(!control->currentThemeIcon().isEmpty());
+    QVERIFY(!control->currentThemeIcon().iconName().isEmpty());
 
     delete control;
 }
@@ -82,8 +69,8 @@ void TestCpThemeControl::testCurrentThemeName()
 {
     CpThemeControl control;
 
-    QVERIFY((control.currentThemeName() == mThemeChanger->currentTheme())
-        || (control.currentThemeName() == QString("hbdefault")));
+    QVERIFY( (control.currentThemeName() == hbInstance->theme()->name())  
+         || (control.currentThemeName() == QString("hbdefault")));
 }
 
 // test that we get a non-empty string for current theme icon
@@ -91,56 +78,10 @@ void TestCpThemeControl::testCurrentThemeIcon()
 {
     CpThemeControl control;
 
-    QVERIFY(!control.currentThemeIcon().isEmpty());
+    QVERIFY(!control.currentThemeIcon().isNull() && !control.currentThemeIcon().iconName().isEmpty());
 }
 
-// NULL test there's no way to externally get the model the QModelIndex is based on
-void TestCpThemeControl::testNewThemeSelected()
-{
-    CpThemeControl control;
-
-    control.newThemeSelected(QModelIndex());
-
-}
-
-// NULL test - basically verifies that it doesn't burst into flames.
-void TestCpThemeControl::testPreviewClosed()
-{
-    CpThemeControl control;
-
-    control.previewClosed();
-
-}
     
-void TestCpThemeControl::testThemeApplied()
-{
-    CpThemeControl control;
-    QList<CpThemeChanger::ThemeInfo> themeList = mThemeChanger->themes();
-    QSignalSpy spy(&control, SIGNAL(themeUpdated(const QString&, const QString&)));
-    int expectedSignalCount = 0;
-
-    for (int i = 0; i < themeList.size(); ++i) {
-        CpThemeChanger::ThemeInfo info = themeList.at(i);
-        QString name = info.themeName;
-
-        if (control.currentThemeName() == mThemeChanger->currentTheme()) {
-            ++expectedSignalCount;
-        }
-
-        control.themeApplied(name);
-        QCOMPARE(control.currentThemeName(), mThemeChanger->currentTheme());
-
-        QCOMPARE(spy.count(),expectedSignalCount);
-    }
-}
-    
-// NULL test - basically verifies that it doesn't burst into flames.
-void TestCpThemeControl::testUpdateThemeList()
-{
-    CpThemeControl control;
-
-    control.updateThemeList();
-}
 
 
 

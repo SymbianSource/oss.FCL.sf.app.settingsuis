@@ -3,7 +3,7 @@
   <plugin displayname = "Time &amp; data" id = "0X102818E9"  dll = "datetimesettingsplugin.dll">
     <desc></desc>
   </plugin>
-  <plugin displayname = "Language and region" id = "0X2002873C"  dll = "cplanguageplugin.dll">
+  <plugin displayname = "Language and region" id = "0X2002873C"  dll = "cplanguageplugin_na.dll">
     <desc></desc>
   </plugin>
   <plugin displayname = "Text and keyboard" id = "0X20025FDD"  dll = "cpinputsettingplugin.dll">
@@ -21,7 +21,7 @@
   <plugin displayname = "Reset" id = "0x10275117"  dll = "cprfsplugin.dll">
     <desc></desc>
   </plugin> 
-  <plugin displayname = "About" id = "0X2002873B"  dll = "cpaboutplugin.dll">
+  <plugin displayname = "About" id = "0X2002873B"  dll = "cpaboutplugin_na.dll">
     <desc></desc>
   </plugin> 
 </childplugins>

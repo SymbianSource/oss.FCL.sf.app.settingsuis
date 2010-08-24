@@ -29,20 +29,24 @@ CpLauncherService::CpLauncherService(HbMainWindow *mainWindow /* = 0*/)
   mAsyncRequestIndex(-1),
   mReturnValue(false)
 {
-    CPSP_LOG("CpLauncherService Constructing...");
+    CPSP_LOG_FUNC_ENTRY("CpLauncherService::CpLauncherService")
+    
     publishAll();
     connect(this,SIGNAL(clientDisconnected()),this,SLOT(handleClientDisconnected()));
 }
 
 CpLauncherService::~CpLauncherService()
 {
-    CPSP_LOG("CpLauncherService Destructing...");
+    CPSP_LOG_FUNC_ENTRY("CpLauncherService::~CpLauncherService")
 }
 
 bool CpLauncherService::complete()
 {
+    CPSP_LOG_FUNC_ENTRY("CpLauncherService::complete")
+    
     CPSP_LOG( QString("CpLauncherService::complete() mAsyncRequestIndex = %1, mReturnValue = %2").arg(
-            mAsyncRequestIndex).arg(mReturnValue.toBool()) );
+            mAsyncRequestIndex).arg(mReturnValue.toBool()) )
+    
     bool ret = completeRequest(mAsyncRequestIndex, mReturnValue);
     mAsyncRequestIndex = -1;
     return ret;
@@ -50,12 +54,14 @@ bool CpLauncherService::complete()
 
 void CpLauncherService::setReturnValue(const QVariant &returnValue)
 {
+    CPSP_LOG_FUNC_ENTRY("CpLauncherService::setReturnValue")
+    
     mReturnValue = returnValue;
 }
 
 bool CpLauncherService::launchSettingView(const QString &pluginFile,const QVariant &hint)
 {
-    CPSP_LOG("Entering CpLauncherService::launchSettingView");
+    CPSP_LOG_FUNC_ENTRY("CpLauncherService::launchSettingView");
    
     mAsyncRequestIndex = setCurrentRequestAsync();
     
@@ -83,14 +89,14 @@ bool CpLauncherService::launchSettingView(const QString &pluginFile,const QVaria
             qApp->quit();  //quit application if loading plugin failed or creating setting view failed.
         }
     }
-       
-    CPSP_LOG("Leaving CpLauncherService::launchSettingView");
     
     return succeed;
 }
 
 void CpLauncherService::handleClientDisconnected()
 {
+    CPSP_LOG_FUNC_ENTRY("CpLauncherService::handleClientDisconnected")
+        
     qApp->quit();
 }
 

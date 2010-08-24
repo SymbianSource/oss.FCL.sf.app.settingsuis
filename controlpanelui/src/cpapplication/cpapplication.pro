@@ -26,14 +26,14 @@ CONFIG += hb
 
 RESOURCES += cpapplication.qrc
 
-LIBS += -lcpframework -lcpcategorymodel
+LIBS += -lcplogger -lcpframework -lcpcategorymodel
 
 TRANSLATIONS = control_panel.ts
 
 symbian: { 
-          SKINICON = qtg_large_settings
-	  TARGET.UID3 = 0x20025FD9
-	  TARGET.EPOCHEAPSIZE = 0x020000 0x1000000
+    SKINICON = qtg_large_settings
+    TARGET.UID3 = 0x20025FD9
+    TARGET.EPOCHEAPSIZE = 0x020000 0x1000000
 	
     deploy.path = C:
     headers.sources += data/mainview.cpcfg

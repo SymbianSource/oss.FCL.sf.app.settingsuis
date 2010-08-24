@@ -23,15 +23,19 @@
 
 class QStringList;
 class CpThemeInfo;
+class HbIcon;
 
 class CpThemeUtil {
 
 public:
     static QList<CpThemeInfo> buildThemeList();
     static CpThemeInfo* buildThemeInfo(const QString& themePath, const QString& themeName = QString());
-    static CpThemeInfo* defaultTheme();
+    static QString defaultTheme();
     static const QList< QPair< QString, QString > > availableThemes(); 
     static const QStringList themeDirectories(const QList<CpThemeInfo> &themeInfoList);
+    
+private:
+    static HbIcon getPreviewIcon(const QString& themePath);
 
         
 };

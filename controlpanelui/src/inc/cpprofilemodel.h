@@ -44,11 +44,6 @@ public:
     bool mNotificationTone;
     int mKeyTouchScreenTone; // 0-5
     
-    bool mRingAlertVibra;
-    bool mMessageVibra;
-    bool mEmailVibra;
-    bool mReminderAlertVibra;
-    bool mNotificationVibra;
     int mKeyTouchScreenVibra; //0-5    
 };
 class PROFILE_WRAPPER_EXPORT CpProfileModel : QObject
@@ -59,22 +54,16 @@ public:
     ~CpProfileModel();
 
 public:
-    int initiationFlag();
     QString profileName(int profileId)const;
     QStringList profileNames()const;
     int activateProfile(int profileId);
     int activeProfileId() const;
-    void profileSettings(int profileId, CpProfileSettings& profileSettings);
-    int setProfileSettings(int profileId, CpProfileSettings& profileSettings );
     
-    /*!
-     * set ring tone in personalization group in control panel's homeview
-     */
+    void profileSettings(int profileId, CpProfileSettings& profileSettings);
+    void setProfileSettings(int profileId, CpProfileSettings& profileSettings );
+    
     QString ringTone() const;
     void setRingTone(const QString& filePath);
-    
-   /* QString alarmTone();
-    void setAlarmTone(const QString& filePath);*/
     
     int masterVolume() const;
     void setMasterVolume(int volume);
@@ -85,9 +74,6 @@ public:
         
     bool silenceMode() const;
     void setSilenceMode(bool isSlience);
-    
-    bool offLineMode() const;    
-    void setOffLineMode(bool isOffLine);
     
     /*!
      *  For profile settings 
@@ -107,21 +93,6 @@ public:
     
     int keyTouchScreenTone(int profileId) const;
     void setKeyTouchScreenTone(int profileId, int level);
-    
-    bool ringAlertVibra(int profileId) const;
-    void setRingAlertVibra(int profileId, bool isActive);
-    
-    bool messageVibra(int profileId) const;
-    void setMessageVibra(int profileId, bool isActive);
-    
-    bool emailVibra(int profileId) const;
-    void setEmailVibra(int profileId, bool isActive);
-    
-    bool reminderVibra(int profileId) const;
-    void setReminderVibra(int profileId, bool isActive);
-    
-    bool notificationVibra(int profileId) const;
-    void setNotificationVibra(int profileId, bool isActive);
     
     int keyTouchScreenVibra(int profileId)const;
     void setKeyTouchScreenVibra(int profileId, int level);

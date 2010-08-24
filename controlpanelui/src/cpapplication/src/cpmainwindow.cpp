@@ -30,7 +30,11 @@ CpMainWindow::CpMainWindow(QWidget *parent /*= 0*/, Hb::WindowFlags windowFlags 
 
 CpMainWindow::~CpMainWindow()
 {
-    
+    CpMainView *mainView = qobject_cast<CpMainView *>(views().first());
+    if(mainView)
+        {
+        mainView->saveActivity();
+        }
 }
 
 bool CpMainWindow::event(QEvent *e)

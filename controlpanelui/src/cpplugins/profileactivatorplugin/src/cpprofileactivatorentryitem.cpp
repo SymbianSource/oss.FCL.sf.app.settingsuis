@@ -20,7 +20,7 @@
 #include <cpitemdatahelper.h>
 #include <cpprofilemodel.h>
 #include <QScopedPointer>
-#include "cpprofilemonitor.h"
+#include <cpprofilemonitor.h>
 
 CpProfileActivatorEntryItem::CpProfileActivatorEntryItem(CpItemDataHelper &itemDataHelper,
                 const QString &text,
