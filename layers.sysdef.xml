@@ -1,22 +1,17 @@
 <?xml version="1.0"?>
-
-<!DOCTYPE SystemDefinition SYSTEM "sysdef_1_4_0.dtd" [
+<!DOCTYPE SystemDefinition SYSTEM "sysdef_1_5_1.dtd" [
   <!ENTITY layer_real_source_path "sf/app/settingsuis" >
 ]>
 
-<SystemDefinition name="settingsuis" schema="1.4.0">
+<SystemDefinition name="settingsuis" schema="1.5.1">
   <systemModel>
     <layer name="app_layer">
-      <module name="settingsuis">
-      <unit name="settingsuis" unitID="presdo.settingsuis" bldFile="&layer_real_source_path;/group" mrp="" />
+    	<module name="themeplugin">
+        <unit unitID="themeplugin" mrp="" bldFile="&layer_real_source_path;/controlpanelplugins/themeplugin" name="themeplugin" proFile="themeplugin.pro" qmakeArgs="-r -config rom"/>
+      </module>
+      <module name="controlpanelui">
+        <unit unitID="controlpanelui" mrp="" bldFile="&layer_real_source_path;/controlpanelui" name="controlpanelui" proFile="controlpanelui.pro" qmakeArgs="-r -config rom"/>
       </module>
     </layer>
-    <layer name="api_test_layer">
-      <module name="settingsuis_test">
-      <!--<unit unitID="presdo.settingsuis_test" mrp="" bldFile="&layer_real_source_path;/tsrc/group" name="settingsuis_test" />-->
-      <unit unitID="presdo.settingsuis_test" mrp="" bldFile="&layer_real_source_path;/devmngt_plat/services_db_api/tsrc/ServicesDbApiTest/group" name="settingsuis_test" />
-      </module>
-    </layer>      
   </systemModel>
 </SystemDefinition>
-

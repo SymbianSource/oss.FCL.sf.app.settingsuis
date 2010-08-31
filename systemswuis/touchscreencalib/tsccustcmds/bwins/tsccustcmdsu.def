@@ -1,3 +1,0 @@
-EXPORTS
-	?CmdTSCStartupExtensionNewL@TSCCustCmdFactory@@SAPAVMSsmCustomCommand@@XZ @ 1 NONAME ; class MSsmCustomCommand * TSCCustCmdFactory::CmdTSCStartupExtensionNewL(void)
-
