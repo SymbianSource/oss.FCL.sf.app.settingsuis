@@ -1,0 +1,59 @@
+/*
+* Copyright (c) 2008 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0""
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  Localization strings for TouchScreenCalib
+*
+*/
+
+
+// LOCALISATION STRINGS
+
+//d:Asks user to tap center of the target with stylus.
+//l:main_touch_calib_pane_t1
+//w:
+//r:3.2
+//
+#define qtn_touch_screen_cali_instr_gen "Touch screen calibration step %N of 4: Use stylus to tap center of target."
+
+//d:Used to tell user that pressing Send key cancels calibration and exits application.
+//d:This is used when TouchScreenCalib application is started from General Settings by user.
+//l:main_touch_calib_pane_t2
+//w:
+//r:3.2
+//
+#define qtn_touch_screen_cali_instr_can "To cancel press Send key."
+
+//d:Used to tell user that pressing Send key resets calibration and calibration
+//d:begins again from point 1. This is used when TouchScreenCalib application is
+//d:started when the phone is starter for the first time.
+//l:main_touch_calib_pane_t2
+//w:
+//r:3.2
+//
+#define qtn_touch_screen_cali_instr_res "To start again from point 1 press Send key."
+
+//d:This Information Note is displayed if user cancels calibration with Send key press.
+//l:popup_note_window/opt2
+//w:
+//r:5.0
+//
+#define qtn_touch_screen_cali_cancel "Calibration cancelled."
+
+//d:This Confirmation Note is dipslayed when calibration is done succesfully.
+//l:popup_note_window/opt2
+//w:
+//r:3.2
+//
+#define qtn_touch_screen_cali_done "Calibration successful!"
+
+// End of File

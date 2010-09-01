@@ -1,0 +1,48 @@
+/*
+* Copyright (c) 2006 - 2008 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0""
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  This file provides the information required for building the
+*                whole of a TouchScreenCalib.
+*
+*/
+
+#include <platform_paths.hrh>
+
+PRJ_PLATFORMS
+DEFAULT
+
+PRJ_EXPORTS
+../loc/touchscreencalib.loc             APP_LAYER_LOC_EXPORT_PATH(touchscreencalib.loc)
+../rom/TouchScreenCalib.iby             CORE_APP_LAYER_IBY_EXPORT_PATH(touchscreencalib.iby)
+../rom/TouchScreenCalib_variant.iby     CUSTOMER_APP_LAYER_IBY_EXPORT_PATH(touchscreencalib_variant.iby)
+../rom/TouchScreenCalibResources.iby    LANGUAGE_APP_LAYER_IBY_EXPORT_PATH(touchscreencalibresources.iby)
+../PubSub/touchscprivatepskeys.h        |../../inc/touchscprivatepskeys.h
+
+PRJ_MMPFILES
+
+TouchScreenCalib.mmp
+../tscstartupextensionplugin/group/tscstartupextensionplugin.mmp
+../tsccustcmds/group/tsccustcmds.mmp
+
+PRJ_EXTENSIONS
+
+START EXTENSION s60/mifconv
+OPTION TARGETFILE touchscreencalib.mif
+OPTION HEADERFILE touchscreencalib.mbg
+OPTION SOURCES -c16,8 Qgn_graf_screencalib \
+		-c16,8 Qgn_graf_screencalib_1 \
+		-c16,8 Qgn_graf_screencalib_2 \
+		-c16,8 Qgn_graf_screencalib_3 \
+		-c16,8 Qgn_graf_screencalib_4 \
+		-c16,8 Qgn_graf_screencalib_5
+END

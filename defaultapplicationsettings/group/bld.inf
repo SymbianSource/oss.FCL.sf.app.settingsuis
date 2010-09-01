@@ -1,0 +1,30 @@
+/*
+* Copyright (c) 2005-2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0""
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  Build information file for project DefaultApplicationSettings
+*
+*/
+
+
+#include <platform_paths.hrh>
+
+#include "../services_db/group/bld.inf"
+#include "../server/group/bld.inf"
+#include "../service/group/bld.inf"
+#include "../gsplugin/group/bld.inf"
+
+PRJ_EXPORTS
+
+../rom/DefaultApplicationSettings.iby CORE_APP_LAYER_IBY_EXPORT_PATH(defaultapplicationsettings.iby)
+../rom/DefaultApplicationSettingsResources.iby LANGUAGE_APP_LAYER_IBY_EXPORT_PATH(defaultapplicationsettingsresources.iby)
+

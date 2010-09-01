@@ -1,0 +1,62 @@
+/*
+* Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0""
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: Resource definitions for project ServicesDbApiTest
+*
+*/
+// ---------------------------------------------------------------------------
+// r_da_services_mime
+// This resource stores localized strings for the supported services, identified
+// by their Uid and generic name.
+// This resource is defined in the services_db.rh file
+// ---------------------------------------------------------------------------
+//
+#include    <bldvariant.hrh>
+#include    <avkon.rh>
+//#include    <avkon.rsg>
+//#include    <avkon.mbg>
+//#include    <eikcore.rsg>
+#include    <eikon.rh>
+//#include    <eikon.rsg>
+//#include    <avkon.loc>
+//#include    <data_caging_paths_strings.hrh>
+#include <services_db.rh>
+//  RESOURCE IDENTIFIER
+NAME    SDBT // 4 letter ID
+RESOURCE RSS_SIGNATURE { }
+RESOURCE TBUF { buf=""; }
+
+RESOURCE DAS_SERVICES r_da_service_mime
+    {
+    services = 
+        {
+        DAS_SERVICE_ENTRY
+            {
+            service_uid = 0x101; // NOT A REAL UID
+            service_name = "Open";
+            service_localized_name = "Open Localized";
+            },
+        DAS_SERVICE_ENTRY
+            {
+            service_uid = 0x102; // NOT A REAL UID
+            service_name = "Upload";
+            service_localized_name = "Upload Localized";
+            },
+        DAS_SERVICE_ENTRY
+            {
+            service_uid = 0x103; // NOT A REAL UID
+            service_name = "Print";
+            service_localized_name = "Print Localized %U";
+            }
+        };
+    }    
