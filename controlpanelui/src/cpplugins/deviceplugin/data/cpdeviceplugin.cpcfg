@@ -21,7 +21,7 @@
   <plugin displayname = "Reset" id = "0x10275117"  dll = "cprfsplugin.dll">
     <desc></desc>
   </plugin> 
-  <plugin displayname = "About" id = "0X2002873B"  dll = "cpaboutplugin_na.dll">
+  <plugin displayname = "About" id = "0X2002873B"  dll = "cpaboutplugin.dll">
     <desc></desc>
   </plugin> 
 </childplugins>
