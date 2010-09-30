@@ -31,3 +31,6 @@ LIBS += -lxqservice -lxqserviceutil -lcplogger -lcpframework
 SERVICE.FILE = service_conf.xml
 SERVICE.OPTIONS = embeddable
 SERVICE.OPTIONS += hidden
+
+
+symbian:MMP_RULES += SMPSAFE

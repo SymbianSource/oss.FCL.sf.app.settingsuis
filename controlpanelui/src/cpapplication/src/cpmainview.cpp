@@ -142,11 +142,14 @@ void CpMainView::saveActivity()
 void CpMainView::onDataFormItemActivated(const QModelIndex &index)
 {
     CPFW_LOG("CpMainView::onDataFormItemActivated");
-    CpSettingFormItemData *itemData = static_cast<CpSettingFormItemData *>(mMainModel->itemFromIndex(index));
-
-    if (CpCategorySettingFormItemData *categoryItemData = qobject_cast<CpCategorySettingFormItemData*>(itemData)) {
-        categoryItemData->initialize(*mItemDataHelper);
-    }    
+    HbDataFormModelItem *modelItem = mMainModel->itemFromIndex(index);
+    if (modelItem != 0 && modelItem->type() == HbDataFormModelItem::GroupItem) {
+        CpSettingFormItemData *itemData = static_cast<CpSettingFormItemData *>(modelItem);
+        if (CpCategorySettingFormItemData *categoryItemData = qobject_cast<CpCategorySettingFormItemData *>(itemData)) {
+            categoryItemData->initialize(*mItemDataHelper);
+        }    
+    }
+        
 }
 void CpMainView::onAboutToChangeView(HbView * oldView, HbView *newView)
 {

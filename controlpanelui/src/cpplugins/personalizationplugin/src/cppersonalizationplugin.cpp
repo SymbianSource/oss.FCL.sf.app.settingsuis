@@ -29,7 +29,7 @@ CpPersonalizationPlugin::~CpPersonalizationPlugin()
 {
 }
 
-QList<CpSettingFormItemData*> CpPersonalizationPlugin::createSettingFormItemData(CpItemDataHelper &itemDataHelper) const
+QList<CpSettingFormItemData*> CpPersonalizationPlugin::createSettingFormItemData(CpItemDataHelper &/*itemDataHelper*/) const
 {
   
     CpPersonalizationGroupItemData *personalItemData = 

@@ -40,6 +40,7 @@ public:
 public:
     QString profileName(int profileId) const;
     QStringList profileNames() const;
+    void setProfileName(int profileId, const QString &name);
     int activateProfile(int profileId);
     int activeProfileId() const;
     void profileSettings(int profileId, CpProfileSettings& profileSettings);

@@ -18,6 +18,8 @@
 #ifndef CPKEYSCREENMODEL_P_H
 #define CPKEYSCREENMODEL_P_H
 
+#include <qglobal.h>
+
 class CRepository;
 
 class CpKeyScreenModelPrivate
@@ -25,7 +27,6 @@ class CpKeyScreenModelPrivate
 public:
     CpKeyScreenModelPrivate();
     ~CpKeyScreenModelPrivate();
-
 public:
     bool isKeyguardSupported();
     int keyguard();
@@ -36,12 +37,16 @@ public:
     bool isBrightnessSupported();
     int brightness();
     void setBrightness(int value);
-    bool isCallibrationSupported();
-
+    bool isScreensaverSupported();
+    bool screensaver();
+    void setScreensaver(bool value);
 private:
+#ifdef Q_OS_SYMBIAN
     CRepository* mLightCenRep;
     CRepository* mSecurityCenRep;
     CRepository* mRotateSensor;
+    CRepository* mScreenSaver;
+#endif
     };
 
 #endif

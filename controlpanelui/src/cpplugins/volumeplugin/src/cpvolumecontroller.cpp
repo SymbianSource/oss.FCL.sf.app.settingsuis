@@ -118,19 +118,7 @@ void CpVolumeController::updateUi()
 	HbDataFormModelItem *masterVolume = mItemList.at(CpVolumeGroupItemData::EVolumeMasterVolumeItem);
 	if (masterVolume) {
 	    CPFW_LOG("::updateMasterVolumeValue(), Start using profile model.");
-	    QMap<QString, QVariant> iconMaps;
-	    if (isSilenceMode) {
-	        CPFW_LOG("::updateMasterVolumeValue(), Got silent state.");
-	        iconMaps.insert(QString("DecreaseElement"), QVariant(":/icon/hb_vol_slider_decrement.svg"));
-	        iconMaps.insert(QString("IncreaseElement"), QVariant(":/icon/hb_vol_slider_increment.svg"));
-	        iconMaps.insert(QString("IconElement"), QVariant(":/icon/hb_vol_slider_muted.svg"));
-	    }
-	    else {
-            iconMaps.insert(QString("DecreaseElement"), QVariant(":/icon/hb_vol_slider_decrement.svg"));
-	        iconMaps.insert(QString("IncreaseElement"), QVariant(":/icon/hb_vol_slider_increment.svg"));
-	        iconMaps.insert(QString("IconElement"), QVariant(":/icon/hb_vol_slider_unmuted.svg"));
-	    }
-	    masterVolume->setContentWidgetData("elementIcons", iconMaps);
+        setSilderSpeakerIcon(isSilenceMode);
 	    masterVolume->setEnabled(!isSilenceMode);
 	    //masterVolume->setContentWidgetData("enabled",!isSilenceMode);
 	    masterVolume->setContentWidgetData("value",mProfileModel->masterVolume());
@@ -148,18 +136,7 @@ void CpVolumeController::settingValueChanged(const XQSettingsKey &key, const QVa
     if (key.uid() == KCRUidProfileEngine.iUid && key.key() == KProEngSilenceMode) {
         HbDataFormModelItem *masterVolume = mItemList.at(CpVolumeGroupItemData::EVolumeMasterVolumeItem);
         if (masterVolume) {
-        		QMap<QString, QVariant> iconMaps;
-        		if (value.toBool()) {
-                    iconMaps.insert(QString("DecreaseElement"), QVariant(":/icon/hb_vol_slider_decrement.svg"));
-        		    iconMaps.insert(QString("IncreaseElement"), QVariant(":/icon/hb_vol_slider_increment.svg"));
-        			iconMaps.insert(QString("IconElement"), QVariant(":/icon/hb_vol_slider_muted.svg"));
-        		}
-        		else {
-                    iconMaps.insert(QString("DecreaseElement"), QVariant(":/icon/hb_vol_slider_decrement.svg"));
-        		    iconMaps.insert(QString("IncreaseElement"), QVariant(":/icon/hb_vol_slider_increment.svg"));
-        		    iconMaps.insert(QString("IconElement"), QVariant(":/icon/hb_vol_slider_unmuted.svg"));
-        		}
-        		masterVolume->setContentWidgetData("elementIcons", iconMaps);
+            setSilderSpeakerIcon(value.toBool());
             masterVolume->setEnabled(!value.toBool());
         }
         HbDataFormModelItem *silenceMode = mItemList.at(CpVolumeGroupItemData::EVolumeSilenceItem);
@@ -178,6 +155,24 @@ void CpVolumeController::settingValueChanged(const XQSettingsKey &key, const QVa
         if (masterVibra) {
             masterVibra->setContentWidgetData("checkState",(value.toInt() ? 2 : 0));
         }
+    }
+}
+/**
+ * set speaker icon for volume silder 
+ */
+void CpVolumeController::setSilderSpeakerIcon(bool isSpeakerOff)
+{
+    HbDataFormModelItem *masterVolume = mItemList.at(CpVolumeGroupItemData::EVolumeMasterVolumeItem);
+    if (masterVolume != 0) {
+        QMap<QString, QVariant> iconMaps;
+        iconMaps = masterVolume->contentWidgetData("elementIcons").toMap();
+        if (isSpeakerOff) {
+            iconMaps.insert("IconElement", QVariant("qtg_mono_speaker_off"));
+        }
+        else {
+            iconMaps.insert("IconElement", QVariant("qtg_mono_speaker"));
+        }
+        masterVolume->setContentWidgetData("elementIcons", QVariant(iconMaps));
     }
 }
 

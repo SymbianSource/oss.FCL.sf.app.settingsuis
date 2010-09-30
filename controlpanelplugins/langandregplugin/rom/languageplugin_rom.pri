@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+# Copyright (c) 2010 Nokia Corporation and/or its subsidiary(-ies).
 # All rights reserved.
 # This component and the accompanying materials are made available
 # under the terms of "Eclipse Public License v1.0"
@@ -11,10 +11,11 @@
 #
 # Contributors:
 #
-# Description: cpdeviceplugin source files
+# Description: 
 #
 
-
-# Input
-HEADERS += src/cplookfeelplugin.h 
-SOURCES += src/cplookfeelplugin.cpp 
+symbian {
+		BLD_INF_RULES.prj_exports += \
+				"$${LITERAL_HASH}include<platform_paths.hrh>" \
+				"rom/languageplugin.iby CORE_APP_LAYER_IBY_EXPORT_PATH(languageplugin.iby)"
+}

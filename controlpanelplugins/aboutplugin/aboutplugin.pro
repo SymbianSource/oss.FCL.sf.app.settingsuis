@@ -84,3 +84,5 @@ symbian: plugin { # copy qtstub and manifest
      
     for(qtplugin, qtplugins.sources):BLD_INF_RULES.prj_exports += "./$$qtplugin  $$deploy.path$$qtplugins.path/$$basename(qtplugin)" 
 }
+symbian:MMP_RULES += SMPSAFE
+# End of file   --Don't remove this.

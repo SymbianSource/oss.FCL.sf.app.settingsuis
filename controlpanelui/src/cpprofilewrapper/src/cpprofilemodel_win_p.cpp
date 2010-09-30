@@ -45,6 +45,16 @@ QString CpProfileModelPrivate::profileName(int profileId)
 }
 
 /*
+ * Set profile name with \a profileId.
+ */
+int CpProfileModelPrivate::setProfileName(int profileId, const QString &name)
+{
+    Q_UNUSED(profileId);
+    Q_UNUSED(name);
+    return -1;
+}
+
+/*
  * Activate a profile with its id, return the operation code.
  */
 int CpProfileModelPrivate::activateProfile(int profileId)

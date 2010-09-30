@@ -79,7 +79,7 @@ void TestCpProfileModel::testConstructor()
         <1> return QString( "General" ) \n &nbsp;&nbsp;
         <2> return QString( "Meeting" ) \n
  */
-void TestCpProfileModel::testProfileNameWithValidProfileID()
+/*void TestCpProfileModel::testProfileNameWithValidProfileID()
 {
     CpProfileModel *profileModel = new CpProfileModel();
     
@@ -90,7 +90,7 @@ void TestCpProfileModel::testProfileNameWithValidProfileID()
     QVERIFY( profileName2 == QString("Meeting") );
     
     delete profileModel;
-}
+}*/
 /*!
      Test Case Description:\n 
      1. Fucntion Name: QString profileName(int profileId)const; \n
@@ -134,7 +134,7 @@ void TestCpProfileModel::testProfileNameWithInvalidProfileID()
      4. Expected result: \n &nbsp;&nbsp;
          \n
  */
-void TestCpProfileModel::testProfileNames()
+/*void TestCpProfileModel::testProfileNames()
 {
     CpProfileModel *profileModel = new CpProfileModel();
     
@@ -146,7 +146,7 @@ void TestCpProfileModel::testProfileNames()
     QVERIFY( profilesNames.contains("Meeting", Qt::CaseInsensitive));    
     
     delete profileModel;
-}
+}*/
 
 /*!
      Test Case Description:\n 

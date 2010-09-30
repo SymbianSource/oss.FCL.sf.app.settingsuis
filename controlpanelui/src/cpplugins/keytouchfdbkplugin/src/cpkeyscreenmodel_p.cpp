@@ -25,13 +25,17 @@
 #include <settingsinternalcrkeys.h>     // KCRUidSecuritySettings
 #include <hwrmlightdomaincrkeys.h>      // KCRUidLightSettings
 #include <featmgr.h>
+#include <screensaverdomaincrkeys.h>      // KCRUidScreensaverSettings
+
 
 CpKeyScreenModelPrivate::CpKeyScreenModelPrivate()
 {
     TRAP_IGNORE(
     mLightCenRep = CRepository::NewL( KCRUidLightSettings );
     mSecurityCenRep = CRepository::NewL( KCRUidSecuritySettings );
-    mRotateSensor = CRepository::NewL(KHbSensorCenrepUid););
+    mRotateSensor = CRepository::NewL(KHbSensorCenrepUid);
+    mScreenSaver = CRepository::NewL(KCRUidScreensaverSettings);)
+
 }
 
 CpKeyScreenModelPrivate::~CpKeyScreenModelPrivate()
@@ -39,6 +43,7 @@ CpKeyScreenModelPrivate::~CpKeyScreenModelPrivate()
     delete mLightCenRep;
     delete mSecurityCenRep;
     delete mRotateSensor;
+    delete mScreenSaver;
 }
 
 bool CpKeyScreenModelPrivate::isKeyguardSupported()
@@ -80,13 +85,25 @@ void CpKeyScreenModelPrivate::setRotate(bool value)
     mRotateSensor->Set(KHbSensorCenrepKey, value);
 }
 
+bool CpKeyScreenModelPrivate::screensaver()
+{
+    int screensaver = 0;
+    mScreenSaver->Get(KScreensaverStatus, screensaver);
+    return screensaver;
+}
+
+void CpKeyScreenModelPrivate::setScreensaver(bool value)
+{
+    mScreenSaver->Set(KScreensaverStatus, value);
+}
+bool CpKeyScreenModelPrivate::isScreensaverSupported()
+{    
+    return FeatureManager::FeatureSupported( KFeatureIdFfBigclockScreensaver );
+}
+
 bool CpKeyScreenModelPrivate::isBrightnessSupported()
 {
-    if ( FeatureManager::FeatureSupported( KFeatureIdBrightnessControl ) ){
-        return true;
-    } else {
-        return false;
-    }
+    return FeatureManager::FeatureSupported( KFeatureIdBrightnessControl );
 }
 
 int CpKeyScreenModelPrivate::brightness()
@@ -98,12 +115,10 @@ int CpKeyScreenModelPrivate::brightness()
 
 void CpKeyScreenModelPrivate::setBrightness(int value)
 {
-    mLightCenRep->Set( KLightIntensity, value * 20 );
+    if ((value >= 1) && (value <= 5)) {
+        mLightCenRep->Set( KLightIntensity, value * 20 );
+    }
 }
 
-bool CpKeyScreenModelPrivate::isCallibrationSupported()
-{
-    return true;
-}
 
 // End of the file

@@ -31,3 +31,6 @@ symbian: {
 }
 
 
+
+
+symbian:MMP_RULES += SMPSAFE

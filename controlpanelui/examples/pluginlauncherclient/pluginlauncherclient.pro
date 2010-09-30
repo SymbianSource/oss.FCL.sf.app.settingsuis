@@ -36,3 +36,6 @@ symbian {
 
 LIBS += -lxqservice -lcpframework
 symbian::TARGET::UID3 = 0X2002873A
+
+
+symbian:MMP_RULES += SMPSAFE

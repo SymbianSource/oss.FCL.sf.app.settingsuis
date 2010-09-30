@@ -30,9 +30,9 @@ private slots:
     
     void testConstructor(); // test the constructor.    
 
-    void testProfileNameWithValidProfileID(); // test the profileName() function with valid profile ID. 
+    //void testProfileNameWithValidProfileID(); // test the profileName() function with valid profile ID. 
     void testProfileNameWithInvalidProfileID(); // test the profileName() function with invalid profile ID.
-    void testProfileNames(); // test the profileNames() function.
+    //void testProfileNames(); // test the profileNames() function.
    
     void testActivateProfileWithInvalidID(); //test the activateProfile() function with invalid profile ID.
     void testActivateProfileWithValidID(); // test the activateProfile() function with valid profile ID.

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (c) 2010 Nokia Corporation and/or its subsidiary(-ies).
  * All rights reserved.
  * This component and the accompanying materials are made available
  * under the terms of "Eclipse Public License v1.0""
@@ -12,26 +12,27 @@
  * Contributors:
  *
  * Description:  
- *
+ *   
  */
+#ifndef	CPLANGUAGEPLUGIN_H
+#define	CPLANGUAGEPLUGIN_H
 
-#ifndef CPLOOKFEELPLUGIN_H
-#define CPLOOKFEELPLUGIN_H
-
-
-#include <qobject.h>
+#include <QObject.h>
 #include <cpplugininterface.h>
+#include "cplanguageplugin_global.h"
 
-class CpLookFeelPlugin  : public QObject,
-	                    public CpPluginInterface
+class CpLanguagePlugin : public QObject, public CpPluginInterface
 {
     Q_OBJECT
     Q_INTERFACES(CpPluginInterface)
 public:
-    CpLookFeelPlugin();
-    virtual ~CpLookFeelPlugin();
+    CpLanguagePlugin();
+    virtual ~CpLanguagePlugin();
     virtual QList<CpSettingFormItemData*> createSettingFormItemData(CpItemDataHelper &itemDataHelper) const;
+public:
+    static void updateEntryItem();
 };
 
+#endif // CPLANGUAGEPLUGIN_H
 
-#endif /* CPLOOKFEELPLUGIN_H */
+//End of File

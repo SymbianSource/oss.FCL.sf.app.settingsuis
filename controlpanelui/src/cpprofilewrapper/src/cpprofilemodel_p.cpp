@@ -33,6 +33,7 @@
 #include <MProfileFeedbackSettings.h>
 #include <MProfileSetFeedbackSettings.h>
 #include <MProfilesNamesArray.h>
+#include <MProfileSetName.h>
 #include <settingsinternalcrkeys.h>
 #include <hbglobal.h>
 #include <QtCore/QStringList>
@@ -50,8 +51,7 @@
  * Constructor
  */
 CpProfileModelPrivate::CpProfileModelPrivate()
-    : mEngine(0),
-      mProfileNames(0),
+    : mEngine(0),      
       q_ptr(0)
 {
     
@@ -66,8 +66,6 @@ void CpProfileModelPrivate::initialize(CpProfileModel *parent)
     CPFW_LOG("CpProfileModelPrivate::CpProfileModelPrivate(), START.");
     TRAP_IGNORE(
         mEngine = CreateProfileEngineExtended2L();
-        mProfileNames = mEngine->ProfilesNamesArrayLC();
-        CleanupStack::Pop(); // pop the pointer of mProfileNames
         /*
          * Currently, engine part will return all previous version of profile
          * so some invalid profile will be added in the new list, to avoid this 
@@ -94,9 +92,6 @@ CpProfileModelPrivate::~CpProfileModelPrivate()
     if (mEngine!=0) {
         mEngine->Release();
     }
-    if (mProfileNames) {
-        delete mProfileNames;
-    }
 	mProfileList.clear();
 }
 
@@ -110,14 +105,38 @@ QString CpProfileModelPrivate::profileName(int profileId) const
     if (!isValidProfile(profileId)) {
         return QString();
     }
-    
-    const MProfileName* name = mProfileNames->ProfileName(profileId);
     QString profileName;
-    if (name != 0) {
-        profileName = XQConversions::s60DescToQString(name->Name());
-    }
-    CPFW_LOG("CpProfileModelPrivate::profileName(), END.");
+    QT_TRAP_THROWING(        
+        MProfile *profile = mEngine->Profile2L(profileId);
+        const MProfileName &name = profile->ProfileName();        
+        if (name.Name().Length() > 0) {
+            profileName = XQConversions::s60DescToQString(name.Name());
+        }
+        profile->Release();
+    )
     return profileName;    
+    
+}
+
+/*
+ * Set profile name with \a profileId.
+ */
+void CpProfileModelPrivate::setProfileName(int profileId, const QString &name)
+{
+    if(!isValidProfile(profileId)) {
+        return;
+    }
+    HBufC *des = XQConversions::qStringToS60Desc( name );
+    QT_TRAP_THROWING(
+        CleanupStack::PushL(des);
+        MProfileExtended *profileExtend = mEngine->Profile2L(profileId);
+        CleanupStack::PushL(profileExtend);
+        MProfileSetName &profileSetName = profileExtend->ProfileSetName();
+        profileSetName.SetNameL(*des);
+        mEngine ->CommitChangeL(*profileExtend);
+        CleanupStack::Pop(2); // des, profileExtend
+        profileExtend->Release();
+    )    
 }
 
 /*
@@ -126,15 +145,17 @@ QString CpProfileModelPrivate::profileName(int profileId) const
 QStringList CpProfileModelPrivate::profileNames() const
 {
     CPFW_LOG("CpProfileModelPrivate::profileNames(), START.");
-    QStringList nameList;
-
-    foreach(int profileId, mProfileList) {
-        const MProfileName *name = mProfileNames->ProfileName(profileId);
-        if (name != 0) {
-            nameList.append(XQConversions::s60DescToQString(name->Name()));
-        }
+    QStringList nameList;    
+    foreach(int profileId, mProfileList) {               
+        QT_TRAP_THROWING(        
+            MProfile *profile = mEngine->Profile2L(profileId);
+            const MProfileName &name = profile->ProfileName();
+            if (name.Name().Length() > 0) {
+                nameList.append(XQConversions::s60DescToQString(name.Name()));
+            }
+            profile->Release();
+        )
     }
-
     CPFW_LOG("CpProfileModelPrivate::profileNames(), END.");
     return nameList;
 }
@@ -228,15 +249,25 @@ void CpProfileModelPrivate::setProfileSettings(int profileId, CpProfileSettings&
         MProfileSetFeedbackSettings &setFeedbackSettings =
                 extraSettings.ProfileSetFeedbackSettings();
         
+        HBufC *setting = XQConversions::qStringToS60Desc(profileSettings.mRingTone);
+        CleanupStack::PushL(setting);
+        setTones.SetRingingTone1L(*setting);
+        CleanupStack::PopAndDestroy();
         
-        setTones.SetRingingTone1L(*XQConversions::qStringToS60Desc(
-                profileSettings.mRingTone));
-        setTones.SetMessageAlertToneL(*XQConversions::qStringToS60Desc(
-                profileSettings.mMessageTone));
-        setExtTones.SetEmailAlertToneL(*XQConversions::qStringToS60Desc(
-                profileSettings.mEmailTone));
-        setExtTones.SetReminderToneL(*XQConversions::qStringToS60Desc(
-                profileSettings.mReminderTone));
+        setting = XQConversions::qStringToS60Desc(profileSettings.mMessageTone);
+        CleanupStack::PushL(setting);
+        setTones.SetMessageAlertToneL(*setting);
+        CleanupStack::PopAndDestroy();
+        
+        setting = XQConversions::qStringToS60Desc(profileSettings.mEmailTone);
+        CleanupStack::PushL(setting);
+        setExtTones.SetEmailAlertToneL(*setting);
+        CleanupStack::PopAndDestroy();
+        
+        setting = XQConversions::qStringToS60Desc(profileSettings.mReminderTone);
+        CleanupStack::PushL(setting);
+        setExtTones.SetReminderToneL(*setting);
+        CleanupStack::PopAndDestroy();
 
         toneSettings.iWarningAndGameTones
                         = profileSettings.mNotificationTone;
@@ -290,9 +321,11 @@ void CpProfileModelPrivate::setRingTone(const QString& filePath)
             CleanupStack::PushL(profileExtend);
             
             MProfileSetTones &setTones = profileExtend->ProfileSetTones();
-            
-            setTones.SetRingingTone1L( *XQConversions::qStringToS60Desc(filePath) );
+            HBufC *ringTone =  XQConversions::qStringToS60Desc(filePath);
+            CleanupStack::PushL(ringTone);
+            setTones.SetRingingTone1L( *ringTone );
             mEngine ->CommitChangeL(*profileExtend);
+            CleanupStack::PopAndDestroy();
             CleanupStack::Pop(); // profileExtend
             profileExtend->Release();
         )
@@ -391,9 +424,11 @@ void CpProfileModelPrivate::setRingTone(int profileId, const QString& filePath)
         CleanupStack::PushL(profileExtend);
         
         MProfileSetTones &setTones = profileExtend->ProfileSetTones();
-        
-        setTones.SetRingingTone1L(*XQConversions::qStringToS60Desc(filePath));
-        mEngine->CommitChangeL(*profileExtend);     
+        HBufC *ringTone =  XQConversions::qStringToS60Desc(filePath);
+        CleanupStack::PushL(ringTone);
+        setTones.SetRingingTone1L(*ringTone);
+        mEngine->CommitChangeL(*profileExtend);
+        CleanupStack::PopAndDestroy(); //ringTone
         CleanupStack::Pop(); // profileExtend
         profileExtend->Release();
     )            
@@ -436,8 +471,11 @@ void CpProfileModelPrivate::setMessageTone(int profileId, const QString& filePat
         CleanupStack::PushL(profileExtend);
         MProfileSetTones &setTones =
             profileExtend->ProfileSetTones();
-        setTones.SetMessageAlertToneL(*XQConversions::qStringToS60Desc(filePath));
+        HBufC *messageTone = XQConversions::qStringToS60Desc(filePath);
+        CleanupStack::PushL(messageTone);
+        setTones.SetMessageAlertToneL(*messageTone);
         mEngine->CommitChangeL(*profileExtend);
+        CleanupStack::PopAndDestroy();//messageTone
         CleanupStack::Pop(); // profileExtend
         profileExtend->Release();
     )                
@@ -479,8 +517,11 @@ void CpProfileModelPrivate::setEmailTone(int profileId, const QString& filePath)
         CleanupStack::PushL(profileExtend);
         MProfileSetExtraTones2 &setExtTones =
                 profileExtend->ProfileSetExtraTones2();
-        setExtTones.SetEmailAlertToneL(*XQConversions::qStringToS60Desc(filePath));
+        HBufC *emailTone =  XQConversions::qStringToS60Desc(filePath);
+        CleanupStack::PushL(emailTone);
+        setExtTones.SetEmailAlertToneL(*emailTone);
         mEngine->CommitChangeL(*profileExtend);
+        CleanupStack::PopAndDestroy();//emailtone;
         CleanupStack::Pop(); // profileExtend
         profileExtend->Release();
     )
@@ -522,8 +563,11 @@ void CpProfileModelPrivate::setReminderTone(int profileId, const QString& filePa
         CleanupStack::PushL(profileExtend);
         
         MProfileSetExtraTones2 &setExtTones = profileExtend->ProfileSetExtraTones2();
-        setExtTones.SetReminderToneL( *XQConversions::qStringToS60Desc(filePath) );
+        HBufC *reminderTone = XQConversions::qStringToS60Desc(filePath);
+        CleanupStack::PushL(reminderTone);
+        setExtTones.SetReminderToneL( *reminderTone );
         mEngine->CommitChangeL(*profileExtend);
+        CleanupStack::PopAndDestroy(); //reminderTone;
         CleanupStack::Pop(); // profileExtend
         profileExtend->Release();
     )            

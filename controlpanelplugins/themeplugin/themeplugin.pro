@@ -91,6 +91,7 @@ symbian: plugin { # copy qtstub and manifest
      
     for(qtplugin, qtplugins.sources):BLD_INF_RULES.prj_exports += "./$$qtplugin  $$deploy.path$$qtplugins.path/$$basename(qtplugin)" 
 }
+symbian:MMP_RULES += SMPSAFE
 
 #symbian: INCLUDEPATH += /sf/mw/hb/include/hbservices \
 #			   /sf/mw/hb/include/hbservices/private \
@@ -99,3 +100,4 @@ symbian: plugin { # copy qtstub and manifest
 #
 			   
 # End of file	--Don't remove this.
+

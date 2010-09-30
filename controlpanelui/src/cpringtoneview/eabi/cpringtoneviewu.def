@@ -4,7 +4,7 @@ EXPORTS
 	_ZN14CpRingToneView11qt_metacastEPKc @ 3 NONAME
 	_ZN14CpRingToneView13itemActivatedERK11QModelIndex @ 4 NONAME
 	_ZN14CpRingToneView16staticMetaObjectE @ 5 NONAME DATA 16
-	_ZN14CpRingToneView18launchMediaFetcherERK7QStringS2_ @ 6 NONAME
+	_ZN14CpRingToneView18launchMediaFetcherERK7QStringS2_RK5QListI8QVariantERK13XQRequestInfo @ 6 NONAME
 	_ZN14CpRingToneView19getStaticMetaObjectEv @ 7 NONAME
 	_ZN14CpRingToneView5selOKERK7QString @ 8 NONAME
 	_ZN14CpRingToneView8handleOkERK8QVariant @ 9 NONAME

@@ -33,3 +33,6 @@ symbian {
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE 
 }
 
+
+
+symbian:MMP_RULES += SMPSAFE

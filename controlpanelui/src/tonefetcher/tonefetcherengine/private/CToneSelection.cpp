@@ -257,9 +257,11 @@ void CToneSelection::HandleQueryCompleted( CMdEQuery& aQuery, TInt aError )
             if ( err != KErrNotFound && property )
                 {            
                 HBufC* songUri = HBufC::NewL( object->Uri().Length() );
+                CleanupStack::PushL(songUri);
                 TPtr ptr = songUri->Des();
                 ptr.Copy( object->Uri() );
                 iResultArray.AppendL( songUri );
+                CleanupStack::Pop( songUri );
                 }
             CleanupStack::PopAndDestroy( object );
             }

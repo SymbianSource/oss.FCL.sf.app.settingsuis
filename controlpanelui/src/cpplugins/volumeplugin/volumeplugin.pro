@@ -27,3 +27,6 @@ include ( volumeplugin.pri )
 symbian { 
     TARGET.UID3 = 0X20028737
 }
+
+
+symbian:MMP_RULES += SMPSAFE

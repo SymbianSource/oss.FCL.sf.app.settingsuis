@@ -17,7 +17,8 @@
 
 #include "cpprofilemonitor_p.h"
 #include "cpprofilemonitor.h"
-
+#include "cpprofilemodel.h"
+#include <ProEngFactory.h>
 #include <CProfileChangeNotifyHandler.h>
 
 /*
@@ -34,6 +35,7 @@ CpProfileMonitorPrivate::CpProfileMonitorPrivate():
  */
 CpProfileMonitorPrivate::~CpProfileMonitorPrivate()
 {
+    delete mProfileModel;
     delete mProfileNotifier;
 }
 
@@ -43,26 +45,46 @@ CpProfileMonitorPrivate::~CpProfileMonitorPrivate()
 void CpProfileMonitorPrivate::initialize(CpProfileMonitor *parent)
 {
     q_ptr = parent;
-    TRAP_IGNORE(mProfileNotifier = CProfileChangeNotifyHandler::NewL(this));   
+    mProfileModel = new CpProfileModel();
+    TRAP_IGNORE(mProfileNotifier = ProEngFactory::NewNotifyHandlerL());
+    TRAP_IGNORE(mProfileNotifier->RequestProfileActivationNotificationsL(*this));
+    TRAP_IGNORE(mProfileNotifier->RequestProfileNameArrayNotificationsL(*this));
+    TRAP_IGNORE(mProfileNotifier->RequestProfileNotificationsL(*this, EProfileWrapperGeneralId));
+    TRAP_IGNORE(mProfileNotifier->RequestProfileNotificationsL(*this, EProfileWrapperMeetingId));
 }
 
 /*
- * From MProfileChangeObserver, monitor the profile event
+ * From MProEngProfileObserver
  */
-void CpProfileMonitorPrivate::HandleActiveProfileEventL(TProfileEvent aProfileEvent, TInt aProfileId)
+void CpProfileMonitorPrivate::HandleProfileModifiedL( TInt aProfileId )
 {
-    switch (aProfileEvent) {
-        case EProfileNewActiveProfile:
-        {
-            q_ptr->profileActivated(aProfileId);
-            break;
-        }
-        case EProfileActiveProfileModified:
-        {
-            q_ptr->activeProfileModified(aProfileId);
-            break;
-        }
-        default:
-            break;
+    if (aProfileId == mProfileModel->activeProfileId()) {
+        q_ptr->avtiveProfileModified();
+    } else {
+        q_ptr->profileModified(aProfileId);
     }
+}
+
+/*
+ * From MProEngProfileActivationObserver
+ */
+void CpProfileMonitorPrivate::HandleProfileActivatedL( TInt aProfileId )
+{
+    q_ptr->profileActivated( aProfileId );
+}
+
+/*
+ * From MProEngProfileNameArrayObserver
+ */
+void CpProfileMonitorPrivate::HandleProfileNameArrayModificationL()
+{
+    q_ptr->profileNameModified();
+}
+
+/*
+ * Stop receiveing notification
+ */
+void CpProfileMonitorPrivate::stopMonitoring()
+{
+    mProfileNotifier->CancelAll();
 }

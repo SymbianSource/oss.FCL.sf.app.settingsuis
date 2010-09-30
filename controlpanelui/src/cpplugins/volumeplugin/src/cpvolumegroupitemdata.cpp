@@ -26,6 +26,7 @@
 #include "cpvolumecontroller.h"
 #include "cppersonalizationcustomviewitem.h"
 #include <hbslider.h>
+#include <hbstyleloader.h>
 
 CpVolumeGroupItemData::CpVolumeGroupItemData(CpItemDataHelper &itemDataHelper)
 : CpSettingFormItemData(HbDataFormModelItem::GroupItem,hbTrId("txt_cp_subhead_volume")),//mSilenceIndicator(0),
@@ -35,6 +36,7 @@ CpVolumeGroupItemData::CpVolumeGroupItemData(CpItemDataHelper &itemDataHelper)
                                                                                    mProfileModel(0)
 {
     initItems(itemDataHelper);
+    HbStyleLoader::registerFilePath(":/resources/hbslider_color.css");
 }
 
 CpVolumeGroupItemData::~CpVolumeGroupItemData()
@@ -68,21 +70,14 @@ void CpVolumeGroupItemData::initItems(CpItemDataHelper &itemDataHelper)
     masterVolume->setContentWidgetData("objectName","masterVolumeSlider");
     
     QMap<QString, QVariant> iconMaps;
-    iconMaps.insert(QString("DecreaseElement"), QVariant(":/icon/hb_vol_slider_decrement.svg"));
-    iconMaps.insert(QString("IncreaseElement"), QVariant(":/icon/hb_vol_slider_increment.svg"));
-    //iconMaps.insert(QString("IconElement"), QVariant(":/icon/hb_vol_slider_muted.svg"));
+    iconMaps.insert(QString("DecreaseElement"), QVariant("qtg_mono_vol_down"));
+    iconMaps.insert(QString("IncreaseElement"), QVariant("qtg_mono_vol_up"));
     
     masterVolume->setContentWidgetData("elementIcons", iconMaps);
     masterVolume->setContentWidgetData("minimum", 1);
     masterVolume->setContentWidgetData("maximum", 10);
     masterVolume->setContentWidgetData("majorTickInterval",1);
     masterVolume->setContentWidgetData("tickPosition",Hb::SliderTicksBelow);
-
-    /*QStringList tickLabels;
-    tickLabels<<hbTrId("txt_cp_setlabel_volume_val_soft")
-              <<hbTrId("txt_cp_setlabel_volume_val_med")
-              <<hbTrId("txt_cp_setlabel_volume_val_loud");
-    masterVolume->setContentWidgetData("majorTickLabels",tickLabels);*/
     
     masterVolume->setContentWidgetData("iconCheckable",false);
     this->appendChild(masterVolume);

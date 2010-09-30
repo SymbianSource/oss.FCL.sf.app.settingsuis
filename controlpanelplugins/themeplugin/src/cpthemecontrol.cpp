@@ -50,18 +50,6 @@
 static const int KThemeChangeTimeOutMilliSeconds = 2000;  
 
 /*!
-	Helper function to fetch the main window.
-*/
-static HbMainWindow *mainWindow() 
-{
-    QList< HbMainWindow* > mainWindows = hbInstance->allMainWindows();
-    if (!mainWindows.isEmpty()) {
-        return mainWindows.front();
-    }
-    return 0;
-}
-
-/*!
 	constructor.
 */
 CpThemeControl::CpThemeControl(): mThemeListView(0), 

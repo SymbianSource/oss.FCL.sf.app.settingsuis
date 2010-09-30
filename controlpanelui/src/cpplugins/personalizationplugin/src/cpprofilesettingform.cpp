@@ -17,12 +17,15 @@
 
 #include "cpprofilesettingform.h"
 #include "cppersonalizationentryitemdata.h"
+#include "cpprofilenameeditdialog.h"
 #include <QStringList>
 #include <hbdataformmodel.h>
 #include <hbabstractviewitem.h>
 #include <cpitemdatahelper.h>
 #include <cpprofilemodel.h>
+#include <cpprofilemonitor.h>
 #include <hbslider.h>
+#include <hbaction.h>
 
 #include <QFileInfo>
 #include <QFileIconProvider>
@@ -36,12 +39,15 @@
 CpProfileSettingForm::CpProfileSettingForm()
     : mModel(0), mItemDataHelper(new CpItemDataHelper( this )),
     mProfileModel(new CpProfileModel()), mFileIconProvider(new QFileIconProvider),
-    mGeneralPage(0),mMeetingPage(0),mCurrentPage( 0 ), mSettingManager(0)
+    mGeneralPage(0),mMeetingPage(0), mSettingManager(0),
+    mCurrentProfileId(EProfileWrapperGeneralId), mEditProfileNameDialog(0), mOkButton(0), mCancelButton(0)
 {
     this->setHeading(hbTrId("txt_cp_button_advanced_settings"));
-    this->setDescription(hbTrId("txt_cp_info_select_tones_that_play_when_you_select"));
-    
+    this->setDescription(hbTrId("txt_cp_info_select_tones_that_play_when_you_select"));    
     initModel();
+    connect(this, SIGNAL(activated(QModelIndex)), this, SLOT(onDataFormActivated(QModelIndex)));
+    mProfileMonitor = new CpProfileMonitor();    
+    connect(mProfileMonitor, SIGNAL(profileNameModified()), this, SLOT(onProfileNameChanged()));       
 }
 
 CpProfileSettingForm::~CpProfileSettingForm()
@@ -50,6 +56,32 @@ CpProfileSettingForm::~CpProfileSettingForm()
     delete mProfileModel;
     delete mFileIconProvider;
     delete mSettingManager;
+    delete mProfileMonitor;
+    if (mEditProfileNameDialog) {
+       delete mEditProfileNameDialog;
+    }
+    if (mOkButton) {
+       delete mOkButton;
+    }
+    if (mCancelButton) {
+       delete mCancelButton;
+    }
+}
+
+void CpProfileSettingForm::onDataFormActivated(const QModelIndex &index)
+{
+    HbDataFormModelItem *item = mModel->itemFromIndex(index);
+    if (item == mGeneralPage ) {
+        mCurrentProfileId = EProfileWrapperGeneralId;        
+    } else if (item == mMeetingPage) {
+        mCurrentProfileId = EProfileWrapperMeetingId;        
+    }
+}
+
+void CpProfileSettingForm::onProfileNameChanged()
+{    
+    mGeneralPage->setLabel(mProfileModel->profileName(EProfileWrapperGeneralId));
+    mMeetingPage->setLabel(mProfileModel->profileName(EProfileWrapperMeetingId));
 }
 
 void CpProfileSettingForm::initModel()
@@ -165,13 +197,13 @@ void CpProfileSettingForm::initProfileItems(int profileId,HbDataFormModelItem *p
     modelItem->setContentWidgetData( QString( "maximum" ), 5 );
     modelItem->setContentWidgetData( QString("value"), profileSettings.mKeyTouchScreenTone );
     QMap< QString, QVariant > elements;
-    elements.insert(QString("IncreaseElement") , QVariant(":/icon/hb_vol_slider_increment.svg"));
-    elements.insert(QString("DecreaseElement"), QVariant(":/icon/hb_vol_slider_decrement.svg") );
+    elements.insert(QString("IncreaseElement") , QVariant("qtg_mono_vol_up"));
+    elements.insert(QString("DecreaseElement"), QVariant("qtg_mono_vol_down") );
     if (profileSettings.mKeyTouchScreenTone != 0) {
-        elements.insert(QString("IconElement"), QVariant(":/icon/hb_vol_slider_unmuted.svg") );
+        elements.insert(QString("IconElement"), QVariant("qtg_mono_speaker") );
     }
     else {
-        elements.insert(QString("IconElement"), QVariant(":/icon/hb_vol_slider_muted.svg") );
+        elements.insert(QString("IconElement"), QVariant("qtg_mono_speaker_off") );
     }
     
     modelItem->setContentWidgetData( QString( "elementIcons" ), elements );
@@ -198,8 +230,8 @@ void CpProfileSettingForm::initProfileItems(int profileId,HbDataFormModelItem *p
     modelItem->setContentWidgetData( QString( "maximum" ), 5 );
     modelItem->setContentWidgetData( QString("value"), profileSettings.mKeyTouchScreenVibra );
     QMap< QString, QVariant > iconElements;
-    iconElements.insert(QString("IncreaseElement") , QVariant(":/icon/hb_vol_slider_increment.svg"));
-    iconElements.insert(QString("DecreaseElement"), QVariant(":/icon/hb_vol_slider_decrement.svg") );
+    iconElements.insert(QString("IncreaseElement") , QVariant("qtg_mono_vol_up"));
+    iconElements.insert(QString("DecreaseElement"), QVariant("qtg_mono_vol_down") );
     modelItem->setContentWidgetData( QString( "elementIcons" ), iconElements );
     
     if (profileId == EProfileWrapperGeneralId) {
@@ -341,11 +373,39 @@ void CpProfileSettingForm::setMuteIcon(HbDataFormModelItem *sliderItem, bool isM
     QMap<QString, QVariant> elements = sliderItem->contentWidgetData("elementIcons").toMap();
     
     if (isMute) {        
-        elements.insert(QString("IconElement"), QVariant(":/icon/hb_vol_slider_muted.svg"));
+        elements.insert(QString("IconElement"), QVariant("qtg_mono_speaker_off"));
     }
     else {
-        elements.insert(QString("IconElement"), QVariant(":/icon/hb_vol_slider_unmuted.svg"));
+        elements.insert(QString("IconElement"), QVariant("qtg_mono_speaker"));
     }
     sliderItem->setContentWidgetData( QString( "elementIcons" ), elements ); 
 }
+
+void CpProfileSettingForm::on_editNameAction_triggered()
+{    
+    if (mEditProfileNameDialog) {       
+        delete mEditProfileNameDialog;
+        delete mCancelButton;
+        delete mOkButton;
+    }  
+    mProfileName =  mProfileModel->profileName(mCurrentProfileId);
+    mCancelButton = new HbAction(hbTrId("txt_common_button_cancel"));
+    mOkButton = new HbAction(hbTrId("txt_common_button_ok"));
+    mEditProfileNameDialog = new CpProfileNameEditDialog();
+    mEditProfileNameDialog->addAction(mOkButton);
+    mEditProfileNameDialog->addAction(mCancelButton);
+    mEditProfileNameDialog->setLineEditMaxLength(maxProfileNameLength);
+    mEditProfileNameDialog->setLineEditText(mProfileName);    
+    mEditProfileNameDialog->open(this, SLOT(onEditNameDialogClosed(HbAction*)));      
+}
+
+void CpProfileSettingForm::onEditNameDialogClosed(HbAction *action)
+{
+    QString editText(mEditProfileNameDialog->lineEditText());
+    if (action == mOkButton && mProfileName != editText) {  
+             
+            mProfileModel->setProfileName(mCurrentProfileId, editText);       
+    }
+}
+
 //End of File

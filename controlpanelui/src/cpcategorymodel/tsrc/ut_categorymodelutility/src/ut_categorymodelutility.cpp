@@ -110,8 +110,7 @@ void TestCpCategoryModelUtility::testSetEntryItemContent()
     QVERIFY(itemData2->text() == newText);    
     QVERIFY( itemData2->description() == newDes );
     QString temp = itemData2->iconName();
-    QString newIconName = QLatin1String(":/icon/qgn_prop_set_default_sub.svg");
-    QVERIFY( itemData2->iconName() == newIconName );
+    QVERIFY( itemData2->iconName() == DEFAULT_ICON_LISTENTRYITEM );
     delete itemData2;
     delete pHelper;  
 }

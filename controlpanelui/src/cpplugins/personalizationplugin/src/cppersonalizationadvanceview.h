@@ -20,6 +20,7 @@
 
 #include <cpbasesettingview.h>
 class CpItemDataHelper;
+class CpProfileSettingForm;
 
 class CpPersonalizationAdvanceView: public CpBaseSettingView
 {
@@ -28,10 +29,10 @@ public:
     explicit CpPersonalizationAdvanceView(QGraphicsItem *parent = 0);
     ~CpPersonalizationAdvanceView();
     
-private slots:
-    void on_editNameAction_triggered();
-    
 private:
     void initMenu();
+    
+private:
+    CpProfileSettingForm *mDataForm;
 };
 #endif

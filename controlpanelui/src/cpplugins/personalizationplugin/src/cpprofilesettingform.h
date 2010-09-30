@@ -20,15 +20,21 @@
 
 #include <hbdataform.h>
 #include <QHash>
+#include "cpprofilemodel.h"
 
 class HbDataFormModel;
 class HbDataFormModelItem;
 class CpItemDataHelper;
-class CpProfileModel;
+class CpProfileMonitor;
 class QFileIconProvider;
 class XQSettingsManager;
 class XQSettingsKey;
 class QVariant;
+class HbAction;
+class CpProfileNameEditDialog;
+
+//max profile name length is 64 bytes.
+const int maxProfileNameLength = 64;
 
 class CpProfileSettingForm : public HbDataForm
 {
@@ -46,7 +52,7 @@ public:
     };
     
     CpProfileSettingForm();
-    virtual ~CpProfileSettingForm();
+    virtual ~CpProfileSettingForm();       
     
 private slots:
     
@@ -64,6 +70,12 @@ private slots:
     void on_meeting_screenVibra_ValueChanged( int value );
     
     void settingValueChanged(const XQSettingsKey &key, const QVariant &value);
+    
+    void onDataFormActivated(const QModelIndex &index);
+    void onProfileNameChanged();    
+    void on_editNameAction_triggered();
+    void onEditNameDialogClosed(HbAction *action);
+
 private:
     void initModel();
     void initGeneralTonesGroup();
@@ -71,6 +83,7 @@ private:
     void initMeetingTonesGroup();
     //void initMeetingVibraGroup();
     bool checkBoxStateToBool( int state );
+    
  //   void initRingToneGroup(HbDataFormModelItem *parent);
  //   void initMessageToneGroup(HbDataFormModelItem *parent);
  //   void initAlertToneGroup(HbDataFormModelItem *parent);
@@ -83,21 +96,24 @@ private:
     HbDataFormModel *mModel;
     CpItemDataHelper *mItemDataHelper;
     CpProfileModel  *mProfileModel;
+    CpProfileMonitor *mProfileMonitor;
     QFileIconProvider *mFileIconProvider;
     
     HbDataFormModelItem *mGeneralPage;
-    HbDataFormModelItem *mMeetingPage;
-    
-    HbDataFormModelItem *mCurrentPage;
-    
+    HbDataFormModelItem *mMeetingPage;    
   //  HbDataFormModelItem *mGeneralKeysAndScreenToneSlider;
  //   HbDataFormModelItem *mGeneralSreenVibra;
  //   HbDataFormModelItem *mMeetingKeysAndScreenToneSlider;
   //  HbDataFormModelItem *mMeetingSreenVibra;
     
-    XQSettingsManager *mSettingManager;
-    
+    XQSettingsManager *mSettingManager;    
     QHash< int,QHash<int,HbDataFormModelItem*>  > mProfileModelItems;
+    ProfileWrapperProfileId mCurrentProfileId;
+    CpProfileNameEditDialog *mEditProfileNameDialog;
+    HbAction *mOkButton;
+    HbAction *mCancelButton;
+    QString mProfileName;
+    //QStringList mProfileNameList;
 };
 
 

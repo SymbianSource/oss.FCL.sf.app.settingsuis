@@ -39,19 +39,19 @@ private:
     void makeScreenItem(HbDataFormModel& model);
     void makeRotateItem(HbDataFormModel& model);
     void makeBrightnessItem(HbDataFormModel& model);
-    void makeCallibrationItem(HbDataFormModel& model);
+    void makeScreensaverItem(HbDataFormModel& model);
     
 private slots:
     void screenValueChanged(const QString&);
     void rotateValueChanged(int value);
+    void screensaverValueChanged(int value);
     void brightValueChanged(int value);
-    void launchCallib();
 
 private:
     CpSettingFormItemData *mScreenComboButton;
     CpSettingFormItemData *mRotateCheckbox;
+    CpSettingFormItemData *mScreensaverCheckbox;
 	CpSettingFormItemData *mBrightSliderItem;
-	CpSettingFormItemData *mCallibItem;
 	CpKeyScreenModel* mModel;
 	
 	QMap<int,QString> mScreenLockValues;

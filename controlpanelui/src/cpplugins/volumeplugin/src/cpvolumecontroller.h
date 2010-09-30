@@ -44,7 +44,7 @@ private slots:
     
 private:
 	void updateUi();	
-	
+	void setSilderSpeakerIcon(bool isSpeakerOff);
 private:
 	CpProfileModel *mProfileModel;
 	QList<HbDataFormModelItem *> mItemList;

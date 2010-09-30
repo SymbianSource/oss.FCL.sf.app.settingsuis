@@ -42,3 +42,5 @@ symbian: {
     
     for(header, headers.sources):BLD_INF_RULES.prj_exports += "./$$header $$deploy.path$$headers.path/$$basename(header)"
 }
+
+symbian:MMP_RULES += SMPSAFE

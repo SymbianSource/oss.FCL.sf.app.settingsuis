@@ -31,7 +31,9 @@ public:
     ~CpProfileMonitor();
 signals:
     void profileActivated(int activeProfileId);
-    void activeProfileModified(int activeProfileId);
+    void avtiveProfileModified();
+    void profileModified(int profileId);
+    void profileNameModified();
 private:
     CpProfileMonitorPrivate *const d_ptr;
    

@@ -80,6 +80,7 @@ CpThemeInfo* CpThemeUtil::buildThemeInfo(const QString& themePath, const QString
     }
                        
     if(name.isEmpty() || (hidden == "true") ||( hidden == "")) {
+        delete themeInfo;
         return NULL;
     }
    

@@ -3,7 +3,7 @@
   <plugin displayname = "Time &amp; data" id = "0X102818E9"  dll = "datetimesettingsplugin.dll">
     <desc></desc>
   </plugin>
-  <plugin displayname = "Language and region" id = "0X2002873C"  dll = "cplanguageplugin_na.dll">
+  <plugin displayname = "Language and region" id = "0X2002873C"  dll = "cplanguageplugin.dll">
     <desc></desc>
   </plugin>
   <plugin displayname = "Text and keyboard" id = "0X20025FDD"  dll = "cpinputsettingplugin.dll">

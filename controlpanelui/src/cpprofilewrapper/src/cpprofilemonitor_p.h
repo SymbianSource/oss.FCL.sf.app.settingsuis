@@ -17,26 +17,35 @@
 #ifndef CPPROFILEMONITORPRIVATE_H
 #define CPPROFILEMONITORPRIVATE_H
 
-#include <MProfileChangeObserver.h>
+#include <MProEngNotifyHandler.h>
+#include <MProEngProfileActivationObserver.h>
+#include <MProEngProfileObserver.h>
+#include <MProEngProfileNameArrayObserver.h>
 #include <qglobal.h>
 
-class CProfileChangeNotifyHandler;
+class CpProfileModel;
 class CpProfileMonitor;
 
-class CpProfileMonitorPrivate:public MProfileChangeObserver
+class CpProfileMonitorPrivate:public MProEngProfileActivationObserver,
+                              public MProEngProfileObserver,
+                              public MProEngProfileNameArrayObserver
 {
     Q_DECLARE_PUBLIC(CpProfileMonitor)
 public:
     CpProfileMonitorPrivate();
     ~CpProfileMonitorPrivate();
     void initialize(CpProfileMonitor *parent);
-    
-#ifdef Q_OS_SYMBIAN
+    void stopMonitoring();
 private:
-    void HandleActiveProfileEventL(TProfileEvent aProfileEvent, TInt aProfileId);
+    //from MProEngProfileObserver
+    void HandleProfileModifiedL( TInt aProfileId );
+    //from MProEngProfileActivationObserver
+    void HandleProfileActivatedL( TInt aProfileId );
+    //from MProEngProfileNameArrayObserver
+    void HandleProfileNameArrayModificationL();
 private:
-    CProfileChangeNotifyHandler *mProfileNotifier;
-#endif
+    CpProfileModel *mProfileModel;
+    MProEngNotifyHandler *mProfileNotifier;
 private:
     CpProfileMonitor *q_ptr;
 };

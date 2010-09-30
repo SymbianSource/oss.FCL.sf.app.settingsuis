@@ -36,7 +36,8 @@ CpProfileActivatorEntryItem::CpProfileActivatorEntryItem(CpItemDataHelper &itemD
     int currentId = mProfileModel->activeProfileId();
     QString currentName = mProfileModel->profileName(currentId);
     this->setDescription(currentName);
-    connect(mProfileMonitor, SIGNAL(profileActivated(int)), this, SLOT(onProfileChanged(int)));        
+    connect(mProfileMonitor, SIGNAL(profileActivated(int)), this, SLOT(onProfileActivated(int)));
+    connect(mProfileMonitor, SIGNAL(profileNameModified()), this, SLOT(onProfileNameChanged()));
 }
 
 CpProfileActivatorEntryItem::~CpProfileActivatorEntryItem()
@@ -55,29 +56,17 @@ void CpProfileActivatorEntryItem::onLaunchView()
     
 }
 
-void CpProfileActivatorEntryItem::onProfileChanged(int activeProfileId)
+void CpProfileActivatorEntryItem::onProfileActivated(int profileId)
 {
-    QString profileName = mProfileModel->profileName(activeProfileId);
-    this->setDescription(profileName);    
+    QString profileName = mProfileModel->profileName(profileId);
+    this->setDescription(profileName);
 }
-/*void CpPersonalizationEntryItemData::handleOk(const QVariant &result)
+
+void CpProfileActivatorEntryItem::onProfileNameChanged()
 {
-    if (!result.canConvert<QString>())
-    {
-        setDescription( "Corrupt result" );
-    }
-    else
-    {
-        setDescription( result.value<QString>() );
-    }
+    QString profileName = mProfileModel->profileName(mProfileModel->activeProfileId());
+    this->setDescription(profileName);
 }
-void CpPersonalizationEntryItemData::handleError(int errorCode, const QString& errorMessage)
-{
-    //
-    Q_UNUSED(errorCode);
-    Q_UNUSED(errorMessage);
-    setDescription("Error");
-}*/
 
 CpBaseSettingView *CpProfileActivatorEntryItem::createSettingView() const
 {

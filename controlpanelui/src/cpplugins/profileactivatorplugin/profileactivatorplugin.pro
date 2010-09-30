@@ -29,3 +29,6 @@ symbian {
     TARGET.EPOCALLOWDLLDATA = 1
     LIBS +=  -lprofileeng
 }
+
+
+symbian:MMP_RULES += SMPSAFE

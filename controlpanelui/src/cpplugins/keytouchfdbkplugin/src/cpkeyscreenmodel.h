@@ -18,6 +18,7 @@
 #ifndef CPKEYSCREENMODEL_H
 #define CPKEYSCREENMODEL_H
 
+
 class CpKeyScreenModelPrivate;
 
 class CpKeyScreenModel
@@ -36,8 +37,9 @@ public:
     bool isBrightnessSupported();
     int brightness();
     void setBrightness(int value);
-    bool isCallibrationSupported();
-
+    bool isScreensaverSupported();
+    bool screensaver();
+    void setScreensaver(bool value);
 private:
     CpKeyScreenModelPrivate* ptr;
     };

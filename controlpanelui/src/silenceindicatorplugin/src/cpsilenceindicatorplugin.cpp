@@ -27,7 +27,6 @@
 #include <hbapplication.h>
 #include <hbindicatorplugininterface.h>
 #include <hbindicatorinterface.h>
-#include <hbtranslator.h>
 #include "cpsilenceindicatorplugin.h"
 #include <MProfileEngineExtended2.h>
 #include <w32std.h>
@@ -93,26 +92,20 @@ int CpSilenceIndicatorPlugin::error() const
 }
 
 /*!
-    The handleInteraction is used launch WLAN list view.
+    The handleInteraction is used to emit dataChange signal.
 */
 bool CpSilenceIndicatorPlugin::handleInteraction(InteractionType type)
 {
-   bool handled = false;
-    switch (type) {
-    case InteractionActivated: 
-        // set silence mode or disable silence mode                
-        bool isSilence = false;
-        TRAP(mError,
-                isSilence = mEngine->SilenceModeL();
-                mEngine->SetSilenceModeL(!isSilence);
-        )
-        emit dataChanged();        
-        handled = true;
-        break;
-    default:
-        break;
-    }
-    return handled;
+    bool handled = false;
+        switch (type) {
+        case InteractionActivated: 
+            emit dataChanged();        
+            handled = true;
+            break;
+        default:
+            break;
+        }
+        return handled;
 }
 
 /*!
@@ -124,13 +117,7 @@ bool CpSilenceIndicatorPlugin::handleClientRequest(RequestType type, const QVari
     bool handled(false);
     switch (type) {
     case RequestActivate:
-        TRAP(mError, mEngine->SetSilenceModeL(true);)
-        handled = true;
-        emit dataChanged();
-        break;
-        
     case RequestDeactivate:
-        TRAP(mError, mEngine->SetSilenceModeL(false);)
         handled = true;
         emit dataChanged();
         break;
@@ -151,9 +138,9 @@ QVariant CpSilenceIndicatorPlugin::indicatorData(int role) const
         // this is the statusbar icon, which is shown only when silence mode is on
     case MonoDecorationNameRole:
         if (mEngine->SilenceModeL()) {
-            variant = HbIcon("qtg_status_profile_silent");
+            variant = QString("qtg_status_profile_silent");
         } else {
-            variant = HbIcon();
+            variant = QString();
         }        
         break;
     default:

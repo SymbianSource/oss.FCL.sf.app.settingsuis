@@ -19,6 +19,8 @@
 
 #include <QString>
 
+#define DEFAULT_ICON_LISTENTRYITEM QLatin1String("qtg_large_non_default.nvg")
+
 class HbDataFormModelItem;
 class CpItemDataHelper;
 class CpSettingFormItemData;

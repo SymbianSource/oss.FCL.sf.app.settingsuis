@@ -48,3 +48,5 @@ symbian {
     # This is for new exporting system coming in garden
     for(soundfile, soundfiles.sources):BLD_INF_RULES.prj_exports += "./$$soundfile $$deploy.path$$soundfiles.path/$$basename(soundfile)"
 }
+
+symbian:MMP_RULES += SMPSAFE

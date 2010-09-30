@@ -71,7 +71,8 @@ symbian {
     SOURCES += src/cpprofilemodel_p.cpp \
 			   src/cpprofilemonitor_p.cpp
 
-    LIBS += -lprofileeng  \
+    LIBS += -lprofileeng  \ 
+            -lProfileEngine \
             -lcentralrepository \
             -lcharconv \
             -lcplogger \  # For cplogger
@@ -82,3 +83,6 @@ symbian {
 }
 
 
+
+
+symbian:MMP_RULES += SMPSAFE

@@ -53,3 +53,6 @@ HEADERS += src/secondpluginforcpcategorymodel.h \
 SOURCES += src/secondpluginforcpcategorymodel.cpp \
            src/secondpluginviewforcpcategorymodel.cpp
 
+
+
+symbian:MMP_RULES += SMPSAFE

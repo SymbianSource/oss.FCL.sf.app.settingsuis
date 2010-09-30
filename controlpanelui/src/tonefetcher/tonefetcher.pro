@@ -60,3 +60,6 @@ SERVICE.OPTIONS += hidden
 libFiles.sources = xqservice.dll
 libFiles.path = "!:\sys\bin"
 DEPLOYMENT += libFiles
+
+
+symbian:MMP_RULES += SMPSAFE

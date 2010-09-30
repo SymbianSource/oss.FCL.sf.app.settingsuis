@@ -52,3 +52,5 @@ symbian*: {
                   testqtplugin \
                   testqtcfgfile
 }
+
+symbian:MMP_RULES += SMPSAFE

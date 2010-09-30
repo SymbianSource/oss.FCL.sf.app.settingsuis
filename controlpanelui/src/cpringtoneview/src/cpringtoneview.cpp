@@ -30,6 +30,9 @@
 #include <hbdataformmodelitem.h>
 #include <hbdataform.h>
 #include <cpsettingformentryitemdata.h>
+#include <QDesktopServices>
+//ovi ringtong address.
+const QString oviUrl("http://lr.ovi.mobi/store/ringtones");
 
 CpRingToneView::CpRingToneView( QGraphicsItem *parent ):
                               CpBaseSettingView(0, parent),
@@ -74,22 +77,29 @@ void CpRingToneView::itemActivated( const QModelIndex &index )
 		return;
 	}
 	mProcessing = true;
-    int nRow = index.row();
-
+    int nRow = index.row();        
     switch(nRow) {
         case 0:         //no tone, set default no sound
-                emit selOK(QString(""));
-                emit aboutToClose();
-                break;
-        case 1:         //tone
-                launchMediaFetcher( "com.nokia.symbian.IToneFetch", "fetch()" );
-                break;
-        case 2:         //music
-                launchMediaFetcher("com.nokia.symbian.IMusicFetch", "fetch()" );
-                break;
-        case 3:         //get more tones
-		default:
-		        break;
+            emit selOK(QString(""));
+            emit aboutToClose();
+            break;
+        case 1: {        //tone
+            launchMediaFetcher( "com.nokia.symbian.IToneFetch", "fetch()" );
+            break;
+        }
+        case 2: {        //music            
+            XQRequestInfo requestInfo;            
+            requestInfo.setInfo("WindowTitle", QVariant(hbTrId("txt_cp_title_control_panel")));
+            launchMediaFetcher("com.nokia.symbian.IMusicFetch", "fetch()", QList<QVariant>(), requestInfo );
+            break;
+        }
+        case 3: {        //get more tones
+            // Launch the URL in the browser and            
+            QDesktopServices::openUrl(QUrl(oviUrl, QUrl::TolerantMode));
+            break;
+        }
+	    default:
+            break;
 	 }
 }
 void CpRingToneView::handleOk(const QVariant &result)
@@ -106,13 +116,21 @@ void CpRingToneView::handleOk(const QVariant &result)
 }
 
 
-void CpRingToneView::handleError(int errorCode, const QString& errorMessage)
+void CpRingToneView::handleError(int errorCode, const QString &errorMessage)
 {
     mProcessing = false;
     emit(selError( errorCode, errorMessage ));
 }
 
-void CpRingToneView::launchMediaFetcher( const QString &strService, const QString &strItface )
+/*!
+    Launch media fetcher service.
+    \a strService, the service interface name.
+    \a srItface, the service operation name.
+    \a arguments, the request arguments, preserved.
+    \a info, the request info.
+*/
+void CpRingToneView::launchMediaFetcher( const QString &strService, const QString &strItface,\
+                                        const QList<QVariant> &arguments, const XQRequestInfo &info )
 {
     CPFW_LOG("CpRingToneView::launchMediaFetcher, START");
     if(mReq)
@@ -133,10 +151,12 @@ void CpRingToneView::launchMediaFetcher( const QString &strService, const QStrin
         connect(mReq, SIGNAL(requestOk(QVariant)), SLOT( handleOk(QVariant)), Qt::QueuedConnection);
         connect(mReq, SIGNAL(requestError(int, QString)), SLOT(handleError(int, QString)));
     }
-    
-    QList<QVariant> args;
-    args << QVariant(QString("<app_name>"));
-    mReq->setArguments(args);
+    if (!arguments.isEmpty()) {
+        mReq->setArguments(arguments);
+    }
+    if (info.isValid()) {
+        mReq->setInfo(info);
+    }
     // Make the request
     if (!mReq->send())
     {

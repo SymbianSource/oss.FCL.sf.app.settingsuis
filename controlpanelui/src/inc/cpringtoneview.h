@@ -47,8 +47,9 @@ private:
     //used to mark if there is a request being processed
     bool mProcessing;
     
-private:
-    void launchMediaFetcher( const QString &strService, const QString &strItface );
+private:    
+    void launchMediaFetcher( const QString &strService, const QString &strItface, \
+            const QList<QVariant> &arguments = QList<QVariant>(), const XQRequestInfo &info = XQRequestInfo() );
 };
 
 #endif // CPRINGTONEVIEW_H

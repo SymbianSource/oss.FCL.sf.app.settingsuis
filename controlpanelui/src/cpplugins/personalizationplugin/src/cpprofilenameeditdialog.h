@@ -30,20 +30,19 @@ class CpProfileNameEditDialog : public HbDialog
 public:
     CpProfileNameEditDialog( QGraphicsItem *parent = 0 );
     virtual ~CpProfileNameEditDialog();
-    
-    static bool launchProfileNameEditDialog( QString &profileName );
+    void setLineEditText(const QString &text);
+    QString lineEditText();
+    void setLineEditMaxLength(int length);
     
 private slots:
     void checkPrimaryAction();
     
 private:
     void init();
-    void setLineEditText( const QString &text );
-    QString getLineEditText();
-    
-private:
+   
+private:    
     HbWidget *mContentWidget;
-    HbLineEdit  *mTextEdit;
+    HbLineEdit  *mLineEdit;
 };
 
 #endif /* CPPROFILENAMEEDITDIALOG_H */

@@ -16,23 +16,24 @@
 
 TEMPLATE = lib
 TARGET = cpkeytouchfdbkplugin
-
-CONFIG += hb plugin
-
-LIBS += -lcpprofilewrapper
+CONFIG += hb \
+    plugin
+RESOURCES = keytouchfdbkplugin.qrc
 
 include ( ../cpplugincommon.pri )
 include ( keytouchfdbkplugin.pri )
-
 symbian { 
-    INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE \
-	                 $$MOC_DIR
+    INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
     HEADERS += src/cpkeyscreenmodel_p.h
     SOURCES += src/cpkeyscreenmodel_p.cpp
-
     LIBS += -lcentralrepository \
-            -lfeatmgr
+        -lfeatmgr
     TARGET.UID3 = 0X20025FDE
-    TARGET.CAPABILITY = All -TCB 
+    TARGET.CAPABILITY = All -TCB
     TARGET.EPOCALLOWDLLDATA = 1
 }
+win32 { 
+    HEADERS += src/cpkeyscreenmodel_p.h
+    SOURCES += src/cpkeyscreenmodel_win.cpp
+}
+symbian:MMP_RULES += SMPSAFE

@@ -47,8 +47,7 @@ CpThemePluginEntryItemData::CpThemePluginEntryItemData(CpItemDataHelper &itemDat
     //Create a CpThemeControl. the themeControl takes care of displaying the themes
     //and letting user select a theme and apply a theme change.
     mThemeControl = new CpThemeControl();
-    
-    setEntryItemIcon(mThemeControl->currentThemeIcon());
+
     setDescription(mThemeControl->currentThemeName());
 
     //connect to signal to update the current theme name and icon whenever the theme changes.
@@ -71,7 +70,7 @@ CpThemePluginEntryItemData::~CpThemePluginEntryItemData()
  */
 void CpThemePluginEntryItemData::themeUpdated(const QString& themeName, const HbIcon& icon)
 {
-    setEntryItemIcon(icon);
+	Q_UNUSED(icon);
     setDescription(themeName);
 }
 

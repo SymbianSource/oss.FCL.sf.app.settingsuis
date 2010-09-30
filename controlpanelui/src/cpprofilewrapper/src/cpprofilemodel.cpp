@@ -43,6 +43,15 @@ QString CpProfileModel::profileName(int profileId) const
 {
     return d_ptr->profileName(profileId);
 }
+
+/*!
+   Set profile id \a profileId 's name with \a name.
+*/
+void CpProfileModel::setProfileName(int profileId, const QString &name)
+{
+    d_ptr->setProfileName(profileId, name);
+}
+
 /*!
    get profile name list 
  */

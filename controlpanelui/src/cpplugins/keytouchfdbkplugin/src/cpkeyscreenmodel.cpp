@@ -19,114 +19,119 @@
 #include "cpkeyscreenmodel.h"
 #include <qglobal.h>
 
-#ifdef Q_OS_SYMBIAN
 #include "cpkeyscreenmodel_p.h"
-#endif
 
 
+/*
+ * Constructor
+ */
 CpKeyScreenModel::CpKeyScreenModel()
 {
-#ifdef Q_OS_SYMBIAN
     ptr = new CpKeyScreenModelPrivate();
-#endif
 }
 
+/*
+ * Desctructor
+ */
 CpKeyScreenModel::~CpKeyScreenModel()
 {
-#ifdef Q_OS_SYMBIAN
     delete ptr;
     ptr = 0;
-#endif
 }
 
+/*
+ * Feature check for key guard setting
+ */
 bool CpKeyScreenModel::isKeyguardSupported()
 {
-#ifdef Q_OS_SYMBIAN
     return ptr->isKeyguardSupported();
-#else
-    return 0;
-#endif
 }
 
+/*
+ * Feature check for screen saver setting
+ */
+bool CpKeyScreenModel::isScreensaverSupported()
+{
+    return ptr->isScreensaverSupported();
+}
+
+/*
+ * Returen key guard setting value
+ */
 int CpKeyScreenModel::keyguard()
 {
-#ifdef Q_OS_SYMBIAN
     return ptr->keyguard();
-#else
-    return 0;
-#endif
 }
 
+/*
+ * Set key guard setting value
+ */
 void CpKeyScreenModel::setKeyguard(int value)
 {
-#ifdef Q_OS_SYMBIAN
     ptr->setKeyguard(value);
-#else
-    Q_UNUSED(value);
-#endif
 }
 
+/*
+ * Feature check for rotate setting 
+ */
 bool CpKeyScreenModel::isRotateSupported()
 {
-#ifdef Q_OS_SYMBIAN
     return ptr->isRotateSupported();
-#else
-    return false;
-#endif
 }
 
+/*
+ * Return rotate setting value
+ */
 bool CpKeyScreenModel::rotate()
 {
-#ifdef Q_OS_SYMBIAN
     return ptr->rotate();
-#else
-    return 0;
-#endif
 }
 
+/*
+ * Set rotate setting value
+ */
 void CpKeyScreenModel::setRotate(bool value)
 {
-#ifdef Q_OS_SYMBIAN
     ptr->setRotate(value);
-#else
-    Q_UNUSED(value);
-#endif
 }
 
+/*
+ * Return screen saver setting
+ */
+bool CpKeyScreenModel::screensaver()
+{
+    return ptr->screensaver();
+}
+
+/*
+ * Set screen saver setting
+ */
+void CpKeyScreenModel::setScreensaver(bool value)
+{
+    ptr->setScreensaver(value);
+}
+
+/*
+ * Feature check for the bright setting
+ */
 bool CpKeyScreenModel::isBrightnessSupported()
 {
-#ifdef Q_OS_SYMBIAN
     return ptr->isBrightnessSupported();
-#else
-    return false;
-#endif
 }
 
+/*
+ * Return bright setting value
+ */
 int CpKeyScreenModel::brightness()
 {
-#ifdef Q_OS_SYMBIAN
-    return ptr->brightness();
-#else
-    return 0;
-#endif    
+    return ptr->brightness(); 
 }
 
+/*
+ * Set bright setting value
+ */
 void CpKeyScreenModel::setBrightness(int value)
 {
-#ifdef Q_OS_SYMBIAN
     ptr->setBrightness(value);
-#else
-    Q_UNUSED(value);
-#endif
 }
-
-bool CpKeyScreenModel::isCallibrationSupported()
-{
-#ifdef Q_OS_SYMBIAN
-    return ptr->isCallibrationSupported();
-#else
-    return true;
-#endif
-}
-
 // End of the file

@@ -212,9 +212,10 @@ bool CpCategoryModelUtility::setEntryItemContentIfEmpty(CpSettingFormItemData *i
     if (entryItemData->description().isEmpty()) {
         entryItemData->setDescription(description);
     }
-    if (entryItemData->iconName().isEmpty()) {
-        entryItemData->setIconName(
-                QLatin1String(":/icon/qgn_prop_set_default_sub.svg") );
+   
+    if (entryItemData->type() == static_cast<HbDataFormModelItem::DataItemType>(CpSettingFormEntryItemData::ListEntryItem)
+        && entryItemData->iconName().isEmpty()) {
+        entryItemData->setIconName(DEFAULT_ICON_LISTENTRYITEM);
     }
     
     return true;

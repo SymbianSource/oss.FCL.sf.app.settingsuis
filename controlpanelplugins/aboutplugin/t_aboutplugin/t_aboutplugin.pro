@@ -50,5 +50,5 @@ symbian {
     TARGET.UID3 = 0x2002BCD5
     TARGET.CAPABILITY = CAP_APPLICATION AllFiles
 }
-
+symbian:MMP_RULES += SMPSAFE
 include(t_aboutplugin.pri)

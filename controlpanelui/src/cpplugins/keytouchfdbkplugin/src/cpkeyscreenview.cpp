@@ -26,16 +26,20 @@
 #include <cpsettingformitemdata.h>
 #include <hbmessagebox.h>
 #include <hbslider.h>
+#include <hbstyleloader.h>
 
-
+/*
+ * Contructor 
+ */
 CpKeyScreenView::CpKeyScreenView(QGraphicsItem *parent) :
     CpBaseSettingView(0,parent),
     mScreenComboButton(0),
     mRotateCheckbox(0),
+	mScreensaverCheckbox(0),
 	mBrightSliderItem(0),
-	mCallibItem(0),
 	mModel(0)
 {   
+    HbStyleLoader::registerFilePath(":/resources/hbslider_color.css");
     HbDataForm *form = qobject_cast<HbDataForm*> ( widget() );
     if (form) {
         // Valid range is:
@@ -53,6 +57,9 @@ CpKeyScreenView::CpKeyScreenView(QGraphicsItem *parent) :
         if ( mModel->isKeyguardSupported() ) {
             makeScreenItem(*model);
         }
+        if ( mModel->isScreensaverSupported() ) {
+            makeScreensaverItem(*model);
+        }        
 
         if ( mModel->isRotateSupported() ) {
             makeRotateItem(*model);
@@ -60,23 +67,23 @@ CpKeyScreenView::CpKeyScreenView(QGraphicsItem *parent) :
 
         makeBrightnessItem(*model);
 
-       /* if ( mModel->isCallibrationSupported() ) {
-            makeCallibrationItem(*model);
-        }*/
-
         form->setModel(model);
     }
 }
-
+/*
+ * Create a key guard setting in setting form
+ */
 void CpKeyScreenView::makeScreenItem(HbDataFormModel& model)
 {
     mScreenComboButton = new CpSettingFormItemData(HbDataFormModelItem::ComboBoxItem,
             hbTrId("txt_cp_setlabel_keys_screen_locked_after"));    
     
-    qobject_cast<HbDataForm*> ( widget() )->addConnection(
+    HbDataForm * form = qobject_cast<HbDataForm*> ( widget() );
+    if (form) {
+        form->addConnection(
             mScreenComboButton,SIGNAL(currentIndexChanged(QString)),
-            this,SLOT(screenValueChanged(QString)));
-    
+            this,SLOT(screenValueChanged(QString)));    
+    }
     model.appendDataFormItem(mScreenComboButton, model.invisibleRootItem());
 
     int period = mModel->keyguard();
@@ -103,10 +110,16 @@ void CpKeyScreenView::makeScreenItem(HbDataFormModel& model)
     mScreenComboButton->setContentWidgetData("objectName", "screenComboButton");
 }
 
+/*
+ * Create a rotate setting in setting form
+ */
 void CpKeyScreenView::makeRotateItem(HbDataFormModel& model)
 {
     mRotateCheckbox = new CpSettingFormItemData(HbDataFormModelItem::CheckBoxItem, QString());
-    qobject_cast<HbDataForm*> ( widget() )->addConnection(mRotateCheckbox,SIGNAL(stateChanged(int)),this,SLOT(rotateValueChanged(int)));
+    HbDataForm * form = qobject_cast<HbDataForm*> ( widget() );
+    if (form) {
+        form->addConnection(mRotateCheckbox,SIGNAL(stateChanged(int)),this,SLOT(rotateValueChanged(int)));
+    }
     model.appendDataFormItem(mRotateCheckbox, model.invisibleRootItem());
 
     mRotateCheckbox->setContentWidgetData( QString("text"), QVariant(hbTrId("txt_cp_list_autorotate_display")) );
@@ -121,10 +134,39 @@ void CpKeyScreenView::makeRotateItem(HbDataFormModel& model)
     mRotateCheckbox->setContentWidgetData("objectName", "rotateCheckbox");
 }
 
+/*
+ * Create a screen saver setting in setting form
+ */
+void CpKeyScreenView::makeScreensaverItem(HbDataFormModel& model)
+{
+    mScreensaverCheckbox = new CpSettingFormItemData(HbDataFormModelItem::CheckBoxItem, QString());
+    HbDataForm * form = qobject_cast<HbDataForm*> ( widget() );
+    if (form) {
+        form->addConnection(mScreensaverCheckbox,SIGNAL(stateChanged(int)),this,SLOT(screensaverValueChanged(int)));
+    }
+    model.appendDataFormItem(mScreensaverCheckbox, model.invisibleRootItem());
+
+    mScreensaverCheckbox->setContentWidgetData( QString("text"), QVariant(hbTrId("txt_cp_list_screensaver")) );
+
+    Qt::CheckState state;
+    if ( mModel->screensaver() ){
+        state = Qt::Checked;
+    } else {
+        state = Qt::Unchecked;
+    }
+    mScreensaverCheckbox->setContentWidgetData( QString("checkState"), state );
+}
+
+/*
+ * Create a brightness setting in setting form
+ */
 void CpKeyScreenView::makeBrightnessItem(HbDataFormModel& model)
 {
     mBrightSliderItem = new CpSettingFormItemData(HbDataFormModelItem::SliderItem, hbTrId("txt_cp_setlabel_brightness"));
-    qobject_cast<HbDataForm*> ( widget() )->addConnection(mBrightSliderItem,SIGNAL(valueChanged(int)),this,SLOT(brightValueChanged(int)));
+    HbDataForm * form = qobject_cast<HbDataForm*> ( widget() );
+    if (form) {
+        form->addConnection(mBrightSliderItem,SIGNAL(valueChanged(int)),this,SLOT(brightValueChanged(int)));
+    }
     model.appendDataFormItem(mBrightSliderItem, model.invisibleRootItem());
 
     QList<QVariant> sliderElements;
@@ -135,27 +177,24 @@ void CpKeyScreenView::makeBrightnessItem(HbDataFormModel& model)
     mBrightSliderItem->setContentWidgetData( QString("minimum"), 1 );
     mBrightSliderItem->setContentWidgetData( QString("maximum"), 5 );
     QMap< QString, QVariant > iconElements;
-    iconElements.insert(QString("IncreaseElement") , QVariant(":/icon/hb_vol_slider_increment.svg"));
-    iconElements.insert(QString("DecreaseElement"), QVariant(":/icon/hb_vol_slider_decrement.svg") );
+    iconElements.insert(QString("IncreaseElement") , QVariant("qtg_mono_vol_up"));
+    iconElements.insert(QString("DecreaseElement"), QVariant("qtg_mono_vol_down") );
     mBrightSliderItem->setContentWidgetData( QString( "elementIcons" ), iconElements );
     mRotateCheckbox->setContentWidgetData("objectName", "brightSliderItem");
 }
 
-void CpKeyScreenView::makeCallibrationItem(HbDataFormModel& model)
-{
-    mCallibItem = new CpSettingFormItemData(HbDataFormModelItem::ToggleValueItem,
-                        QString());
-    qobject_cast<HbDataForm*> ( widget() )->addConnection(mCallibItem,SIGNAL(pressed()),this,SLOT(launchCallib()));
-    model.appendDataFormItem(mCallibItem, model.invisibleRootItem());
-    mCallibItem->setContentWidgetData( QString("text"), hbTrId("txt_cp_button_touch_screen_calibration"));
-}
-
+/*
+ * Desctructor
+ */
 CpKeyScreenView::~CpKeyScreenView()
 {
     delete mModel;
 	mModel = 0;
 }
 
+/*
+ * Private slots, invoke when screen key guard setting is changed
+ */
 void CpKeyScreenView::screenValueChanged(const QString &value)
 {    
     for (QMap<int,QString>::iterator it = mScreenLockValues.begin();
@@ -167,18 +206,29 @@ void CpKeyScreenView::screenValueChanged(const QString &value)
     }
 }
 
+/*
+ * Private slots, invoke when rotate setting is changed
+ */
 void CpKeyScreenView::rotateValueChanged(int value)
 {
     mModel->setRotate( value );
 }
 
+/*
+ * Private slots, invoke when screen saver setting is changed
+ */
+void CpKeyScreenView::screensaverValueChanged(int value)
+{
+    mModel->setScreensaver( value );
+}
+
+/*
+ * Private slots. invoke when bright setting is changed.
+ */
 void CpKeyScreenView::brightValueChanged(int value)
 {
 	mModel->setBrightness(value);
 }
 
-void CpKeyScreenView::launchCallib()
-{
-}
 
 

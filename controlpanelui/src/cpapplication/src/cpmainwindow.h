@@ -19,7 +19,7 @@
 #define CPMAINWINDOW_H
 
 #include <hbmainwindow.h>
-
+class QTimer;
 class CpMainWindow : public HbMainWindow
 {
     Q_OBJECT    
@@ -28,6 +28,16 @@ public:
     ~CpMainWindow();
 public:
     virtual bool event(QEvent *e);
+signals:
+	/**
+	 * Emit when control panel's startup is finished
+	 */
+    void applicationReady();
+private slots:
+    void onStartupFininshed();
+
+private:
+    QTimer *mStartupTimer;
 };
 
 #endif // CPMAINWINDOW_H

@@ -50,7 +50,7 @@ QList<CpSettingFormItemData*> CpThemePlugin::createSettingFormItemData(CpItemDat
         itemDataHelper,
         hbTrId("txt_cp_dblist_theme"),
         QString(),
-        HbIcon());
+        HbIcon("qtg_large_personalization"));
         return QList<CpSettingFormItemData*>() << entryItem;
 }
 

@@ -55,6 +55,7 @@ public:
 
 public:
     QString profileName(int profileId)const;
+    void setProfileName(int profileId, const QString &name);
     QStringList profileNames()const;
     int activateProfile(int profileId);
     int activeProfileId() const;

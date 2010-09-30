@@ -58,3 +58,5 @@ symbian*: {
 }
 HEADERS += src/*.h
 SOURCES += src/*.cpp
+
+symbian:MMP_RULES += SMPSAFE

@@ -23,11 +23,12 @@
 #include <hbdataformmodelitem.h>
 */
 #include "cpprofilesettingform.h"
-#include "cpprofilenameeditdialog.h"
 
 #include <cppluginutility.h>
 #include <hbaction.h>
 #include <hbmenu.h>
+#include <hbstyleloader.h>
+
 CpPersonalizationAdvanceView::CpPersonalizationAdvanceView(QGraphicsItem *parent /*=0*/):
     CpBaseSettingView(0,parent)
 {
@@ -37,14 +38,14 @@ CpPersonalizationAdvanceView::CpPersonalizationAdvanceView(QGraphicsItem *parent
     // 4.use cppersonalizationentryitemdata class to create ringtone, message tone...
     // 5.ignore cpmastervolumeslider class, please use default slideritem to create keyandscreen slider, new property added in slider, if any question, please contact me.
     // 6. don't forget the cfg file in data folder, you can try to add the profile activator plugin and ringtone plugin here
-    HbDataForm *form = new CpProfileSettingForm();
-    setWidget( form );
-    CpPluginUtility::addCpItemPrototype(form);
+    HbStyleLoader::registerFilePath(":/resources/hbslider_color.css");
+    mDataForm = new CpProfileSettingForm();
+    setWidget( mDataForm );
+    CpPluginUtility::addCpItemPrototype(mDataForm);
     initMenu();
 }
 CpPersonalizationAdvanceView::~CpPersonalizationAdvanceView()
 {
-    
 }
 
 void CpPersonalizationAdvanceView::initMenu()
@@ -54,11 +55,7 @@ void CpPersonalizationAdvanceView::initMenu()
     editNameAction->setText( hbTrId( "txt_cp_list_edit_name" ) );
     
     menu()->addAction( editNameAction );
-    connect( editNameAction, SIGNAL( triggered() ), this, SLOT( on_editNameAction_triggered() ));
+    connect( editNameAction, SIGNAL( triggered() ), mDataForm, SLOT( on_editNameAction_triggered() ));
 }
 
-void CpPersonalizationAdvanceView::on_editNameAction_triggered()
-{
-    QString string = QString( "general" );
-    bool ret = CpProfileNameEditDialog::launchProfileNameEditDialog( string );
-}
+

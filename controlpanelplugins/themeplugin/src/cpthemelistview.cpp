@@ -71,7 +71,7 @@ CpThemeListView::CpThemeListView(QGraphicsItem *parent) : CpBaseSettingView(0, p
     //Create the toolbar for Ovi Store.
     HbToolBar* toolBar = new HbToolBar(this);
 
-    HbAction* oviAction = new HbAction(HbIcon("qtg_large_ovistore"), hbTrId("txt_cp_list_get_more_tones"));
+    HbAction* oviAction = new HbAction(HbIcon("qtg_large_ovistore"), hbTrId("txt_cp_list_get_more_themes"));
     QObject::connect( oviAction, SIGNAL(triggered()), 
                           this, SIGNAL(oviClicked()));
        

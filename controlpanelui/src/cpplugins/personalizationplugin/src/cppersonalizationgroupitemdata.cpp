@@ -41,7 +41,7 @@ CpPersonalizationGroupItemData::~CpPersonalizationGroupItemData()
 {
 }
 
-void CpPersonalizationGroupItemData::beforeLoadingConfigPlugins(CpItemDataHelper &itemDataHelper)
+void CpPersonalizationGroupItemData::beforeLoadingConfigPlugins(CpItemDataHelper &/*itemDataHelper*/)
 {
 
     // keep this interface for development in the futrue
