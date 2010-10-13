@@ -17,7 +17,7 @@
 
 
 // INCLUDE FILES
-#include <StifTestInterface.h>
+#include <Stiftestinterface.h>
 #include <SettingServerClient.h>
 #include <ScreensaverInternalPSKeys.h>
 #include <e32property.h>

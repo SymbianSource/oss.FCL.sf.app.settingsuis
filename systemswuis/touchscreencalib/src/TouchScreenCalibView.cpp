@@ -25,8 +25,8 @@
 #include <AknBitmapAnimation.h>
 #include <ConeResLoader.h>
 #include <AknBidiTextUtils.h>
-#include <touchscreencalib_anim.rsg>
-#include <touchscreencalib.rsg>
+#include <TouchScreenCalib_anim.rsg>
+#include <TouchScreenCalib.rsg>
 #include <touchscreencalib.mbg>
 
 // USER INCLUDES

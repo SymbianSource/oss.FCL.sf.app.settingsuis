@@ -20,9 +20,9 @@
 // [INCLUDE FILES]
 #include <e32svr.h>
 #include <StifParser.h>
-#include <StifTestInterface.h>
+#include <Stiftestinterface.h>
 #include "ServicesDbApiTest.h"
-#include <servicesdbapitest.rsg>
+#include <ServicesDbApiTest.rsg>
 
 
 // ============================ MEMBER FUNCTIONS ===============================

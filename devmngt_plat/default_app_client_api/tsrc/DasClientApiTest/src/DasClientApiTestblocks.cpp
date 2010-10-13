@@ -20,7 +20,7 @@
 // [INCLUDE FILES]
 #include <e32svr.h>
 #include <StifParser.h>
-#include <StifTestInterface.h>
+#include <Stiftestinterface.h>
 #include "DasClientApiTest.h"
 
 
