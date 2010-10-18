@@ -15,27 +15,21 @@
 *
 */
 
-#ifndef CPMAINWINDOW_H
-#define CPMAINWINDOW_H
+#ifndef CPAPPLICATION_H
+#define CPAPPLICATION_H
 
-#include <hbmainwindow.h>
-class QTimer;
-class CpMainWindow : public HbMainWindow
+#include <hbapplication.h>
+
+class CpApplication : public HbApplication
 {
-    Q_OBJECT    
+    Q_OBJECT
 public:
-    explicit CpMainWindow(QWidget *parent = 0, Hb::WindowFlags windowFlags = Hb::WindowFlagNone);
-    ~CpMainWindow();
-public:
-    virtual bool event(QEvent *e);
-private slots:
-    void onStartupFininshed();
-
-private:
-    QTimer *mStartupTimer;
+    CpApplication(int &argc, char *argv[]);
+    virtual ~CpApplication();
+    void handleAppReady();
+    
+signals:
+    void applicationReady();
 };
 
-#endif // CPMAINWINDOW_H
-
-//End of File
-
+#endif /* CPAPPLICATION_H */

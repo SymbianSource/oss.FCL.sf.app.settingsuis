@@ -23,7 +23,7 @@
 
 int main(int argc, char *argv[])
 {
-    HbApplication a(argc, argv);
+    HbApplication a(argc, argv, Hb::NoSplash);
     
 #ifdef ENABLE_TONEFETCHER_LOG
     Logger::instance(TONEFETCHER_LOGGER_NAME)->configure(

@@ -56,10 +56,7 @@ symbian {
              
 SERVICE.FILE = service_conf.xml
 SERVICE.OPTIONS = embeddable
-SERVICE.OPTIONS += hidden     
-libFiles.sources = xqservice.dll
-libFiles.path = "!:\sys\bin"
-DEPLOYMENT += libFiles
+SERVICE.OPTIONS += hidden
 
 
 symbian:MMP_RULES += SMPSAFE

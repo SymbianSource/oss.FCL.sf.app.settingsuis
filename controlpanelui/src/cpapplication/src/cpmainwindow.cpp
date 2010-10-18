@@ -15,6 +15,7 @@
 *
 */
 
+#include "cpapplication.h"
 #include "cpmainwindow.h"
 #include "cpmainview.h"
 #include <cpplugininterface.h>
@@ -58,9 +59,12 @@ bool CpMainWindow::event(QEvent *e)
  */
 void CpMainWindow::onStartupFininshed()
 {
-    // emit applicationReady signal when the all initilizing event has been deal with.
+    // call CpApplication's handleAppReady()
+    // to emit applicationReady signal when the all initilizing events have been dealt with.
     // only emit it once
-    emit applicationReady();
+    if( CpApplication *app = qobject_cast<CpApplication *>(qApp)) {
+        app->handleAppReady();
+    }    
     if (mStartupTimer != 0) {
         mStartupTimer->stop();
         delete mStartupTimer;

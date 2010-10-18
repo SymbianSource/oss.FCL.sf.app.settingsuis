@@ -23,7 +23,7 @@
 
 int main(int argc, char **argv)
 {
-    HbApplication app(argc,argv ); 
+    HbApplication app(argc,argv, Hb::NoSplash); 
  
 #ifdef ENABLE_CPSP_LOG
     INIT_LOGGER(CPSP_LOGGER_NAME,CPSP_LOGGER_CONFIG_PATH)

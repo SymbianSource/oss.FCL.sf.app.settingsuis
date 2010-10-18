@@ -15,7 +15,7 @@
 *
 */
 
-#include <hbapplication.h>
+#include "cpapplication.h"
 #include <cpmainwindow.h>
 #include <cpmainview.h>
 #include <hbstyleloader.h>
@@ -27,7 +27,7 @@
 
 int main(int argc, char **argv)
 {
-    HbApplication app(argc, argv);
+    CpApplication app(argc, argv);
     
     //used by QSettings
     QCoreApplication::setOrganizationName("nokia");

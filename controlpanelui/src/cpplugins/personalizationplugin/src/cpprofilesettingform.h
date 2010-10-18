@@ -75,7 +75,7 @@ private slots:
     void onProfileNameChanged();    
     void on_editNameAction_triggered();
     void onEditNameDialogClosed(HbAction *action);
-
+    void onWarningNoteClosed();
 private:
     void initModel();
     void initGeneralTonesGroup();

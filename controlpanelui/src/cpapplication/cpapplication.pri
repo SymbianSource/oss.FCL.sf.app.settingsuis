@@ -15,10 +15,12 @@
 #
 
 HEADERS += src/cpmainview.h \
-	   src/cpmainwindow.h \
-           src/cpmainmodel.h
+	       src/cpmainwindow.h \
+           src/cpmainmodel.h \
+           src/cpapplication.h
            
 SOURCES += src/main.cpp \
            src/cpmainview.cpp \
            src/cpmainwindow.cpp \
-           src/cpmainmodel.cpp
+           src/cpmainmodel.cpp \
+           src/cpapplication.cpp

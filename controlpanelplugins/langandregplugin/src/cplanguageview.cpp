@@ -137,7 +137,7 @@ CpLanguageView::CpLanguageView(QGraphicsItem *parent) :
              * Create region item.
              */
             HbDataFormModelItem *regionItem = new HbDataFormModelItem(HbDataFormModelItem::ComboBoxItem,
-                hbTrId("Region"));
+                hbTrId("txt_cp_setlabel_region"));
  
             int regionIndex = mSupportedRegions.indexOf(setting.regionId);
             
@@ -480,8 +480,22 @@ void CpLanguageView::onDataFormItemActivated(const QModelIndex &modelIndex)
             HbLocaleUtil::changeRegion(mCurrentSetting.regionId);
             HbInputSettingProxy::instance()->setGlobalInputLanguage(mCurrentSetting.primaryWritingLan);
             
-            //update combobox
-            mCurrentPrimaryInputLanguageItem->setContentWidgetData("currentIndex",mPrimaryInputLanguages.indexOf(mCurrentSetting.primaryWritingLan));
+            //update index of primary writing language combobox
+            int primaryInputIndex = mPrimaryInputLanguages.indexOf(mCurrentSetting.primaryWritingLan); //exact match
+            if (primaryInputIndex < 0) { //exach match failed. partially match the language part.
+                for (int i = 0; i < mPrimaryInputLanguages.count();i++) {
+                    if (mPrimaryInputLanguages.at(i).language() == mCurrentSetting.primaryWritingLan.language()) {
+                        primaryInputIndex = i;
+                        mCurrentSetting.primaryWritingLan = mPrimaryInputLanguages.at(i);
+                        setting->primaryWritingLan = mPrimaryInputLanguages.at(i);
+                        break;
+                    }
+                }
+            }
+            
+            mCurrentPrimaryInputLanguageItem->setContentWidgetData("currentIndex",primaryInputIndex);
+            
+            //update index of region combobox
             mCurrentRegionItem->setContentWidgetData("currentIndex",mSupportedRegions.indexOf(mCurrentSetting.regionId)); 
             
             CPLANG_LOG(QString("Primary writing:") + HbInputSettingProxy::instance()->globalInputLanguage().asString());

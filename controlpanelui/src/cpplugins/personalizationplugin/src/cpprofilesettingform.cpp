@@ -26,6 +26,7 @@
 #include <cpprofilemonitor.h>
 #include <hbslider.h>
 #include <hbaction.h>
+#include <hbmessagebox.h>
 
 #include <QFileInfo>
 #include <QFileIconProvider>
@@ -401,11 +402,21 @@ void CpProfileSettingForm::on_editNameAction_triggered()
 
 void CpProfileSettingForm::onEditNameDialogClosed(HbAction *action)
 {
+    QStringList profileNameList(mProfileModel->profileNames());
     QString editText(mEditProfileNameDialog->lineEditText());
     if (action == mOkButton && mProfileName != editText) {  
-             
-            mProfileModel->setProfileName(mCurrentProfileId, editText);       
+        //two profiles can not have the same names.
+        if (profileNameList.contains(editText, Qt::CaseSensitive)) {
+            HbMessageBox::warning(hbTrId("txt_cp_info_cannot_rename_profile_name_already_ex"),\
+                this , SLOT(onWarningNoteClosed()));            
+        } else {          
+            mProfileModel->setProfileName(mCurrentProfileId, editText);
+        }
     }
 }
 
+void CpProfileSettingForm::onWarningNoteClosed()
+{
+    on_editNameAction_triggered();
+}
 //End of File

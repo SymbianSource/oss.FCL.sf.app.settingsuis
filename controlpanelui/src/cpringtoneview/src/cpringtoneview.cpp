@@ -71,12 +71,7 @@ CpRingToneView::~CpRingToneView()
 }
 
 void CpRingToneView::itemActivated( const QModelIndex &index )
-{
-    //avoid responding to the second or later consecutive click
-	if (mProcessing) {
-		return;
-	}
-	mProcessing = true;
+{    
     int nRow = index.row();        
     switch(nRow) {
         case 0:         //no tone, set default no sound
@@ -84,10 +79,20 @@ void CpRingToneView::itemActivated( const QModelIndex &index )
             emit aboutToClose();
             break;
         case 1: {        //tone
+            //avoid responding to the second or later consecutive click
+            if (mProcessing) {
+                return;
+            }
+            mProcessing = true;
             launchMediaFetcher( "com.nokia.symbian.IToneFetch", "fetch()" );
             break;
         }
-        case 2: {        //music            
+        case 2: {        //music
+            //avoid responding to the second or later consecutive click
+            if (mProcessing) {
+                return;
+            }
+            mProcessing = true;
             XQRequestInfo requestInfo;            
             requestInfo.setInfo("WindowTitle", QVariant(hbTrId("txt_cp_title_control_panel")));
             launchMediaFetcher("com.nokia.symbian.IMusicFetch", "fetch()", QList<QVariant>(), requestInfo );
