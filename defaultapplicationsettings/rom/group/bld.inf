@@ -17,9 +17,8 @@
 
 #include <platform_paths.hrh>
 
-#include "../services_db/group/bld.inf"
-#include "../server/group/bld.inf"
-#include "../service/group/bld.inf"
-#include "../gsplugin/group/bld.inf"
-#include "../rom/group/bld.inf"
+PRJ_EXPORTS
+
+../DefaultApplicationSettings.iby	CORE_APP_LAYER_IBY_EXPORT_PATH(defaultapplicationsettings.iby)
+../DefaultApplicationSettingsResources.iby	LANGUAGE_APP_LAYER_IBY_EXPORT_PATH(defaultapplicationsettingsresources.iby)
 
